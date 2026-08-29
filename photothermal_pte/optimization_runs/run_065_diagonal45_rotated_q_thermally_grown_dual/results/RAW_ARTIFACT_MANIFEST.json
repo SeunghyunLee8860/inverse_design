@@ -1,0 +1,1847 @@
+{
+  "schema": "official-ansys-dfm-exact-repair-optimization-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 179792716,
+    "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/component_yee_jacobian_v2_run58_optical_ideal_terminal_no_Au",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/component_yee_jacobian_v2_run58_optical_ideal_terminal_no_Au/component_yee_jacobian_result.json",
+    "certificate_sha256": "7539a5086d81897b395270e0a9724b5a3b258cf0238370b564ada37653c3ce19"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0001_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12686,
+        "sha256": "e3c8d974a589b75c3eebb6e6411b801bf9d3826f316c2c93d2b51bcdcb332f2e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0001_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1462906,
+        "sha256": "424f51554d3b08096de3fbf53a99402d79c7661ecf627a151d4ef69ef5599701"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0001_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "b9f8d8eb1ab0031e4bced89f2171b6c5773413b29887234d1ec1d68f708bd405"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0001_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 927,
+        "sha256": "3e94fdd8e5fb0a52759ddc67b59f684792da3bb883494a90e2535aaaa6332968"
+      }
+    },
+    "0002": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0002_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12684,
+        "sha256": "5ed804775ddfdd660af9f542b733e13abe49f2e3b61d1398279483beaa733230"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0002_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1734761,
+        "sha256": "75dab400d7ad18321430fd8b4da950f7b01d1aa728339f4eb39866d2488d321e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0002_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "9bf62aa2b371d21c2879e0582509331bd25346225c8d1bd5876758d876e24374"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0002_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 270314,
+        "sha256": "53dc0f8a6310c7bce10dcab340c58ffa6072d48631a58f0e469ffb2ecc31adcf"
+      }
+    },
+    "0003": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0003_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12685,
+        "sha256": "0bb11c066ce5d7016a770a142269f501052329ab0a400e70ae4a1081e86de414"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0003_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1762163,
+        "sha256": "37938f9378286af2a1f6a51c759b8848416cb8707b02db3122d10047bb9331cf"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0003_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "5d4372b5950eece4d259525783c093b5e0a3de13d1ab6a2c109b7382e052c706"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0003_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 297809,
+        "sha256": "7d0b34090fe2e4189fcb567e46c5fed66db46f85d6dba4962bc023d0f537d2f5"
+      }
+    },
+    "0005": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0005_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12684,
+        "sha256": "2959f14e328cef2bbf4f10b690dcbdc5192237080606af63995b5318185fd80e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0005_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1762163,
+        "sha256": "37938f9378286af2a1f6a51c759b8848416cb8707b02db3122d10047bb9331cf"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0005_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "fa11c7e10fe77fe0439b073b2dad4617fe3d7c8978a19ccdbf693665f2f549a5"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0005_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 297809,
+        "sha256": "7d0b34090fe2e4189fcb567e46c5fed66db46f85d6dba4962bc023d0f537d2f5"
+      }
+    },
+    "0006": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0006_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12682,
+        "sha256": "6d96b57efe4aabf882db55dd0831d8a3da43526049e9cb7ed67140787aa15482"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0006_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1762833,
+        "sha256": "a04d13d5996a5db0c1befadbbe83b70b11c2444351e9d1d2450c78715076159f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0006_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "fb74d43d6c0eaca64a49bf9aa33e55386d3e98e3963247b83e1bd8d94f8d09f4"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0006_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 298675,
+        "sha256": "0913027e7b6a6d2a88232ab0bd351d5cd366806e6c49edd8b5d430bc424bbd63"
+      }
+    },
+    "0007": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0007_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12677,
+        "sha256": "d2ba26f23af46867d1c4428bc2b3fd6f7639cbe73ef68970ee0dd85888d003b7"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0007_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1767632,
+        "sha256": "3592fc2b3334b283578f9c15cdff0748fb0b3df93224b8609da30d05352196c4"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0007_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "8dcf89974a194031f925b70cc7e5c20af80b65c193ad6378878647e4efa28868"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0007_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 303334,
+        "sha256": "11ec871c20affe05434463902fbd734bb383cf11f906185f4e10a2480b6b56d4"
+      }
+    },
+    "0008": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0008_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12672,
+        "sha256": "2abd43f285c19dc4b765d70223fd692f4ef70a8703fb1101df01cec3f709cbed"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0008_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1779972,
+        "sha256": "6f7244ad8e7041fb76748ee4357fa28bc980c18b82348e9f4c94952d0d8d8545"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0008_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "11d1f10e9e4b8c4acf3d5113c5a3a6c93160d0b6790175ecf46b83df4f3d9a97"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0008_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 315521,
+        "sha256": "61aca6628b5b570675e387494a98b7894b731bc0ff277faec4d834bebb4ed86d"
+      }
+    },
+    "0009": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0009_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12685,
+        "sha256": "3a21bef86b9a7d49765bdb95e20a92d0f9f81235a9e73b9ad062a09bf2d3a002"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0009_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1807104,
+        "sha256": "993c36b1d0544bafd79485f56f1302f0fd75262b26a4593414f67e0f9c38cb16"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0009_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "c35a03090fe36796c1482b946a00a5e582491433037107179547ee3e00b6f110"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0009_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 342504,
+        "sha256": "92ecc68033cf3fb69e74cc21b963fa2a19d9f531adae958dbdec05075bba63fc"
+      }
+    },
+    "0010": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0010_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12672,
+        "sha256": "7def17d623930890eac094a173e2cf9ba91e12e908c5728219646cd96e6af631"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0010_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1820679,
+        "sha256": "12f333f25dfba76bb60d827a5e0672a404156f0115ae0095d1c559f3a561503f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0010_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "63a74d92763c02ae1c6f2089dfe0963c4fd396fffc4a3f702931fda3899343ab"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0010_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 355089,
+        "sha256": "74b9ace8bc8cebdd6fcc49082120a0f4b2dc6090804970e32da21c891e958963"
+      }
+    },
+    "0011": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0011_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12682,
+        "sha256": "173c80f8acfcb7d180af823f2bfaa00df5df9e141303d3d2242cbaf755aa728b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0011_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1533956,
+        "sha256": "e753eb2a6db40d4378e3977574c1b53fe2837a8e641cdaf655f4d005e4c319a8"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0011_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "79c216f7d9cea7b3255d6ddfb428159c31a188815cf1021d42f8af85bbf918c3"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0011_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 46758,
+        "sha256": "96de839b2b7492a2e4ec115af2ed2cf989eb1cd580a3956cc22fc01afe0a4269"
+      }
+    },
+    "0012": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0012_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12685,
+        "sha256": "8f4aba0a1eb7237086c6a4088e5a55576d0885fe99e5f48a75acc2f8f30627cc"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0012_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1516038,
+        "sha256": "08d7d2e8d12ee34bae358d74461d2a51f13af964ce80fc0325cf23d88c6cc1a6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0012_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "bd1c801bd8e594a3a1aacfe457816ba56b39b7b8dafb28fff95d566695ebc425"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0012_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 29801,
+        "sha256": "5ffa16c80479512674c7ddd1544832bdc6328c8b4b8ba528f51d84ce1aaf5c93"
+      }
+    },
+    "0013": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0013_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12679,
+        "sha256": "447d17469629c7a2269c45b62732174f56b2a5148ae8635816607016ef5c3b49"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0013_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1510243,
+        "sha256": "c631c69b85b30e9827f819b7f19eb1a5c10e877434f5abe711e00e04c211461d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0013_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "c50216e6affa2c6f7043a130d2c04e8653702fd985994c7b1e4a107cf9015329"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0013_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 23716,
+        "sha256": "d1d4f7a1644b9d993babb7cde4594d1e064f0d47c5b4745ffa141a63a0dd08e8"
+      }
+    },
+    "0014": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0014_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12673,
+        "sha256": "09561c55653cb19216951dfa391c3ac0e55175b00305486f0f3f12a86751af71"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0014_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1506563,
+        "sha256": "0687a607e1daf3a5e288f74db74820bb7e4ddb480a59c21a893b4581efce51c6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0014_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "047c340f7059bf3e82a788dfb6becebfe339640a5de87453a6a1f2cf1053e8fd"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0014_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 18521,
+        "sha256": "08970f752c364d71bd9a46bca6adb154a7befb6ebfec09c78b3171b0443c79f6"
+      }
+    },
+    "0015": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0015_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12692,
+        "sha256": "8bad9d10a6f2a84498cb03c68f5ccad4a26c15d5034e5edf21f268e7ce6c5573"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0015_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1506946,
+        "sha256": "ca8766a184b909971bcf887275afdd38ae4ba7d676ff04851355fc63127745f5"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0015_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "b4f272ad46d9ff81828741272ccf8c2c49b6b5f8939cc2eac9b802a3e2b7303a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0015_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 17278,
+        "sha256": "75b280d86aef9de0bb5d79755aff02098b3f247b2f270b5d3827a31da51dfed2"
+      }
+    },
+    "0016": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0016_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12682,
+        "sha256": "bd819483dac9d0e5368addd0c98f39fdd6b92d115cfee7a99fef3c3261e882b4"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0016_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1505350,
+        "sha256": "bbf5f66d0e2120347810d41b41b7d529308f1a690d12beb8adbad30b1810a2df"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0016_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "82c76014522b46cd6c1702d04c3c3a5c2a4e741f6b4d9624ab131e4ac6d3436b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0016_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 15241,
+        "sha256": "4dd49ca9b2bdc47819154d9abb45016ee5d2e570c652798154b902111403156a"
+      }
+    },
+    "0017": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0017_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12686,
+        "sha256": "242facb17c204d95d8f362d22dcbfcc2e0235f122c9179de04e640bd06b0e4d0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0017_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1504556,
+        "sha256": "727085d7dae0afe46611c7d77c43141bd1db3c6bd542914782b4499312707a68"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0017_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "0921db781298cccb8c3484f2af1e5d12cadf5e02539f5c38f55630d31ef06680"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0017_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 13374,
+        "sha256": "13c466aa3c11297e86c5b31d27be52be3df649316e30fa65d0523edddd64ad7e"
+      }
+    },
+    "0018": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0018_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12683,
+        "sha256": "995bc820a9c2c95d321d41edc35cabcfda7c21b310e136f88f3ea0b8ae9f015c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0018_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1502947,
+        "sha256": "dcfdd3022b41624d9c944f71505a0a9751be709b4e3c3ebaf8baf2a2c9742a0f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0018_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "16f77cb71372d1da68de9da01d2e4491ef764a9e252582bfb08c44ae81709ffc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0018_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 11959,
+        "sha256": "a3ca361b409bbade7b4de29bd0e12862e466aafa5bc125ed1f48e6e32404eeea"
+      }
+    },
+    "0019": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0019_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12663,
+        "sha256": "75d0ae4c74aaca6da1af54e392ba5061a07b6683f3db5ae4b562d758776c0e5f"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0019_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1502633,
+        "sha256": "b47cb55dd279333348474732268e10c646fa3e8a459cd274a501e4723098bb68"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0019_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "6454f0c0d6e8b6abf378d2bc6e3913bbc6b47d1c91fc5cdef6b1af0692827c0c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0019_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 10834,
+        "sha256": "b193c2f145399f3855e419868c6db74b1c543764279628ee9c0ef8223781268f"
+      }
+    },
+    "0020": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0020_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12688,
+        "sha256": "d4b37365288393be1368bd0611e6c07a8e210ca34d7ce68b3bda8448c944a9c4"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0020_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1501536,
+        "sha256": "c365a217a5cb543f0e5beb6a00ae19a5852f08ee4e096f1ab8d46f3af33371b3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0020_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "6e25f54bf5714a2af1f4ad6b769b5e09ebe823f1d8753fc89275d6b43caed972"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0020_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 9360,
+        "sha256": "dc6c5990511b5350e7164fd8602d34bfa3d1b9d34cddd898437274f26f4b1f25"
+      }
+    },
+    "0021": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0021_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12681,
+        "sha256": "b40edf1bb7e068199e0bfe0f787a403ea0c9527e558198db474df524a342e6ca"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0021_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1500824,
+        "sha256": "ce8c25aff86f7d803b1cdf5850d29d7ed4e6de914c9cc549c281ea1510b5ad3c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0021_beta1_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "22b2ba428b9a5ce7a4232e524e035befbb354c6d44fda277c236035120aa3997"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0021_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 8600,
+        "sha256": "9a8f0085797067d10f148f7aa7c7b43b7c2d0971de8183a839b1c06ed8a0d039"
+      }
+    },
+    "0022": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0022_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12681,
+        "sha256": "bf00a8bec77f25858bf131769233dab8bf463ac96f2aaf383ed1eff8b8efefa8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0022_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1501012,
+        "sha256": "4ba58e351c26f55e3b02321c39636430ce6edd28fb9f5f95c0a18f9a613ab593"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0022_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "77c0f416778ff22a7e568847a8e86eecf1b513ee0cbf3d5d2f22bacdac7209fd"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0022_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 8600,
+        "sha256": "9a8f0085797067d10f148f7aa7c7b43b7c2d0971de8183a839b1c06ed8a0d039"
+      }
+    },
+    "0023": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0023_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12688,
+        "sha256": "5ca69d3f1f823e90c1e0df0cc99a746b1fbe2100e18eda13570a391eedacf45d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0023_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1742239,
+        "sha256": "327ace417189f5480b38cc2d3c92cf9fba960d14265521fd7169122402465cc4"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0023_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "b6c9296144ae03f799fdfa800630d7bea70455d3151352572db249ec3910ce88"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0023_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 269302,
+        "sha256": "949a8567a3c86c94effc2fd02642f7b55ff570f82de40ccaaebc9e0aed8e9f45"
+      }
+    },
+    "0024": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0024_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12685,
+        "sha256": "93000a060e716cdcd4b05e6b44901ce469d085bedce5bb15062b707fb4723e16"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0024_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1768299,
+        "sha256": "0f21f506600650050c942dc5f883b65da572df31d700431f52426cebb3d28b69"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0024_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "ccb045c3cee02d3f2b460fd2b984a846579f301c5fba475b79c7ebbaeb6e0e04"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0024_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 297198,
+        "sha256": "e7fb1d10a686b178ae17c895104e55f53c7b75fab43c51a5c90917095966edb3"
+      }
+    },
+    "0025": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0025_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12694,
+        "sha256": "2ffab0f978064ec33310519a976fc59c1b5a7d1f009aed875c40562bee24fb01"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0025_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1784120,
+        "sha256": "3dc0cf4cbd83ee44696fe516f43c06c84c9e96ae096af53b2e7894b970fe13c4"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0025_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "c872a053315bfdb877bc7a28e90d3467a3b0e5dcb5a56eb7d8611d1414300be1"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0025_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 314132,
+        "sha256": "1858c70cae106b738ae304b7a5b4307413e10545fc23ca50bbfbb34d93d2d429"
+      }
+    },
+    "0026": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0026_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12683,
+        "sha256": "16e2bee58747518b03d7d1ac75d3636a767b29f11360a40c54839813fe239e92"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0026_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1810158,
+        "sha256": "cbfd3287efdb44193b285b7b70536e568616778a9ffd67aaa613bd13d86b0819"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0026_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145095,
+        "sha256": "c9b5ad29d067f47c0c052ae79205acfcefe54b6719af795d781709e01c79316f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0026_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 341506,
+        "sha256": "9fe1970a0cca09e85464e11a4b37000b15eb0b44da393aa88165b3b7b55c8d6c"
+      }
+    },
+    "0027": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0027_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12708,
+        "sha256": "e7664b41ac2bddc0889b122cab475f69865033a9f4ed2a44ec8bf528dd881da7"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0027_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1812969,
+        "sha256": "26440b0ee52987d7b2231b7720fef8d642a4f419047f908abae0152c5f983707"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0027_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "b76c50cb2f46219fd161ff082dd80406bf05f8122b7bd8ec102aff9d36e4daf3"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0027_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 343407,
+        "sha256": "f8402c436bc925e71260932c8bf5b99d425ac89f692e132012105ced45f6bf4b"
+      }
+    },
+    "0028": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0028_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12710,
+        "sha256": "1497251a50d9d37c6abfdd1b46a4594b5abda4d31dd98816568c894b9febd86e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0028_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1577022,
+        "sha256": "bdedf06ad55ddcd4141cbfa528f57e31c13f0b30fa97076f04a47c3b8056390c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0028_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145383,
+        "sha256": "1507d41453409251274eab6f07798b63a71ceb9888deb0da0c5019e0bfc01265"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0028_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 74666,
+        "sha256": "772f7908f853adca701847eb4e5ea7cd8f0a2878381571ec1e70e65de9619153"
+      }
+    },
+    "0029": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0029_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12701,
+        "sha256": "16a6d50383904ffec58d1354d8001587cefabafe7a6b3e06efff28849d80a53a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0029_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1568069,
+        "sha256": "26614ec01d2cd15c08e2c52a42e729b8ae6502e7e32d28d5cc20b17bc0d513a6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0029_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145335,
+        "sha256": "f81a2ac269e69d6cb0fbb5dc34c90c31bbe6644dbe8e10ebecc92824f571c011"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0029_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 57118,
+        "sha256": "d02565da691fdc7b8516519a16222416ecd330de977bd708c807dce4ffcf808c"
+      }
+    },
+    "0030": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0030_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12697,
+        "sha256": "e9b08e4b63c8a2c4786745bf1955c810064a97781a0a7659fb5e180e7aa9e4ec"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0030_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1560355,
+        "sha256": "d2af10d6bd936ac421df70f48cf9a3ac50074090fc8f7ab2304f670c93622316"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0030_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145335,
+        "sha256": "d2f75d38cdea1b0367da9ca284abce45d9292bbfa38c3d4715634db34ab8948b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0030_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 44050,
+        "sha256": "07d16e862a253c9726a8b356f2373de43865cc554d3f68ee00d8b47c76c3ed12"
+      }
+    },
+    "0031": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0031_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12691,
+        "sha256": "d799691dcfa05f4603aa3118b4aac5e48c423ee1aba389a9e1edd31c45d88d23"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0031_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1549592,
+        "sha256": "7c683cb2af3646d38333b1425b66013f922e69f94166fe4a51aaf8b8988247aa"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0031_beta2_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145287,
+        "sha256": "66ca4fe3dfea90d847bf2c15e6e3672640164e40e4f11fa8bc698bd33eead023"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0031_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 34148,
+        "sha256": "f126f90751c0979f36bbe5365ae0317f20f6931091a250cab2c1fcd5177f392e"
+      }
+    },
+    "0032": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0032_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12703,
+        "sha256": "221ec8218a3959ecc78bc2506a1a73c5c4f38eb5419edf16085a72ebcb0c7f0e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0032_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1549672,
+        "sha256": "bfac596e8984ac1a762788b4de119ea6b1632390a5b98be3a098c2bec8676015"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0032_beta4_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145335,
+        "sha256": "9480cefc0fa721420350e649ba16b71abcedfdbc649aefebc63d84bbe2fdd0f0"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0032_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 34148,
+        "sha256": "f126f90751c0979f36bbe5365ae0317f20f6931091a250cab2c1fcd5177f392e"
+      }
+    },
+    "0033": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0033_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12682,
+        "sha256": "7cbea2f4ff559d396d84c942f23b6c647255a15f3ddf8e1b2d7ba50745039e5b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0033_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1750713,
+        "sha256": "65cd3414b7e0ee7bd5075a1fb6333d59072e24d62ac3e99905b63cb6d40641f5"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0033_beta4_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145335,
+        "sha256": "3a2ac001fdcda6ab5501331599e50f7c56aa5dfc809b9e6be4007e194140d9f5"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0033_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 273557,
+        "sha256": "f9d817b487a6b6a3b710e6ac6002166094e1e1fe8e52de17c3cef62621c44722"
+      }
+    },
+    "0034": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0034_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12697,
+        "sha256": "d8418e764a7c50b5687c9a11be83445b99feaf709124027a254450af1b6171ed"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0034_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1738281,
+        "sha256": "b7c208eb23e7b50465e3ce7303cfefed0049d243d95a275d6621cd6d0c5452ee"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0034_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "ea5b78841b447357488f7f65248b7f081cde608f39bde7261e11a547561efd15"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0034_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 273557,
+        "sha256": "f9d817b487a6b6a3b710e6ac6002166094e1e1fe8e52de17c3cef62621c44722"
+      }
+    },
+    "0035": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0035_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12703,
+        "sha256": "98e6b300c03ff08f454c06802c9575adfe4675d39af705369152151656833725"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0035_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1739418,
+        "sha256": "f802f6c7c34da97e3318f7ae619d9f3bca0116977b9fa6b3a113a44ef158a809"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0035_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "f0bdce8363cfd96d891d334af13fa8574516725868d86d8482f94c7fe731f551"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0035_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 275551,
+        "sha256": "511251f3d864321d4c7b759f70244f7e879177d6895d703ce0cafbf54d552205"
+      }
+    },
+    "0036": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0036_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12699,
+        "sha256": "5420420e64ee670f7ec4e48f3dc727f200f3630b10f633ba5a8ae8d7992a0c95"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0036_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1744777,
+        "sha256": "df27cb74d5d88dab8938c9302bf7fe03dacce2fa4c9e05da6a2e8926cbadad87"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0036_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "90e77199cf12ee00f984b3792d6d1754f9da2068a0bb17d9881809654ca1bf01"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0036_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 280906,
+        "sha256": "3d22932ab89474f73eb5bfe7cbd23dd61be830c8c76c2606c257ca9c34d34374"
+      }
+    },
+    "0037": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0037_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12697,
+        "sha256": "57e3cda5a1adb483039ee20b9a326dc4d20879353cae6c6a3bbce5dc075f6b13"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0037_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1762351,
+        "sha256": "74bbad2997eb796d5dc5006bb36945737f7cc5cd9f71aa965f12f736eb2843fb"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0037_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "0e04e97e89c596529fe3710b0b822d2cbba6e46418828b6a42654f3116a3fb38"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0037_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 298376,
+        "sha256": "40703a8675fd900c49896b0747cdd2c89b5588eab5487b3deb22c8a58fa5da67"
+      }
+    },
+    "0038": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0038_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12700,
+        "sha256": "dee2f215a49da9b8facf5b98d71e0abb6f537255674668be51d061784369a43c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0038_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1775321,
+        "sha256": "bcad51fd86d0bf477744541e3a3951758da1b9354220a85ba82c3fddbb48eedd"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0038_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "5c111c12662a018bcc8b9be4de0d28320e37afc3f2af1c711ef5706d8bb76803"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0038_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 322116,
+        "sha256": "935734658325e8dcfbb546325b2d00c7f85f0efaff785231e094d6fd193e35b8"
+      }
+    },
+    "0039": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0039_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12704,
+        "sha256": "19ed74f9542e3aea5ee8ccce3b636b52b0966c4eb88aa37ee8f1f56f62fdf2d5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0039_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1793431,
+        "sha256": "32d23e6da5afda6c6601211946f069d3a829a9f1a8d6dcb3fafa28db1e6fa65f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0039_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "13e99a4682acc3a4cdaa26931d4924c2c0fc5730525192718632080b7df0ee7c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0039_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 336270,
+        "sha256": "2d3b3d4797af6e249ea3b996997185e53475f9bdf424c38121866e33942e36d5"
+      }
+    },
+    "0041": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0041_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12702,
+        "sha256": "89fba0e6421a41c5417db2135d46250babbf1ac184cde09e38ae3f0777a89ac8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0041_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1793431,
+        "sha256": "32d23e6da5afda6c6601211946f069d3a829a9f1a8d6dcb3fafa28db1e6fa65f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0041_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "7a80efd5e5f30e6b97c79b4fda9ed469e4dd486a7ba8e2d0980c2376a4757c2c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0041_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 336270,
+        "sha256": "2d3b3d4797af6e249ea3b996997185e53475f9bdf424c38121866e33942e36d5"
+      }
+    },
+    "0042": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0042_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12702,
+        "sha256": "de39cd368496721ec988588d6df81c0458d2d513f3951440ac5aee77b02346f8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0042_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1793632,
+        "sha256": "6d32a147dfbacf38fb7c4ab6873cd7734e5c8c4f75c1dc7596ec5518f035d266"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0042_beta8_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "ec2b9ed0f92015edfb2235c079e54847ce44aac440379cb28f70632adf74120d"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0042_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 336314,
+        "sha256": "59c8bb99a7dae34ff96fcc96710ec38ee81bfe273eb61d15e5f85cf927c8fe35"
+      }
+    },
+    "0043": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0043_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12929,
+        "sha256": "f46e4aef4654a139390e556eecc47a202f3baa6011bfdd9d8271008d8ecc1c8b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0043_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2132647,
+        "sha256": "96cc7761a8d278cff123185b78b33763eef0b929b6cd51d8fa5ec086cf5e6819"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0043_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "acebca737f1eaeeb0a45e7021caf49ddfd63def33c540379acd0e80ed774979f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0043_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 336314,
+        "sha256": "59c8bb99a7dae34ff96fcc96710ec38ee81bfe273eb61d15e5f85cf927c8fe35"
+      }
+    },
+    "0044": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0044_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12938,
+        "sha256": "e7dcf4a08eb174666ef7332288b82a37e60dffdd4c4510fbf377decdd309a0ca"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0044_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2132420,
+        "sha256": "a374a2f503738c7fe4650d3c854030aa1dc34c8c7eef382df2af9ce9f22fe336"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0044_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "248e8b1e51ec2a18d221ecee48522604b75a2c790635f00cca2cc434a62edb91"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0044_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 336548,
+        "sha256": "b4ff2435c95f9436060bde89a6b0c5e559bef933fd337d48f4b5ddc64ada098f"
+      }
+    },
+    "0045": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0045_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12919,
+        "sha256": "84c04b509aa21709c19b61e77f586893f1f4bd3bab0859de16f4f15f6ae6df82"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0045_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2132588,
+        "sha256": "ea2f328fbfa05ac9280bdcdae4874827f99c709d3e8198b831ee3249b8ac83c6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0045_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "6be53bd44c16ea997e019ca334386e38e3bf48b7de7bd68b86111fe0779330fc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0045_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 336958,
+        "sha256": "d80a5970a449064e3c8d7196d941953d9f553f56976aa84d6c025b87ed105046"
+      }
+    },
+    "0046": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0046_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12912,
+        "sha256": "3fc6fc546701320ffbbbec2ec9c18dfd046a972ebfc9d2b4bcea39aa21b34cf6"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0046_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2130022,
+        "sha256": "88c56f65b8d9a5e3c15a1ffad9087d31ef52116b7328419d11ecda1bc08febbd"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0046_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "e4854824e51b758f911bb29651800a2c91f3cdd9c6254949191fc1a5532451d6"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0046_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 337219,
+        "sha256": "c4c89113d31c8370afc60cf9e98bb5a8280a728f0cd6f5caff0aab9e98b310ab"
+      }
+    },
+    "0047": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0047_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12936,
+        "sha256": "fe66f1246185c6d0fedb70f90e25463250c71ef51ab06384742a2790e500de2e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0047_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2119695,
+        "sha256": "a5ee9f0de14e7dc59f2c7d2775c8c102b556f6ea4479331fb672f6bea66055ae"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0047_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204146583,
+        "sha256": "5b5eefcb959881c7e471be3fbfe4184bbd22e1be772aa3f4e76a22a195caf1d8"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0047_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 334006,
+        "sha256": "4c2f6dfe73a634a565f0fb8450fa8701e1d5d6adb4dc237c9c4ae6cd55a07d22"
+      }
+    },
+    "0048": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0048_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12926,
+        "sha256": "764dcb04a403c34c3cf5da9e60c79fae52129e6da3afce9c74e927acb5f35b0a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0048_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1832115,
+        "sha256": "bcda16c8cd3b011d7a61db25efe29895040019316e75573289e243e15f290cfe"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0048_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204147063,
+        "sha256": "a7ca9997279abf5c6ebcef45c0b54adb8c867dbd0898da2a60f26d3019ad5ad1"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0048_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 123289,
+        "sha256": "98475878f1b3c8bfffb0abf4ce7af865e75249dc43b83f8fb5fbb70209ec269e"
+      }
+    },
+    "0049": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0049_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12927,
+        "sha256": "673eb3b72bd3371b695b5b59074a9d738a49249f0e90be6d2b15cd4e52e8ee9f"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0049_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1831357,
+        "sha256": "21564831e06fd559fc3668e47eed4a4e9be64168e097b686339d8677b6801994"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0049_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204147063,
+        "sha256": "b8122bc945da7e0e577ea40e21bd4fa07b5fee8cdb858e74a70dde3c11d63a3e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0049_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 122744,
+        "sha256": "4aaf76c0737ea8ba2c6d5021d4620cbffbb1d19c7e9d292623592734aa93f2e4"
+      }
+    },
+    "0050": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0050_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12902,
+        "sha256": "594d551a65e5c5dc97266c1e280786e2d7223c208fe603f4ed5dd24fe756220b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0050_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1831352,
+        "sha256": "5c9da8e75917945d78cf87e4f3f373eddcff565a28aea6f70ae08f98637b2c84"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0050_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204147063,
+        "sha256": "70e3e9516bc46306d1d74e2211f22b4441819dffb51622504eebba6a0a0d555d"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0050_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 122745,
+        "sha256": "acdc9c980ca9d4446f2025ea0174c81ccdbed50de5134d0df0b89ef1240ffbfe"
+      }
+    },
+    "0051": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0051_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12930,
+        "sha256": "4e90439e2f00ccf197bd871143acb1795f00ade4e6064443b5bef0264c0e181d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0051_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1831223,
+        "sha256": "a06351dc77aa2b6e8f061c2e6c1a24bd86536b71121c034bb9bf58c706949ded"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0051_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204147063,
+        "sha256": "dfffd47675550725866c14f7d2d14c223f45bad34a3b80e11ba4535ba03ce6e0"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0051_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 122745,
+        "sha256": "1d52c2c7ae3b9109c05b2f0e287258a9d33a64427d74aedfa7a2b47e7e3b3fb8"
+      }
+    },
+    "0052": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0052_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12937,
+        "sha256": "dd17e7b4a1b103bd2f026714edab457b5439c71e696da2511b3f0018de8b70a2"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0052_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1831365,
+        "sha256": "2d369df339005f6ed2348d80df9331c7fb9af352d6083ad315725c8a9a80e772"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0052_beta16_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204147063,
+        "sha256": "24cafe80014fa424674a873275846e8c053978101d182d88cb125abdf55def68"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0052_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 122738,
+        "sha256": "ae3e441d42dc88dba92a154804d054fbcc0b2250457666ceadfc9ad494e2fa21"
+      }
+    },
+    "0053": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0053_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12937,
+        "sha256": "529bae4c89da04b33fab814f97c5008b1c43b0b3195b3251f81606abe348419e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0053_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1738404,
+        "sha256": "0f14084a80052d493c68b7290c5d1c5be4be903e3558675b958649817283d54b"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0053_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150519,
+        "sha256": "b6b5ff0393abd5fcd1b499fd064760399278184c94ee05e5908dd0331f5855e7"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0053_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 122738,
+        "sha256": "ae3e441d42dc88dba92a154804d054fbcc0b2250457666ceadfc9ad494e2fa21"
+      }
+    },
+    "0054": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0054_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12933,
+        "sha256": "d17d1acda3162c546dd6c7eb5bcc467de88cab28624b2c4bf9d9a91dbd59f1a7"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0054_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1738513,
+        "sha256": "42684b79e4350998ff8c6d0873224a36f56bdd30fe2dd97720f9371e3db75646"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0054_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150567,
+        "sha256": "9e8e42817cb850c3b39a850c3c43f55d3c6ec0c4427ef0ca3422ec546691c70e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0054_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 125992,
+        "sha256": "aceb60ac5478baff395e4a1b97460baeef559af351e9c857ad57ba8e4fbcfb52"
+      }
+    },
+    "0055": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0055_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12935,
+        "sha256": "3e2c6dc12853192b3b7f23f0fdb8ef894985b24ab352976ff8aca1adaa7e971a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0055_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1737685,
+        "sha256": "363cd3d039f8410fc1d4e3d22fba5b894b5f9c0aebbe4237b744244423ac6650"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0055_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150567,
+        "sha256": "8e7f0897d80b86387867db8a156dfd835b04f080dc9c06dc53bc56ace76d1952"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0055_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 125449,
+        "sha256": "f93f5d9b0eb70bd6d6b83436ff40b4abb1605a23474b91485ba4e5aea263933f"
+      }
+    },
+    "0056": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0056_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12929,
+        "sha256": "16e374c5b698ed71da9f663dbec812280205a30a0fc5d85aee5d9f2464260004"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0056_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1730883,
+        "sha256": "b628493f1013e9dbd440f581866f7d9b5b04ca11deeda8bf0c3bb948de7e494d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0056_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150999,
+        "sha256": "605c54786c982a4474e7a3a45ba6226e51686b1bcb5c076cb09b1af6d26af943"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0056_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 117602,
+        "sha256": "67147108aba4edfe7dafbe240ec25aefec49d31734f9cb2acf70eb27ebbb5aa8"
+      }
+    },
+    "0057": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0057_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12909,
+        "sha256": "085c0eed986c25e8b70be5b3a44cb94102f8346fda4e5621df3bd6b51b54897c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0057_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1717228,
+        "sha256": "01c3be51d4061874314f69fa27da24e7bb26beff1f7fbd045b56d33b979758ea"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0057_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204151191,
+        "sha256": "77951f32f205e8656db349413e4ece19786f6f7d76c1f2daae61c09361b0213c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0057_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 104351,
+        "sha256": "37511e2ebe13a84c6e8bd7ee0850949e5030dbea93f67548ad597aa44f4b6a09"
+      }
+    },
+    "0058": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0058_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12930,
+        "sha256": "b77c36f6b097aff340ddd96fb9a94322a8521ff9acc4128978ae1ac0e37a84d9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0058_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1713172,
+        "sha256": "3e7dcaac02efabceacf0b548372a4f76f618388862f811108e14159af5cb2731"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0058_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150951,
+        "sha256": "ab7af4a7724b169cde4597234e5304a39fc59cd752933cd5f119d4bcda46ea34"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0058_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 100319,
+        "sha256": "99dd6feec44b7282bdc94687666a8244df6b0cca4f229b8d0f80188fdfac5661"
+      }
+    },
+    "0059": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0059_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12935,
+        "sha256": "82624ce6579985afc92d868b05c6fbd6197a8f70e7e088ccd59d51f36f12f043"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0059_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1712684,
+        "sha256": "f9e0efb80ccfc0ac71e7ecaa31d85c7d725dd1b94bf485a8ca8893cd0783afa7"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0059_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150711,
+        "sha256": "d086bc17699bb0cde615dcec20bb9b6a21b17173ba49d59fd7a330d53eee0586"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0059_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 99816,
+        "sha256": "2193c132ac9e22147bb99308e3d518937dc85243aa4e43b82bad54778dd97ab7"
+      }
+    },
+    "0060": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0060_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12934,
+        "sha256": "1314e0b0def5bb813017fc197093c8dfa69804258fba58b2cda74a612b34d879"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0060_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1712893,
+        "sha256": "866d465845e0658f1826a450dfec2ef99cc7916408ea064087f705c2357d2676"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0060_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150759,
+        "sha256": "8bb09ccead95548ce12ca267db34eccff4f98c55409755dcc9f5ba6f2d588a7e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0060_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 99808,
+        "sha256": "fc472ee09b6209bed6a519c7a542c11f32d3bc43a0741cfa0e095d1feb6a85fb"
+      }
+    },
+    "0061": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0061_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12951,
+        "sha256": "245ca73f38e942ca9e8f685d2a990c2caf95ee9474c22e227047751036b51ee9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0061_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1712850,
+        "sha256": "d9b79567825a77ca390e95653bfa986ab2711d55e7828bdc63b2d5400da8ab19"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0061_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150711,
+        "sha256": "bb4e40e4ab90bffcc6dcc147bef7753db5f6e7a0afa72a4ae2a5e425b8ec9e69"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0061_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 99819,
+        "sha256": "ae51fe8bbf5fda8ee0ad4127dd7b0f4f93f7cd4880e9c3ca39feaf2eed1e6229"
+      }
+    },
+    "0062": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0062_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12926,
+        "sha256": "97c8f0e31e96c6f3960079eb915736048e0f1222f6051123bff617ebbb4e9881"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0062_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1712750,
+        "sha256": "43b17e3d101ee54fe775110d5ae6a69d40a5ea2ec48aef05898eed41df361553"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0062_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150711,
+        "sha256": "185e31f1fa313d3247337b4dd3a887c90489599db0ba19ec6cef15bfd3666c33"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0062_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 99823,
+        "sha256": "5030f66cad87d42bab59f5d06b691a8e9f46f5b29195199980d476679eeeb19a"
+      }
+    },
+    "0063": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0063_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12939,
+        "sha256": "035a25cf119c5f576b05d381a7eaad65ad36f105af5e9d1137e1e5d816b1fa49"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0063_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1712684,
+        "sha256": "f9e0efb80ccfc0ac71e7ecaa31d85c7d725dd1b94bf485a8ca8893cd0783afa7"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0063_beta32_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204150711,
+        "sha256": "17e99ce7b909575a4b9c2eeb66615ce134d9efc43a59f3d4f2a732a8bcc6b3d4"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0063_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 99816,
+        "sha256": "2193c132ac9e22147bb99308e3d518937dc85243aa4e43b82bad54778dd97ab7"
+      }
+    },
+    "0064": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0064_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12931,
+        "sha256": "af2e2cf6ad8128ca154da529f988d8b4d411c48642c724665a19118c7b1057b2"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0064_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1517619,
+        "sha256": "63e3a7a618aab229e67de905f7ecc7fec959e31dbe1c16c79568ec82e1bcf3c5"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0064_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145959,
+        "sha256": "6a63e3c7740c1d168acec4861e076eb2bcd479ff6e9b69b69af04d0c6cdb3207"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0064_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 99816,
+        "sha256": "2193c132ac9e22147bb99308e3d518937dc85243aa4e43b82bad54778dd97ab7"
+      }
+    },
+    "0065": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0065_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12935,
+        "sha256": "6d4927380bc6d99ec5c677a9932334bc2611c3e46a1988ebd83a3b9510de3760"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0065_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1517538,
+        "sha256": "1ed3ad6ca69047aa31b303c473a19202baa86f3804ce47e0867b133f482f5df8"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0065_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145959,
+        "sha256": "2f0ab25669ec7c5454031293f5307567f50f4a20ff7002cf0645c0d28268f378"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0065_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 100004,
+        "sha256": "3e45aaba8e3233818a6d023165d2762501b58d16af8ab0ffb8c6d17e7aad1853"
+      }
+    },
+    "0066": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0066_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12936,
+        "sha256": "15cacdd30957efd7170f352464f001468e018a1fd1cc65689419c87f4a77745a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0066_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1516914,
+        "sha256": "630d5b9f004bf46075ed06933241381fc4f1e4577e16012d975eb8cd1c43ca18"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0066_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145911,
+        "sha256": "2bc2b67194f62c91653921538b6ba865a675799bcb995dca8afb58b01b07ab1e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0066_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 100324,
+        "sha256": "2ecb075a07bbbc7019eba6c2034aba7571ca27648ae2337fdee7984860350ad4"
+      }
+    },
+    "0067": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0067_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12927,
+        "sha256": "3c4b86d59714239859aadc692b8f8875c163b31b71990ee3480ccede6aed528e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0067_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1513518,
+        "sha256": "3d0d5020a82926dbdd2ba44aaed8437368e690d3ec43b17121b98c55cdc04539"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0067_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145815,
+        "sha256": "cfb20a10310fd2b40a9f0fd26b641672fce3532b7183d7475d98296d76515a3a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0067_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 100383,
+        "sha256": "87546eac879202705d6934ae40c5248faea7cc27e4b9dcbaee0c82c3de8ef229"
+      }
+    },
+    "0068": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0068_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12950,
+        "sha256": "d88dde933a10d98706f49f10b0dee5b39dedbd8714ab974a003fc81ceaa4c8f5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0068_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1507271,
+        "sha256": "3ace8f33137b804f406f51217df26a65463d6586bcc2d04860cd76b17c1845f7"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0068_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "520ea2b406281e8969f49611997826f309b4675244e2218e28bd59a7b9f495c7"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0068_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 97994,
+        "sha256": "fdf25af9b40f6948bcddd63801d8a493c32c51d7d4782842d7e3524c4da1c0ce"
+      }
+    },
+    "0069": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0069_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12933,
+        "sha256": "b87e356e0542e3d396c58a4bbd575a2efa8232e73a6698f05b58be62dd7fe90a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0069_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1504779,
+        "sha256": "1531f4998f2ac49d23244abb7190ba80a2cd6cdc54418d447393e59191a3cde3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0069_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "21662d73322df915bbfc40ad4183f29b20bf658f0f517ae9c2d79aa228b20198"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0069_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 95694,
+        "sha256": "c98ddd51c74d830958c8a9b962e7681d2f0c1fe08f091e42b5c3ac2288b1a8d3"
+      }
+    },
+    "0070": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0070_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12923,
+        "sha256": "70688b2f3ce7bd27dba862a97735a61cf4e0c041bfd6c99a73f060a747e6f7a9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0070_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1504902,
+        "sha256": "09aa3d69b86b5563f21f2804414fef898cb53db09ba063eba4cf9b616d5d634c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0070_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "abbdc094ed22ae720045c7b4275c7f4f65def8369de95ec1bfe1cd37dcb35508"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0070_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 95650,
+        "sha256": "260781d036aab8cd8563bfcc5975a7f28f6a978080fefbe87ca2870b072a43b1"
+      }
+    },
+    "0071": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0071_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12921,
+        "sha256": "1441036eb3b05cfa857cfef4ff75f742ae6912ca216f66a90825d4542e6ad9ff"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0071_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1504883,
+        "sha256": "ee58fdc49c374bc1784284694f9a420af9e589baca769f3fd40b7ed917f2a8cc"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0071_beta64_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "efb9307e7f7ebf2f475b5f743c967a6720af9c44c83714823f1c845ed896e7ed"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0071_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 95619,
+        "sha256": "fe5df2e4f77337f8aba6042a35e20126d2b75cd3bf5da0779d185ca73a0812de"
+      }
+    },
+    "0072": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0072_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12939,
+        "sha256": "f21f479de1a48c2a385a4bf5826d797a7638c60a66444958a8199e9765ca72d1"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0072_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1487447,
+        "sha256": "bddc30f9565c5f089d7673f8b37fb8a8dcb8bfc945f7225912dba3677035035e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0072_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "aa0a18571139c67fc771a13f0e4817359a54826ce8885b9a9774ca5b53550332"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0072_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 95619,
+        "sha256": "fe5df2e4f77337f8aba6042a35e20126d2b75cd3bf5da0779d185ca73a0812de"
+      }
+    },
+    "0073": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0073_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12944,
+        "sha256": "92efe7196aa0ac617c38313fa73bb2f083c85727eb3c40930878bb79bd7a864d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0073_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1487528,
+        "sha256": "a8ef80ce34a63b2ee122aab87a59623f90c41da3931c5fb106b40bf481a2050d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0073_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "08b95e44e11ab452f2387e12f9a588ea2b1617fc494f014998f67c863bfa9313"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0073_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 95852,
+        "sha256": "3b91be765bd607608d495e32ec2258ba76b06b8ed6b6fdbe2f4518ed1f3f6c42"
+      }
+    },
+    "0074": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0074_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12949,
+        "sha256": "14fe41d38a5f65778af68b7a67938810b13ad65816c23769886592776071f442"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0074_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1487425,
+        "sha256": "f6f30ec7598b9929bc5bd6887f099bec7bb6ff713b8c7537dcb71e63b32c1672"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0074_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "98248bb75ed17f8bea999b5f4a5bd27cae4939aedfd42dec2cab07f7faf6fc6e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0074_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 96179,
+        "sha256": "b66a094d695851ecec2552913cc8eb59b7d51a6d5ad902518dc7653599e0630f"
+      }
+    },
+    "0075": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0075_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12950,
+        "sha256": "b21825d08d23cbc627ed9df8101febacc79ac810d83c6989127cc3cb1c78ef61"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0075_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1487029,
+        "sha256": "2c47467e77e651883142c6019cf1baa82343ac2b089aecc98e7ea3d2fedd617d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0075_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "382f7cc587b010e993b6b966974dc55a3dcb4cef38c97f5f5fee80a8e63126dc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0075_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 96280,
+        "sha256": "1dbc02b213938ef8ce63197d67f766253aaa397ce65d6749332d0484cd450503"
+      }
+    },
+    "0076": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0076_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12945,
+        "sha256": "97919553f016b60168b80df160c9172f123149d8454e4f53a0c1f5b45aea55e6"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0076_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1485440,
+        "sha256": "3b0e20e9de6464c9f80254c21072906f0135c2ca9872b1ca0cf27ab8236f009d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0076_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "720a4b8d5f22500108471504b52cd93197da8fa380d15cdd4b30c372ae08b3d1"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0076_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 95228,
+        "sha256": "8ff411141c6810126644b97ad88e457f67b3955e2408ecf6f57aa922a139f3ac"
+      }
+    },
+    "0077": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0077_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12941,
+        "sha256": "3e5016d83fe43e499b86f6178876cb93b351e49298fb4797ff3ad0bb203fab8b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0077_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1482249,
+        "sha256": "efb8100ca844e6c559582e05d02a13549385661e0b13d9275566893871ea3e14"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0077_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "ee4522cd072cdb75ae48765a3411a944b0c4e67d9d904f26b0a31754b32a9c35"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0077_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 92383,
+        "sha256": "baa84268f35a009652b73829a6816169f05760ea8b8db343eadda294b44f37f8"
+      }
+    },
+    "0078": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0078_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12936,
+        "sha256": "f156a4b0e57519ca182f618830b8b77d4edfed30e98bab2c5a763684e4dec024"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0078_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1482164,
+        "sha256": "926f92695dd76d81ef83ff1fbb7a50ced6b2188b5e1ab3de2f9ef83d5b1316ed"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0078_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "e18eea237f5c2cdd06ab60873a3442c1d614e09fb8aa539baabfdcfc44865187"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0078_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 92266,
+        "sha256": "fc8a3b80b1727a83556d9835e516731da6cee9bc1e54b57a526da227ffdf848b"
+      }
+    },
+    "0079": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0079_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 12952,
+        "sha256": "077ada01ba258400c36d8c5334dd2239cbb3369a9015b805dc9e870481e18377"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0079_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 1482245,
+        "sha256": "7abd4a947b58ed50814c4f35d4434b9d67f0611d6912cc84183ac4f8bb575422"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0079_beta128_official_ansys_dfm/Ea/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "a7d0a68174b51a5211d09bf420a96c7b6afbd0c7a96e0f0c36746e7efa46eb37"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/evaluation_0079_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 92293,
+        "sha256": "033f44b83858093b82105db6619cea5c861cff3b63b5b7540803d8d61e16007b"
+      }
+    }
+  },
+  "continuation": {
+    "beta_schedule": [
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0,
+      128.0
+    ],
+    "maximum_evaluations_per_beta": {
+      "1.0": 20,
+      "2.0": 10,
+      "4.0": 8,
+      "8.0": 8,
+      "16.0": 10,
+      "32.0": 10,
+      "64.0": 8,
+      "128.0": 8
+    },
+    "stage_trust_radius": {
+      "1.0": 0.2,
+      "2.0": 0.2,
+      "4.0": 0.15,
+      "8.0": 0.12,
+      "16.0": 0.1,
+      "32.0": 0.08,
+      "64.0": 0.06,
+      "128.0": 0.05
+    },
+    "trust_region_interpretation": "fixed bounds around each beta-stage start; not a fixed per-evaluation update or normalized-gradient step",
+    "same_beta_restart_loop": false,
+    "official_dfm": {
+      "source": "/opt/lumerical/v261/api/python/lumopt/geometries/topology.py",
+      "implementation": "topoparamstominfeaturesizeindicator and topoparamstominfeaturesizegradient",
+      "contract": {
+        "filter_radius_m": 3e-07,
+        "minimum_feature_m": 5e-07,
+        "eta": 0.5,
+        "dx_m": 1e-07,
+        "dy_m": 1e-07,
+        "activation_beta": 12.0,
+        "penalty_factor": 100.0,
+        "maximum_penalty": 10000.0
+      },
+      "derived": {
+        "delta_eta": 0.4722222222222222,
+        "eta_d": 0.02777777777777779,
+        "eta_e": 0.9722222222222222
+      },
+      "extra_Maxwell_solves": 0
+    },
+    "exact_final_gate": "independent 500-nm binary opening audit"
+  },
+  "objective": {
+    "mode": "dual_softmin",
+    "polarizations": [
+      "Ea",
+      "Eb"
+    ],
+    "formula": "-tau*log(mean(exp(-I/tau))), tau=5 nA at 285 uW",
+    "exact_gate": "both polarizations preserve current within 1%"
+  },
+  "stage_checkpoints": {
+    "beta_1": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_1_completed.npz",
+      "size_bytes": 46148,
+      "sha256": "d7a52853c77c60aac7a3b7dcf15c8d9c9ae8fa98f830d9f7ffa20c025c0513dd",
+      "nlopt_result_code": 5,
+      "discreteness": 0.31706678061995563,
+      "full_physics_evaluations": 20
+    },
+    "beta_2": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_2_completed.npz",
+      "size_bytes": 118108,
+      "sha256": "a7010b2a685a61b07866d2b8f5cd35834fb12725cd3422cc169adff51df3294e",
+      "nlopt_result_code": 5,
+      "discreteness": 0.6974774798761999,
+      "full_physics_evaluations": 10
+    },
+    "beta_4": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_4_completed.npz",
+      "size_bytes": 558593,
+      "sha256": "575df5c52d26032ef461fce004ba5b134ffcfe073518e8b01b22d69d4ba44eb8",
+      "nlopt_result_code": 3,
+      "discreteness": 0.8193318054299793,
+      "full_physics_evaluations": 2
+    },
+    "beta_8": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_8_completed.npz",
+      "size_bytes": 664074,
+      "sha256": "d4f385f887e3dbb9918e15c39d5454391f3d83f354f3f664ee9fcf90f7163b46",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9223132589313855,
+      "full_physics_evaluations": 8
+    },
+    "beta_16": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_16_completed.npz",
+      "size_bytes": 290759,
+      "sha256": "32ca99500c074f2f0bfffe9040ad886c8029322e2d4ce1bec929c42be9ab0546",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9866644943131262,
+      "full_physics_evaluations": 10
+    },
+    "beta_32": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_32_completed.npz",
+      "size_bytes": 174460,
+      "sha256": "f4e76ae2f94245162c8dbc3ba96c42327e69843b189b2b90eea8ec9d34a8cdf8",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9960463145891906,
+      "full_physics_evaluations": 11
+    },
+    "beta_64": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_64_completed.npz",
+      "size_bytes": 114779,
+      "sha256": "41404da4cbdafa83f1295b1547164e936ed8362352a1901b867a01476c933fcb",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9985905841242707,
+      "full_physics_evaluations": 8
+    },
+    "beta_128": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run065_diagonal45_rotated_q_dual_thermally_grown_v3_from_uniform/beta_128_completed.npz",
+      "size_bytes": 101464,
+      "sha256": "774ee459ceff40b4bb9d542924840f6ab8ef5fe9fd3dcf9c060981be6da4ed0f",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9995209405775066,
+      "full_physics_evaluations": 8
+    }
+  }
+}

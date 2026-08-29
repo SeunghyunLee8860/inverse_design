@@ -29,6 +29,12 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device im
     device_to_crystal_field,
     device_to_crystal_transpose,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_q_mapping import (
+    RotatedScalarMap,
+    build_rotated_scalar_map,
+    make_control_volume_conservative,
+)
+from photothermal_pte.finite_inverse_design.native_yee_q import integrate_xyz
 
 
 HERE = Path(__file__).resolve().parent
@@ -511,6 +517,102 @@ def map_native_q(native_q: np.lib.npyio.NpzFile, state: ThermalState) -> tuple[n
         / max(abs(native_total), np.finfo(float).tiny),
         "components": records,
     }
+
+
+def map_rotated_native_q(
+    native_q: np.lib.npyio.NpzFile, state: ThermalState
+) -> tuple[np.ndarray, dict[str, object], dict[str, RotatedScalarMap]]:
+    """Rotate Run58-style local Q components into the +45-degree device."""
+
+    mapped = np.zeros(state.system.shape, dtype=np.float64)
+    target_centers = tuple(_centers(edges) for edges in state.edges_m)
+    support = state.masks["physical_absorbing_support"]
+    operators: dict[str, RotatedScalarMap] = {}
+    records: dict[str, object] = {}
+    source_total = 0.0
+    target_total = 0.0
+    for component in "xyz":
+        source = np.asarray(native_q[f"Q{component}_W_m3"], dtype=np.float64)
+        coordinates = tuple(
+            np.asarray(native_q[f"Q{component}_{axis}_m"], dtype=np.float64)
+            for axis in "xyz"
+        )
+        source_edges = tuple(nodal_control_volume_edges(value) for value in coordinates)
+        source_volume = (
+            np.diff(source_edges[0])[:, None, None]
+            * np.diff(source_edges[1])[None, :, None]
+            * np.diff(source_edges[2])[None, None, :]
+        )
+        raw_operator = build_rotated_scalar_map(coordinates, target_centers, support)
+        operator, represented = make_control_volume_conservative(
+            raw_operator, source_volume, state.system.cell_volume_m3
+        )
+        component_mapped = operator.apply(source)
+        native_power = integrate_xyz(source, *coordinates)
+        source_power = float(np.sum(source[represented] * source_volume[represented]))
+        target_power = float(np.sum(component_mapped * state.system.cell_volume_m3))
+        mapped += component_mapped
+        source_total += source_power
+        target_total += target_power
+        operators[component] = operator
+        records[component] = {
+            "native_power_W": native_power,
+            "source_power_W": source_power,
+            "target_power_W": target_power,
+            "relative_mapping_error": abs(target_power - source_power)
+            / max(abs(source_power), np.finfo(float).tiny),
+            "operator_shape": list(operator.operator.shape),
+            "operator_nnz": int(operator.operator.nnz),
+            "represented_source_control_volumes": int(np.count_nonzero(represented)),
+        }
+    return mapped, {
+        "method": "control-volume-conservative +45-degree sparse rotation of GPU-native Qx/Qy/Qz",
+        "source_coordinate_frame": "axis-aligned local optical device",
+        "target_coordinate_frame": "global crystal x=b/y=a/z",
+        "source_power_W": source_total,
+        "target_power_W": target_total,
+        "relative_mapping_error": abs(target_total - source_total)
+        / max(abs(source_total), np.finfo(float).tiny),
+        "clipping_smoothing_gain_or_rescaling": False,
+        "conservation": "per represented optical control volume; no global power fit",
+        "components": records,
+    }, operators
+
+
+def map_rotated_tensor_q(
+    rotated_q: dict[str, object], state: ThermalState
+) -> tuple[np.ndarray, dict[str, object], RotatedScalarMap]:
+    """Rotate local full-tensor TaIrTe4 Q into the global thermal mesh."""
+
+    coordinates = tuple(
+        np.asarray(rotated_q["coordinates"][axis], dtype=np.float64)
+        for axis in "xyz"
+    )
+    components = rotated_q["Q_principal_components"]
+    source = sum(
+        np.asarray(components[axis], dtype=np.float64) for axis in "bac"
+    )
+    expected = tuple(value.size for value in coordinates)
+    if source.shape != expected:
+        raise ValueError(f"rotated Q shape {source.shape} != coordinates {expected}")
+    target_centers = tuple(_centers(edges) for edges in state.edges_m)
+    support = state.masks["physical_absorbing_support"]
+    mapping = build_rotated_scalar_map(coordinates, target_centers, support)
+    mapped = mapping.apply(source)
+    source_power = integrate_xyz(source, *coordinates)
+    target_power = float(np.sum(mapped * state.system.cell_volume_m3))
+    return mapped, {
+        "method": "explicit +45-degree sparse trilinear scalar-Q rotation",
+        "source_coordinate_frame": "local device u/v/z",
+        "target_coordinate_frame": "global crystal x=b/y=a/z",
+        "source_power_W": source_power,
+        "target_power_W": target_power,
+        "relative_mapping_error": abs(target_power - source_power)
+        / max(abs(source_power), np.finfo(float).tiny),
+        "operator_shape": list(mapping.operator.shape),
+        "operator_nnz": int(mapping.operator.nnz),
+        "clipping_smoothing_gain_or_rescaling": False,
+    }, mapping
 
 
 def flake_cell_temperature(state: ThermalState, active_temperature: np.ndarray) -> np.ndarray:

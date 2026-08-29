@@ -382,6 +382,11 @@ def main() -> int:
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument(
+        "--initial-latent-npz",
+        type=Path,
+        help="Seed a fresh run from the latent array in a prior checkpoint.",
+    )
+    parser.add_argument(
         "--finalize-after-beta",
         type=float,
         choices=BETA_SCHEDULE,
@@ -420,6 +425,8 @@ def main() -> int:
     published = args.published_dir.expanduser().resolve()
     if raw_root.exists() and any(raw_root.iterdir()) and not args.resume:
         raise RuntimeError("fresh bounded run requires an empty raw directory")
+    if args.resume and args.initial_latent_npz is not None:
+        raise RuntimeError("--initial-latent-npz cannot be combined with --resume")
     raw_root.mkdir(parents=True, exist_ok=True)
     published.mkdir(parents=True, exist_ok=True)
     events = raw_root / "events.jsonl"
@@ -444,11 +451,6 @@ def main() -> int:
                 if float(row["beta"]) <= args.finalize_after_beta
             ],
         )
-        if last_completed_beta < args.finalize_after_beta:
-            raise RuntimeError(
-                "forced finalization requires a completed checkpoint at or above "
-                f"beta={args.finalize_after_beta:g}; latest is beta={last_completed_beta:g}"
-            )
         if args.finalize_after_beta < BETA_SCHEDULE[-1]:
             manifest["forced_finalization"] = {
                 "requested": True,
@@ -504,9 +506,26 @@ def main() -> int:
             else {"mode": "single", "polarization": args.polarization}
         )
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
-        latent = CONTRACT.apply_fixed_contact_density(
-            np.full(MAPPING.shape, 0.5, dtype=np.float64)
-        )
+        if args.initial_latent_npz is None:
+            latent = CONTRACT.apply_fixed_contact_density(
+                np.full(MAPPING.shape, 0.5, dtype=np.float64)
+            )
+        else:
+            initial_path = args.initial_latent_npz.expanduser().resolve()
+            with np.load(initial_path) as initial_data:
+                latent = np.asarray(initial_data["latent"], dtype=np.float64)
+            if latent.shape != MAPPING.shape or not np.all(np.isfinite(latent)):
+                raise RuntimeError("initial latent checkpoint is invalid")
+            if np.any(latent < 0.0) or np.any(latent > 1.0):
+                raise RuntimeError("initial latent checkpoint must stay in [0,1]")
+            latent = CONTRACT.apply_fixed_contact_density(latent)
+            manifest["initial_latent"] = {
+                "path": str(initial_path),
+                "sha256": sha256(initial_path),
+                "source_is_seed_only": True,
+                "cached_objectives_reused": False,
+            }
+            write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
         fixed_source_power = None
         evaluation_counter = 0
         global_evaluation = 0

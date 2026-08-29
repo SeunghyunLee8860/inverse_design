@@ -17,6 +17,7 @@ import numpy as np
 @dataclass(frozen=True)
 class TaIrTe4FlakeContract:
     geometry_mode: str = "fixed_frame"
+    rotated_optical_mode: str = "run58_proxy"
     axis_contract: str = "lumerical_x_b_y_a"
     wavelength_m: float = 10.0e-6
     target_waist_m: float = 8.5e-6
@@ -73,23 +74,30 @@ class TaIrTe4FlakeContract:
     ) -> tuple[np.ndarray, np.ndarray]:
         """Map Yee samples to density-array coordinates for the optical model.
 
-        The diagonal device uses the stable Run58 optical approximation: its
-        local ``(u, v)`` density array is imported on the numerically identical
-        axis-aligned ``(x, y)`` grid.  The physical rotation is applied only by
-        the thermal and electrical solvers, so rotating optical Yee samples a
-        second time would assign them to the wrong density columns.
+        Historical diagonal runs used the Run58 axis-aligned proxy.  The
+        physical crystal-grid mode instead maps global Yee samples back to the
+        local ``(u, v)`` design coordinates of the +45-degree device.
         """
 
         x = np.asarray(x_m, dtype=np.float64)
         y = np.asarray(y_m, dtype=np.float64)
         if x.shape != y.shape:
             raise ValueError("optical density coordinates must have matching shapes")
+        if (
+            self.geometry_mode == "diagonal_45_contact_anchored"
+            and self.rotated_optical_mode == "physical_crystal_grid"
+        ):
+            return self.rotated_uv(x, y)
         return x, y
 
     @property
     def optical_geometry_contract(self) -> str:
         if self.geometry_mode == "diagonal_45_contact_anchored":
-            return "run58_axis_aligned_uv_proxy_no_Au"
+            return {
+                "run58_proxy": "run58_axis_aligned_uv_proxy_no_Au",
+                "physical_crystal_grid": "physical_plus45_mask_fixed_crystal_axes_no_Au",
+                "rotated_tensor_local_grid": "physical_equivalent_local_grid_rotated_tensor_no_Au",
+            }[self.rotated_optical_mode]
         return "physical_xy"
 
     def flake_support_mask(self, x_m: np.ndarray, y_m: np.ndarray) -> np.ndarray:
@@ -280,6 +288,21 @@ class TaIrTe4FlakeContract:
             "diagonal_45_contact_anchored",
         }:
             raise ValueError(f"unsupported geometry mode: {self.geometry_mode}")
+        if self.rotated_optical_mode not in {
+            "run58_proxy",
+            "physical_crystal_grid",
+            "rotated_tensor_local_grid",
+        }:
+            raise ValueError(
+                f"unsupported rotated optical mode: {self.rotated_optical_mode}"
+            )
+        if (
+            self.geometry_mode != "diagonal_45_contact_anchored"
+            and self.rotated_optical_mode != "run58_proxy"
+        ):
+            raise ValueError(
+                "rotated optical modes are only valid for the 45-degree device"
+            )
         if (
             self.design_span_x_m > self.flake_span_m
             or self.design_span_y_m > self.flake_span_m
@@ -353,9 +376,18 @@ class TaIrTe4FlakeContract:
                 "six_boundaries": "PML",
                 "source": "finite scalar Gaussian",
                 "coordinate_mapping": (
-                    "Run58-style Maxwell approximation uses a centered "
-                    "unrotated sheet with x=b, y=a, z=c; thermal and "
-                    "electrical geometry is rotated +45 degrees"
+                    (
+                        "physical +45-degree binary mask on the global crystal "
+                        "grid with fixed x=b, y=a, z=c material axes"
+                        if self.rotated_optical_mode == "physical_crystal_grid"
+                        else "axis-aligned device-coordinate grid with the "
+                        "TaIrTe4 permittivity tensor rotated -45 degrees; "
+                        "physically equivalent to the +45-degree global diamond"
+                        if self.rotated_optical_mode == "rotated_tensor_local_grid"
+                        else "Run58-style Maxwell approximation uses a centered "
+                        "unrotated sheet with x=b, y=a, z=c; thermal and "
+                        "electrical geometry is rotated +45 degrees"
+                    )
                     if self.geometry_mode == "diagonal_45_contact_anchored"
                     else "Lumerical x=b, y=a, z=c"
                 ),
@@ -385,6 +417,9 @@ def np_isclose(a: float, b: float, tolerance: float = 1e-18) -> bool:
 
 def _selected_contract() -> TaIrTe4FlakeContract:
     mode = os.environ.get("TAIRTE4_TOPOLOGY_GEOMETRY", "fixed_frame")
+    rotated_optical_mode = os.environ.get(
+        "TAIRTE4_ROTATED_OPTICAL_MODE", "run58_proxy"
+    )
     if mode == "fixed_frame":
         return TaIrTe4FlakeContract()
     if mode == "contact_anchored":
@@ -404,6 +439,7 @@ def _selected_contract() -> TaIrTe4FlakeContract:
     if mode == "diagonal_45_contact_anchored":
         return TaIrTe4FlakeContract(
             geometry_mode="diagonal_45_contact_anchored",
+            rotated_optical_mode=rotated_optical_mode,
             design_span_x_m=24.0e-6,
             design_span_y_m=24.0e-6,
             fixed_contact_depth_m=2.0e-6,

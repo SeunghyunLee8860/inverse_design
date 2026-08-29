@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import time
 import traceback
@@ -302,7 +303,25 @@ def main() -> int:
             except Exception:
                 pass
         result_path.write_text(json.dumps(result, indent=2, default=str) + "\n")
-    print(json.dumps(result, indent=2, default=str))
+    if os.environ.get("TAIRTE4_VERBOSE_RESULT", "0") == "1":
+        print(json.dumps(result, indent=2, default=str))
+    else:
+        print(
+            json.dumps(
+                {
+                    "status": result.get("status"),
+                    "passed": result.get("passed"),
+                    "polarization": result.get("polarization"),
+                    "objective_A": result.get("objective_A"),
+                    "Q_mapping_relative_error": result.get("Q_mapping", {}).get(
+                        "relative_mapping_error"
+                    ),
+                    "wall_s": result.get("wall_s"),
+                    "result_path": str(result_path),
+                },
+                default=str,
+            )
+        )
     return 0 if result.get("passed") else 1
 
 

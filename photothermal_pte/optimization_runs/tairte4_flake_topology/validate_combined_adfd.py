@@ -46,6 +46,8 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     flake_cell_temperature,
     flake_temperature_transpose,
     map_native_q,
+    map_rotated_native_q,
+    map_rotated_tensor_q,
     thermal_interface_contract,
     thermal_density_gradient,
 )
@@ -350,7 +352,21 @@ def solve_coupled(
 ):
     state_options = dict(thermal_state_kwargs or {})
     state = build_state(rho, **state_options)
-    mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
+    rotated_mapping = None
+    rotated_native_mappings = None
+    if "rotated_tensor_q" in forward:
+        mapped_q, mapping, rotated_mapping = map_rotated_tensor_q(
+            forward["rotated_tensor_q"], state
+        )
+    elif (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode == "run58_proxy"
+    ):
+        mapped_q, mapping, rotated_native_mappings = map_rotated_native_q(
+            native_arrays(forward["q"]), state
+        )
+    else:
+        mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
     source_active = state.system.active_source(mapped_q)
     source_power = np.asarray(state.system.source_volume_operator_m3 @ source_active)
     thermal_operator = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=cuda_device)
@@ -390,6 +406,8 @@ def solve_coupled(
         "state": state,
         "mapped_q": mapped_q,
         "mapping": mapping,
+        "rotated_q_mapping_operator": rotated_mapping,
+        "rotated_native_q_mapping_operators": rotated_native_mappings,
         "source_power": source_power,
         "thermal_forward": thermal_forward,
         "temperature": nodal_temperature,
@@ -448,6 +466,44 @@ def solve_coupled(
 
 
 def pullback_q(forward: dict, coupled: dict) -> tuple[dict[str, np.ndarray], dict[str, object]]:
+    if coupled.get("rotated_q_mapping_operator") is not None:
+        operator = coupled["rotated_q_mapping_operator"]
+        value = operator.transpose(coupled["target_sensitivity"])
+        rng = np.random.default_rng(910)
+        source_probe = rng.normal(size=operator.source_shape)
+        target_probe = rng.normal(size=operator.target_shape)
+        dot_error = relative(
+            float(np.vdot(operator.apply(source_probe), target_probe)),
+            float(np.vdot(source_probe, operator.transpose(target_probe))),
+        )
+        return {axis: value.copy() for axis in "bac"}, {
+            "method": "exact transpose of local-to-global sparse Q rotation",
+            "shape": list(value.shape),
+            "finite": bool(np.all(np.isfinite(value))),
+            "fresh_transpose_relative_error": dot_error,
+        }
+    if coupled.get("rotated_native_q_mapping_operators") is not None:
+        operators = coupled["rotated_native_q_mapping_operators"]
+        pulled: dict[str, np.ndarray] = {}
+        records: dict[str, object] = {}
+        rng = np.random.default_rng(911)
+        for component in "xyz":
+            operator = operators[component]
+            value = operator.transpose(coupled["target_sensitivity"])
+            source_probe = rng.normal(size=operator.source_shape)
+            target_probe = rng.normal(size=operator.target_shape)
+            dot_error = relative(
+                float(np.vdot(operator.apply(source_probe), target_probe)),
+                float(np.vdot(source_probe, operator.transpose(target_probe))),
+            )
+            pulled[component] = value
+            records[component] = {
+                "method": "exact transpose of +45-degree GPU-native Q rotation",
+                "shape": list(value.shape),
+                "finite": bool(np.all(np.isfinite(value))),
+                "fresh_transpose_relative_error": dot_error,
+            }
+        return pulled, records
     pulled = {}
     records = {}
     rng = np.random.default_rng(910)
@@ -482,9 +538,9 @@ def compact_forward(value: dict) -> dict:
 def polarization_angle(label: str) -> float:
     """Map the crystal-axis certificate label to Lumerical's source angle."""
     if label == "Ea":
-        return 90.0  # Lumerical y = crystal a
+        return optical.polarization_angle_deg("a")
     if label == "Eb":
-        return 0.0  # Lumerical x = crystal b
+        return optical.polarization_angle_deg("b")
     raise ValueError(f"unsupported polarization: {label}")
 
 

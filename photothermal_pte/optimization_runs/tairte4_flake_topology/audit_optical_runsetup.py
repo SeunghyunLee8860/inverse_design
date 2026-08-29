@@ -170,16 +170,37 @@ def main() -> int:
             optical_lateral_span_m=optical_lateral_span_m,
         )
         flux_names = optical.add_absorption_and_flux(fdtd)
-        fdtd.setnamed(audit.SOURCE_NAME, "polarization angle", 90.0)
+        fdtd.setnamed(
+            audit.SOURCE_NAME,
+            "polarization angle",
+            optical.polarization_angle_deg("a"),
+        )
         fdtd.runsetup()
         mesh = audit.mesh_readback(fdtd)
         if not mesh.get("available"):
             raise RuntimeError(f"mesh readback failed: {mesh}")
         coordinates = mesh.pop("coordinate_arrays")
         np.savez_compressed(mesh_npz, **{f"{axis}_m": coordinates[axis] for axis in "xyz"})
-        flake = 0.5 * CONTRACT.flake_span_m
-        design_x = CONTRACT.design_bounds_m["x"]
-        design_y = CONTRACT.design_bounds_m["y"]
+        physical_rotated = (
+            CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            and CONTRACT.rotated_optical_mode == "physical_crystal_grid"
+        )
+        optical_flake_half = (
+            CONTRACT.flake_bounding_half_span_m
+            if physical_rotated
+            else 0.5 * CONTRACT.flake_span_m
+        )
+        flake = optical_flake_half
+        design_x = (
+            (-optical_flake_half, optical_flake_half)
+            if physical_rotated
+            else CONTRACT.design_bounds_m["x"]
+        )
+        design_y = (
+            (-optical_flake_half, optical_flake_half)
+            if physical_rotated
+            else CONTRACT.design_bounds_m["y"]
+        )
         regional = {
             "design_max_dx_m": regional_maximum_step(coordinates["x"], *design_x),
             "design_max_dy_m": regional_maximum_step(coordinates["y"], *design_y),
@@ -255,7 +276,12 @@ def main() -> int:
                 )
             )
             and all(value == "PML" for value in domain_readback["boundaries"].values())
-            and int(round(source_readback["polarization angle"])) == 90
+            and np.isclose(
+                source_readback["polarization angle"],
+                optical.polarization_angle_deg("a"),
+                rtol=0.0,
+                atol=1.0e-12,
+            )
             and (
                 CONTRACT.geometry_mode != "diagonal_45_contact_anchored"
                 or np.isclose(

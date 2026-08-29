@@ -1,0 +1,88 @@
+{
+  "role": "nlopt_evaluation",
+  "algorithm": "NLopt LD_MMA + official Ansys v261 DFM",
+  "nlopt_version": "2.11.0",
+  "evaluation_id": 74,
+  "global_full_physics_evaluation": 72,
+  "stage_full_physics_evaluation": 3,
+  "beta": 128.0,
+  "objective_A": 2.1402086023099994e-17,
+  "objective_at_reference_power_A": 4.410333881787526e-08,
+  "objective_scaled_minimize": 16.93047141928618,
+  "raw_current_objective_scaled_minimize": -4.410333881787526,
+  "morphology_penalty_weight": 0.0,
+  "morphology_aggregation": "mean",
+  "morphology_penalty_value": 0.0,
+  "official_ansys_dfm_enabled": true,
+  "official_ansys_dfm_penalty_value": 21.340805301073708,
+  "official_ansys_dfm": {
+    "source": "/opt/lumerical/v261/api/python/lumopt/geometries/topology.py",
+    "implementation": "topoparamstominfeaturesizeindicator and topoparamstominfeaturesizegradient",
+    "contract": {
+      "filter_radius_m": 3e-07,
+      "minimum_feature_m": 5e-07,
+      "eta": 0.5,
+      "dx_m": 1e-07,
+      "dy_m": 1e-07,
+      "activation_beta": 12.0,
+      "penalty_factor": 100.0,
+      "maximum_penalty": 10000.0
+    },
+    "derived": {
+      "delta_eta": 0.4722222222222222,
+      "eta_d": 0.02777777777777779,
+      "eta_e": 0.9722222222222222
+    },
+    "extra_Maxwell_solves": 0,
+    "beta": 128.0,
+    "penalty_scaling": 10000.0,
+    "indicator_solid": 0.0015214722291506382,
+    "indicator_void": 0.0006126083009567327,
+    "indicator_sum": 0.0021340805301073708,
+    "gradient_l2": 0.00034522486136487216,
+    "gradient_max_abs": 1.3516146766180046e-05
+  },
+  "fixed_source_power_W": 1.3830232993859658e-13,
+  "source_power_relative_change": 0.0,
+  "terminal_conductance_S": 0.012687261817226037,
+  "minimum_terminal_conductance_S": null,
+  "constraint_names": [],
+  "constraint_values": [],
+  "maximum_constraint_value": null,
+  "terminal_conductance_constraint_enabled": false,
+  "morphology_caps": [
+    Infinity,
+    Infinity
+  ],
+  "gray_fraction_0p01_0p99": 0.0017045161068163428,
+  "binarization": 0.0005670179595476181,
+  "smooth_solid_constraint": 0.001139472381582475,
+  "smooth_void_constraint": 0.0008520599033225581,
+  "exact_bad_cells": 106,
+  "rho_mean": 0.693570855250759,
+  "latent_range": [
+    0.0,
+    1.0
+  ],
+  "maximum_absolute_step_from_previous_evaluation": 0.0029946607321218455,
+  "rms_step_from_previous_evaluation": 0.00033120181710469433,
+  "manual_move_limit": null,
+  "used_adam": false,
+  "gradient_direction_normalization": false,
+  "post_update_hard_clipping": false,
+  "symmetry_constraint": false,
+  "volume_constraint": false,
+  "optimizer_controls": {
+    "one_stage_per_beta": true,
+    "manual_move_limit": null,
+    "beta_factor": 2.0
+  },
+  "polarization_objectives_A": {
+    "Ea": 2.122981725829701e-17,
+    "Eb": 2.158752684540988e-17
+  },
+  "polarization_objectives_at_reference_power_A": {
+    "Ea": 4.3748344090088326e-08,
+    "Eb": 4.448547724158643e-08
+  }
+}

@@ -772,7 +772,9 @@ def main() -> int:
                 sample_x, sample_y = np.meshgrid(
                     detail_coordinates[0], detail_coordinates[1], indexing="ij"
                 )
-                sample_u, sample_v = contract.rotated_uv(sample_x, sample_y)
+                sample_u, sample_v = contract.optical_density_coordinates(
+                    sample_x, sample_y
+                )
                 support_xy = (
                     (sample_u >= x_nodes[0] - 2.0e-18)
                     & (sample_u <= x_nodes[-1] + 2.0e-18)

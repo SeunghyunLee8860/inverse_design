@@ -16,6 +16,9 @@ from photothermal_pte.finite_inverse_design.probe_v261_cpu_tfsf_device import (
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device import (
+    device_to_crystal_field,
+)
 
 
 REPOSITORY = Path(__file__).resolve().parents[3]
@@ -24,6 +27,7 @@ TAIRTE4_MATERIAL = "run010_TaIrTe4_paper_abc"
 SIO2_MATERIAL = "run010_Kitamura_SiO2_10um"
 SI_MATERIAL = "run010_Palik_Si_10um"
 DESIGN_OBJECT = "run010_TaIrTe4_void_anisotropic_design"
+PERMITTIVITY_ROTATION_OBJECT = "run064_fixed_crystal_axes_in_device_coordinates"
 SOURCE_NAME = "run010_gaussian10_w8p5_source"
 ROTATED_DEVICE_ANGLE_DEG = 45.0
 Q_HALF_SPAN_XY_M = (
@@ -75,12 +79,18 @@ def design_nodes() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 
 def import_nodes() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Nodes of Run58's stable central imported-material region."""
+    """Global import nodes used by the selected optical geometry contract."""
 
     x, y, z = design_nodes()
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
-        inset = int(round(CONTRACT.fixed_contact_depth_m / CONTRACT.design_step_m))
-        x = x[inset:-inset]
+        if CONTRACT.rotated_optical_mode == "physical_crystal_grid":
+            half = 0.5 * CONTRACT.crystal_bounding_span_m
+            count = CONTRACT.crystal_bounding_node_shape[0]
+            x = np.linspace(-half, half, count)
+            y = x.copy()
+        elif CONTRACT.rotated_optical_mode == "run58_proxy":
+            inset = int(round(CONTRACT.fixed_contact_depth_m / CONTRACT.design_step_m))
+            x = x[inset:-inset]
     return x, y, z
 
 
@@ -94,8 +104,11 @@ def anisotropic_index(rho_xy: np.ndarray) -> tuple[np.ndarray, dict[str, object]
     if np.any((rho < 0.0) | (rho > 1.0)) or not np.all(np.isfinite(rho)):
         raise ValueError("rho must be finite in [0,1]")
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
-        inset = int(round(CONTRACT.fixed_contact_depth_m / CONTRACT.design_step_m))
-        rho = rho[inset:-inset, :]
+        if CONTRACT.rotated_optical_mode == "physical_crystal_grid":
+            rho = device_to_crystal_field(rho)
+        elif CONTRACT.rotated_optical_mode == "run58_proxy":
+            inset = int(round(CONTRACT.fixed_contact_depth_m / CONTRACT.design_step_m))
+            rho = rho[inset:-inset, :]
     if rho.shape != (x.size, y.size):
         raise RuntimeError("optical import density/node shape mismatch")
     endpoint = material_epsilon()
@@ -164,6 +177,12 @@ def add_fixed_frame(fdtd: Any) -> list[str]:
     x_design = 0.5 * CONTRACT.design_span_x_m
     y_design = 0.5 * CONTRACT.design_span_y_m
     z = (-CONTRACT.flake_thickness_m, 0.0)
+    if (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode
+        in {"physical_crystal_grid", "rotated_tensor_local_grid"}
+    ):
+        return []
     if CONTRACT.geometry_mode == "contact_anchored":
         pieces = {
             "bottom_contact": {"x": (-flake, flake), "y": (-flake, -y_design), "z": z},
@@ -208,13 +227,51 @@ def add_design(fdtd: Any, rho_xy: np.ndarray) -> dict[str, object]:
     fdtd.addimport({"name": DESIGN_OBJECT, "x": 0.0, "y": 0.0, "z": 0.0})
     if int(fdtd.importnk2(index, x, y, z)) != 1:
         raise RuntimeError("anisotropic importnk2 returned failure")
-    # Leave all primitive rotation axes inactive, exactly as in Run58. The
-    # physical +45-degree geometry is retained in thermal/electrical solves.
+    tensor_rotation = None
+    if (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode == "rotated_tensor_local_grid"
+    ):
+        rotation = fdtd.addgridattribute("permittivity rotation")
+        rotation["name"] = PERMITTIVITY_ROTATION_OBJECT
+        rotation["angle convention"] = "Euler (Z-Y'-Z'')"
+        rotation["phi"] = -ROTATED_DEVICE_ANGLE_DEG
+        rotation["theta"] = 0.0
+        rotation["psi"] = 0.0
+        rotation["enable conformal meshing"] = 1
+        tensor_rotation = {
+            "name": PERMITTIVITY_ROTATION_OBJECT,
+            "angle_convention": "Euler (Z-Y'-Z'')",
+            "phi_deg": -ROTATED_DEVICE_ANGLE_DEG,
+            "theta_deg": 0.0,
+            "psi_deg": 0.0,
+            "scope": (
+                "uniform global attribute; air, SiO2, and Si are isotropic, "
+                "so only anisotropic TaIrTe4 is changed"
+            ),
+        }
+    # The physical mode rasterizes the diamond directly on the fixed crystal
+    # grid, so the imported primitive itself remains unrotated and the
+    # anisotropic material axes stay x=b, y=a, z=c.
     return {
         "name": DESIGN_OBJECT,
         "nodes_m": {"x": x, "y": y, "z": z},
+        "permittivity_rotation": tensor_rotation,
         **metadata,
     }
+
+
+def polarization_angle_deg(polarization: str) -> float:
+    """Return the source angle in the active optical coordinate frame."""
+
+    if polarization not in {"a", "b"}:
+        raise ValueError("polarization must be 'a' or 'b'")
+    if (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode == "rotated_tensor_local_grid"
+    ):
+        return 45.0 if polarization == "a" else -45.0
+    return 90.0 if polarization == "a" else 0.0
 
 
 def add_mesh(fdtd: Any, name: str, bounds: dict[str, tuple[float, float]], **steps: float) -> None:
@@ -255,7 +312,16 @@ def add_mesh_hierarchy(
         y=CONTRACT.outer_xy_max_step_m,
     )
     names.append("run010_outer_coarse_xy_mesh")
-    stack_half = 14.0e-6
+    physical_rotated = (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode == "physical_crystal_grid"
+    )
+    optical_flake_half = (
+        CONTRACT.flake_bounding_half_span_m
+        if physical_rotated
+        else 0.5 * CONTRACT.flake_span_m
+    )
+    stack_half = max(14.0e-6, optical_flake_half + 0.1e-6)
     add_mesh(
         fdtd,
         "run010_illuminated_stack_xy_mesh",
@@ -264,7 +330,7 @@ def add_mesh_hierarchy(
         y=250e-9,
     )
     names.append("run010_illuminated_stack_xy_mesh")
-    flake = 0.5 * CONTRACT.flake_span_m + CONTRACT.design_step_m
+    flake = optical_flake_half + CONTRACT.design_step_m
     add_mesh(
         fdtd,
         "run010_flake_xy_z_mesh",

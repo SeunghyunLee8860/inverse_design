@@ -84,10 +84,29 @@ def test_optical_density_coordinates_match_imported_array_indices() -> None:
     x = np.asarray([-7.3e-6, 0.0, 4.9e-6])
     y = np.asarray([2.1e-6, -6.4e-6, 11.2e-6])
     density_x, density_y = CONTRACT.optical_density_coordinates(x, y)
-    assert np.array_equal(density_x, x)
-    assert np.array_equal(density_y, y)
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
         rotated_u, rotated_v = CONTRACT.rotated_uv(x, y)
-        assert not np.allclose(density_x, rotated_u, rtol=0.0, atol=1.0e-15)
-        assert not np.allclose(density_y, rotated_v, rtol=0.0, atol=1.0e-15)
-        assert CONTRACT.optical_geometry_contract == "run58_axis_aligned_uv_proxy_no_Au"
+        if CONTRACT.rotated_optical_mode == "physical_crystal_grid":
+            assert np.allclose(density_x, rotated_u, rtol=0.0, atol=1.0e-15)
+            assert np.allclose(density_y, rotated_v, rtol=0.0, atol=1.0e-15)
+            assert (
+                CONTRACT.optical_geometry_contract
+                == "physical_plus45_mask_fixed_crystal_axes_no_Au"
+            )
+        else:
+            assert np.array_equal(density_x, x)
+            assert np.array_equal(density_y, y)
+            assert not np.allclose(density_x, rotated_u, rtol=0.0, atol=1.0e-15)
+            assert not np.allclose(density_y, rotated_v, rtol=0.0, atol=1.0e-15)
+            expected = {
+                "run58_proxy": "run58_axis_aligned_uv_proxy_no_Au",
+                "rotated_tensor_local_grid": (
+                    "physical_equivalent_local_grid_rotated_tensor_no_Au"
+                ),
+            }
+            assert CONTRACT.optical_geometry_contract == expected[
+                CONTRACT.rotated_optical_mode
+            ]
+    else:
+        assert np.array_equal(density_x, x)
+        assert np.array_equal(density_y, y)
