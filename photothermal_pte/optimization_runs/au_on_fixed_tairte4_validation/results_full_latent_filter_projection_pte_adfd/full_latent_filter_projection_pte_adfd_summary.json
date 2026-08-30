@@ -1,0 +1,462 @@
+{
+  "status": "VALIDATED_FULL_LATENT_FILTER_PROJECTION_FDTDX_PTE_ADFD",
+  "scope": "three-direction end-to-end latent -> finite conic filter -> tanh projection -> FDTDX Maxwell Q -> conservative remap -> explicit thermal -> Au-aware electrical weighting/current; no optimization",
+  "scenario": "thermally_grown",
+  "mapping": {
+    "shape": [
+      20,
+      20
+    ],
+    "spacing_nm": 500.00000000000006,
+    "radius_nm": 750.0,
+    "eta": 0.5,
+    "kernel_shape": [
+      5,
+      5
+    ],
+    "kernel_nonzero_count": 9,
+    "normalization_min": 1.2928932188134522e-06,
+    "normalization_max": 1.921572875253809e-06,
+    "constant_preservation_max_abs": 0.0,
+    "periodic_wrap": false,
+    "forward_operator": "D^-1 C with zero padding",
+    "transpose_operator": "C D^-1 with symmetric conic kernel"
+  },
+  "beta": 2.0,
+  "h": 0.01,
+  "latent_range": [
+    0.4534799750890457,
+    0.5702169856249933
+  ],
+  "physical_baseline_reconstruction_max_abs": 9.992007221626409e-16,
+  "physical_gradient_norm_A": 6.4530350582044696e-18,
+  "latent_gradient_norm_A": 8.239196135901991e-18,
+  "directions": [
+    {
+      "scenario": "thermally_grown",
+      "beta": 2.0,
+      "direction": "latent_adjoint_aligned",
+      "h": 0.01,
+      "direction_strength_vs_latent_gradient_norm": 0.9999999999999998,
+      "AD_A": 8.23919613590199e-18,
+      "FD_A": 8.239379933904032e-18,
+      "strong_relative_error": 2.2307261410019514e-05,
+      "latent_gradient_norm_normalized_error": 2.2307759035031776e-05,
+      "midpoint_objective_relative_error": 6.286326691064099e-06,
+      "objective_plus_A": 2.767286116365288e-18,
+      "objective_minus_A": 2.6024985176872073e-18
+    },
+    {
+      "scenario": "thermally_grown",
+      "beta": 2.0,
+      "direction": "latent_smooth_asymmetric",
+      "h": 0.01,
+      "direction_strength_vs_latent_gradient_norm": 0.1774296720571285,
+      "AD_A": -1.4618778684074506e-18,
+      "FD_A": -1.4623489017250437e-18,
+      "strong_relative_error": 0.0003221073418508208,
+      "latent_gradient_norm_normalized_error": 5.716981484887959e-05,
+      "midpoint_objective_relative_error": 7.350712210078359e-06,
+      "objective_plus_A": 2.6702716857905063e-18,
+      "objective_minus_A": 2.699518663825007e-18
+    },
+    {
+      "scenario": "thermally_grown",
+      "beta": 2.0,
+      "direction": "latent_fixed_seed_random",
+      "h": 0.01,
+      "direction_strength_vs_latent_gradient_norm": 0.019563206498024763,
+      "AD_A": 1.6118509538437835e-19,
+      "FD_A": 1.6048152070071223e-19,
+      "strong_relative_error": 0.004365010809394679,
+      "latent_gradient_norm_normalized_error": 8.539360783029831e-05,
+      "midpoint_objective_relative_error": 1.8237823911957965e-05,
+      "objective_plus_A": 2.686529221301555e-18,
+      "objective_minus_A": 2.6833195908875406e-18
+    }
+  ],
+  "cases": {
+    "latent_adjoint_aligned": {
+      "row": {
+        "scenario": "thermally_grown",
+        "beta": 2.0,
+        "direction": "latent_adjoint_aligned",
+        "h": 0.01,
+        "direction_strength_vs_latent_gradient_norm": 0.9999999999999998,
+        "AD_A": 8.23919613590199e-18,
+        "FD_A": 8.239379933904032e-18,
+        "strong_relative_error": 2.2307261410019514e-05,
+        "latent_gradient_norm_normalized_error": 2.2307759035031776e-05,
+        "midpoint_objective_relative_error": 6.286326691064099e-06,
+        "objective_plus_A": 2.767286116365288e-18,
+        "objective_minus_A": 2.6024985176872073e-18
+      },
+      "plus": {
+        "label": "latent_adjoint_aligned_plus",
+        "objective_A": 2.767286116365288e-18,
+        "P_Q_W": 2.477934037646012e-13,
+        "Tmax_K": 5.577291001435532e-10,
+        "thermal_residual": 9.46189252296506e-10,
+        "thermal_energy_balance": 2.7892928553297484e-11,
+        "electrical_residual": 7.807758836600098e-12,
+        "electrical_terminal_balance": 2.0770322009448512e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.500456781133794e-14,
+            "mapped_power_W": 5.5004567811337935e-14,
+            "relative_error": 1.1473387561945806e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269763953152718e-13,
+            "mapped_power_W": 1.5269763953152716e-13,
+            "relative_error": 1.6531721802982023e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091196421736054e-14,
+            "mapped_power_W": 4.009119642173606e-14,
+            "relative_error": 1.5741329281823453e-16,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 8.333691649138927,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_adjoint_aligned_plus.npz",
+          "bytes": 1620,
+          "sha256": "7c201219c40ef23cad5c513e5987d8a2ff7b856721af42c9736ce6186eeff6ea",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_adjoint_aligned_plus.npz",
+          "bytes": 18010946,
+          "sha256": "28caeb9542e80eee89cf3b9c4b36fc852b70c6fdfe9a4a092dbd18e1b506bb8d",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_adjoint_aligned_plus.npz",
+          "bytes": 23625172,
+          "sha256": "7f0fecf745e7aee06d0fa84e60ab3fae612da6bcdca840593f2c8abd639e960c",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "latent_adjoint_aligned_minus",
+        "objective_A": 2.6024985176872073e-18,
+        "P_Q_W": 2.4779812995944895e-13,
+        "Tmax_K": 5.577416096483943e-10,
+        "thermal_residual": 8.197338369700084e-10,
+        "thermal_energy_balance": 1.1093390853143897e-11,
+        "electrical_residual": 7.802182076441907e-12,
+        "electrical_terminal_balance": 2.022722943152143e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5007646405885885e-14,
+            "mapped_power_W": 5.500764640588588e-14,
+            "relative_error": 1.1472745434701642e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269893383701414e-13,
+            "mapped_power_W": 1.5269893383701414e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091549716548924e-14,
+            "mapped_power_W": 4.009154971654892e-14,
+            "relative_error": 1.5741190566058604e-16,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 19.071175273507833,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_adjoint_aligned_minus.npz",
+          "bytes": 1628,
+          "sha256": "0e1ce2f158757531cf5ac6f9f368f5eb5bafbfa0e4c1b24016c43b8d4980580b",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_adjoint_aligned_minus.npz",
+          "bytes": 18011172,
+          "sha256": "532e72e42769929dfc11cd33db36fe6cecffe2a67bac19e8aa11bc6b26666d8c",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_adjoint_aligned_minus.npz",
+          "bytes": 23625715,
+          "sha256": "869b2b45f280411f6d161ee6b1cf016a6777f8216a87fedfd3f20699578ba5e6",
+          "committed_to_git": false
+        }
+      }
+    },
+    "latent_smooth_asymmetric": {
+      "row": {
+        "scenario": "thermally_grown",
+        "beta": 2.0,
+        "direction": "latent_smooth_asymmetric",
+        "h": 0.01,
+        "direction_strength_vs_latent_gradient_norm": 0.1774296720571285,
+        "AD_A": -1.4618778684074506e-18,
+        "FD_A": -1.4623489017250437e-18,
+        "strong_relative_error": 0.0003221073418508208,
+        "latent_gradient_norm_normalized_error": 5.716981484887959e-05,
+        "midpoint_objective_relative_error": 7.350712210078359e-06,
+        "objective_plus_A": 2.6702716857905063e-18,
+        "objective_minus_A": 2.699518663825007e-18
+      },
+      "plus": {
+        "label": "latent_smooth_asymmetric_plus",
+        "objective_A": 2.6702716857905063e-18,
+        "P_Q_W": 2.4780704930782077e-13,
+        "Tmax_K": 5.576519206996699e-10,
+        "thermal_residual": 9.860285430281927e-10,
+        "thermal_energy_balance": 1.668227181022801e-11,
+        "electrical_residual": 7.870865947719894e-12,
+        "electrical_terminal_balance": 2.150972569596577e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5010993926544814e-14,
+            "mapped_power_W": 5.5010993926544814e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5270375931858084e-13,
+            "mapped_power_W": 1.5270375931858086e-13,
+            "relative_error": 1.653105927432185e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.009229606269509e-14,
+            "mapped_power_W": 4.009229606269509e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 18.87614795565605,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_smooth_asymmetric_plus.npz",
+          "bytes": 1630,
+          "sha256": "ede196f312041d9f2efb5b96a5749fc3a66e6ceaf47143e4284508cc0904933d",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_smooth_asymmetric_plus.npz",
+          "bytes": 18010459,
+          "sha256": "23bb17c46e6e331653bf4af1543931f3496f161325fce1dbaaf6b59aec92eeff",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_smooth_asymmetric_plus.npz",
+          "bytes": 23624442,
+          "sha256": "213edaffef6de6ce8c68b62894fee8f88c9c7cb02aec8beb72c917dd45bd8347",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "latent_smooth_asymmetric_minus",
+        "objective_A": 2.699518663825007e-18,
+        "P_Q_W": 2.477843619589137e-13,
+        "Tmax_K": 5.578192070364986e-10,
+        "thermal_residual": 7.574853295570465e-10,
+        "thermal_energy_balance": 1.0341950596011778e-11,
+        "electrical_residual": 7.737100608098268e-12,
+        "electrical_terminal_balance": 2.041868228812559e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.500126764626895e-14,
+            "mapped_power_W": 5.5001267646268943e-14,
+            "relative_error": 1.1474075983767254e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269268544912012e-13,
+            "mapped_power_W": 1.5269268544912012e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0090408863524594e-14,
+            "mapped_power_W": 4.0090408863524594e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 19.035126380622387,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_smooth_asymmetric_minus.npz",
+          "bytes": 1632,
+          "sha256": "2ccb9e216b81afa0fbeb2d662033e42e769f9be04684b4fae2825d10ff02a7ce",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_smooth_asymmetric_minus.npz",
+          "bytes": 18010126,
+          "sha256": "7a3d1844410caf78c12d02d04c3bf58a0de0dbbbd603ad602c95f2b080729c69",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_smooth_asymmetric_minus.npz",
+          "bytes": 23625297,
+          "sha256": "5c4ab113f2d8089767f0688de609733b2c7d6e275d3b0b07e4c0c577ea53cf77",
+          "committed_to_git": false
+        }
+      }
+    },
+    "latent_fixed_seed_random": {
+      "row": {
+        "scenario": "thermally_grown",
+        "beta": 2.0,
+        "direction": "latent_fixed_seed_random",
+        "h": 0.01,
+        "direction_strength_vs_latent_gradient_norm": 0.019563206498024763,
+        "AD_A": 1.6118509538437835e-19,
+        "FD_A": 1.6048152070071223e-19,
+        "strong_relative_error": 0.004365010809394679,
+        "latent_gradient_norm_normalized_error": 8.539360783029831e-05,
+        "midpoint_objective_relative_error": 1.8237823911957965e-05,
+        "objective_plus_A": 2.686529221301555e-18,
+        "objective_minus_A": 2.6833195908875406e-18
+      },
+      "plus": {
+        "label": "latent_fixed_seed_random_plus",
+        "objective_A": 2.686529221301555e-18,
+        "P_Q_W": 2.4779510911976825e-13,
+        "Tmax_K": 5.577656704598372e-10,
+        "thermal_residual": 8.4251274714153e-10,
+        "thermal_energy_balance": 1.3111419905740559e-11,
+        "electrical_residual": 7.800068490101411e-12,
+        "electrical_terminal_balance": 2.013811452400685e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.500463505200339e-14,
+            "mapped_power_W": 5.500463505200339e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.526990786792619e-13,
+            "mapped_power_W": 1.5269907867926187e-13,
+            "relative_error": 1.653156599595169e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091395388502924e-14,
+            "mapped_power_W": 4.0091395388502924e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 18.89839370548725,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_fixed_seed_random_plus.npz",
+          "bytes": 1635,
+          "sha256": "5cb865f96e92abb87fe25c85d5c5d4d3d693c5bfa99c570b2dea10575788cf8a",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_fixed_seed_random_plus.npz",
+          "bytes": 18009406,
+          "sha256": "b4d7e6a1ec11a69872acd293de724a4470355b2249ff2dbaff65fc49d9894a46",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_fixed_seed_random_plus.npz",
+          "bytes": 23624880,
+          "sha256": "9e40c20606d001f96be60c67f2ea65faca5ce62383ea36eb8be23ec5f725cd7c",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "latent_fixed_seed_random_minus",
+        "objective_A": 2.6833195908875406e-18,
+        "P_Q_W": 2.4779572258968063e-13,
+        "Tmax_K": 5.577046249101523e-10,
+        "thermal_residual": 8.109767735300289e-10,
+        "thermal_energy_balance": 1.1734072379602702e-11,
+        "electrical_residual": 7.803937831412867e-12,
+        "electrical_terminal_balance": 2.047890049836999e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5007377929375456e-14,
+            "mapped_power_W": 5.5007377929375444e-14,
+            "relative_error": 2.2945602860295244e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269708435624087e-13,
+            "mapped_power_W": 1.5269708435624084e-13,
+            "relative_error": 1.653178190893247e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091260304064325e-14,
+            "mapped_power_W": 4.0091260304064325e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 15.994692895561457,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/rho_latent_fixed_seed_random_minus.npz",
+          "bytes": 1630,
+          "sha256": "2dbec6935a8217c336f9524e7783cc935a5c66fefaa79028ec771982383b8f78",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/native_yee_q_latent_fixed_seed_random_minus.npz",
+          "bytes": 18010802,
+          "sha256": "8607b71d65a40a70a2010efeda5c2f0e6a4ae6b82bffb3a43f32008a567f1de0",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/thermal_q_latent_fixed_seed_random_minus.npz",
+          "bytes": 23625248,
+          "sha256": "11479b73eec73e0c4b1bbf989cb61665323872cfac13478dc25dc228f4e8e08e",
+          "committed_to_git": false
+        }
+      }
+    }
+  },
+  "worst_strong_direction_relative_error": 0.0003221073418508208,
+  "worst_latent_gradient_norm_normalized_error": 8.539360783029831e-05,
+  "worst_midpoint_objective_relative_error": 1.8237823911957965e-05,
+  "worst_linear_residual": 9.860285430281927e-10,
+  "worst_thermal_energy_balance": 2.7892928553297484e-11,
+  "worst_electrical_terminal_balance": 2.150972569596577e-12,
+  "gates": {
+    "input_status_and_SHA_chain_validated": true,
+    "physical_baseline_reconstruction_lt_1e-12": true,
+    "strict_interior_unclipped_latent_FD": true,
+    "three_independent_latent_directions": true,
+    "all_spatial_Q_and_remap_subgates_validated": true,
+    "strong_direction_relative_error_lt_1pct": true,
+    "all_direction_gradient_norm_error_lt_1pct": true,
+    "all_midpoint_objective_errors_lt_0p5pct": true,
+    "linear_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_terminal_balance_lt_1pct": true,
+    "GPU_FDTDX_and_GPU_linear_solves_no_CPU_fallback": true,
+    "no_Q_latent_density_or_gradient_clipping_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd_raw.npz",
+    "bytes": 24445,
+    "sha256": "92f496f9763e537e5b314a0e87450f3236ebc74bd1f65b25a58df13b327fda5b",
+    "committed_to_git": false
+  },
+  "next_gate": "freeze a fabrication/minimum-feature contract and optimizer continuation; the derivative chain is validated but optimization has not started"
+}

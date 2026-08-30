@@ -1,0 +1,77 @@
+{
+  "status": "VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_DIRECTIONAL_ADFD",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_raw.npz",
+    "bytes": 16595440,
+    "sha256": "47a861e937435158cb2eb54640fb0c0b0166ed60be2c984e2f880383a9a8bd5e",
+    "committed_to_git": false
+  },
+  "input_SHAs": {
+    "optical_gradient": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "direct_gradient": "a09c1418bc9abd8c8b47b9fd8fcd6ff4971903f918d72cefa8e28d4305a2d98e"
+  },
+  "perturbation_artifacts": {
+    "plus": {
+      "density": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/rho_plus.npz",
+        "bytes": 1632,
+        "sha256": "838a31412029461160141454a3ecc33fadf6f8db6cc06ff9828ddb064d26cc6c",
+        "committed_to_git": false
+      },
+      "spatial_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_plus.npz",
+        "bytes": 18011092,
+        "sha256": "a09392e0698a090475e217100f074cb7a899f1cd8b826e6d8631c5189b230249",
+        "committed_to_git": false
+      },
+      "thermal_Q": {
+        "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/thermal_q_plus.npz",
+        "bytes": 23625297,
+        "sha256": "b387954ece2bd9fbb9af873b445e107a3812b37675ead352c501e67b4678cb10",
+        "committed_to_git": false
+      }
+    },
+    "minus": {
+      "density": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/rho_minus.npz",
+        "bytes": 1630,
+        "sha256": "375503d29074d7710c97f373fad02d7df3aee71933e4a9060779c344aa66452e",
+        "committed_to_git": false
+      },
+      "spatial_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_minus.npz",
+        "bytes": 18011509,
+        "sha256": "43428a07223ec61e18a4a6c5ca87eb7abaea303cc6c63b9d0e4cb4d32df2cd97",
+        "committed_to_git": false
+      },
+      "thermal_Q": {
+        "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/thermal_q_minus.npz",
+        "bytes": 23624821,
+        "sha256": "95f682e85dfc4d6b3348e9e9636509f5c3c5ffe6cf5ffa54d867e900a4e7795a",
+        "committed_to_git": false
+      }
+    }
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_summary.json",
+      "bytes": 6403,
+      "sha256": "9007565338434a5581710dab4186cdfa32acda6e40476fd9908b0d3eef279145"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd.csv",
+      "bytes": 421,
+      "sha256": "2e78509590e216bee962f48c92790a4305c4bf1a9bbc60e6bfa3286984fe52ff"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd.png",
+      "bytes": 235534,
+      "sha256": "021ddf544145865dd08697ccf649bc0dd8ae1129f08ac09d76a696f58cb24df0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/FULL_COMBINED_PTE_DIRECTIONAL_ADFD_REPORT.md",
+      "bytes": 1384,
+      "sha256": "f0027d8a96bbdb1785cdbd4f924ebb19ffbbc834416e101142031b34f9be698b"
+    }
+  ]
+}

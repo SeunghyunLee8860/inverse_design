@@ -1,0 +1,35 @@
+{
+  "status": "VALIDATED_FDTDX_SPATIAL_Q_CONSERVATIVE_MATERIAL_OVERLAP_REMAP",
+  "scope": "component-native Yee dual-cell power to material-primal thermal-cell overlap remap for Au, TaIrTe4, and SiO2; no thermal solve, PTE, Maxwell adjoint, combined gradient, or optimization",
+  "input_spatial_Q": {
+    "summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/spatial_audit/fdtdx_spatial_native_yee_q_summary.json",
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_minus.npz",
+    "bytes": 18011509,
+    "sha256": "43428a07223ec61e18a4a6c5ca87eb7abaea303cc6c63b9d0e4cb4d32df2cd97"
+  },
+  "output_thermal_Q": {
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/thermal_q_minus.npz",
+    "bytes": 23624821,
+    "sha256": "95f682e85dfc4d6b3348e9e9636509f5c3c5ffe6cf5ffa54d867e900a4e7795a",
+    "committed_to_git": false
+  },
+  "source_total_power_W": 2.477973536898288e-13,
+  "target_total_power_W": 2.477973536898288e-13,
+  "total_power_relative_error": 0.0,
+  "maximum_component_power_relative_error": 1.957046876057757e-16,
+  "maximum_transpose_dot_relative_error": 7.466964227612805e-15,
+  "maximum_axis_overlap_column_sum_error": 0.0,
+  "maximum_boundary_dual_power_redistributed_fraction": 0.27645562418420255,
+  "mapping_contract": "p_source=Q_native*V_dual; p_source is distributed by exact separable intersection with the absorbing material's primal thermal cells, normalized only within that source-cell/material intersection; Q_thermal=sum(p)/V_thermal",
+  "gates": {
+    "source_SHA_matches_validated_spatial_Q": true,
+    "finite_nonnegative_thermal_Q": true,
+    "axis_overlap_column_sum_error_lt_1e-12": true,
+    "component_power_conservation_lt_1e-12": true,
+    "total_power_conservation_lt_1e-12": true,
+    "transpose_dot_error_lt_1e-12": true,
+    "source_power_matches_spatial_summary_lt_1e-6": true,
+    "no_source_deletion_clipping_smoothing_gain_or_global_rescaling": true
+  },
+  "next_gate": "solve one explicit heterogeneous Au/TaIrTe4/SiO2 thermal control with this Q, audit energy balance, then compare against fixed-Q coupled operator"
+}

@@ -1,0 +1,72 @@
+{
+  "status": "PUBLISHED_REDUCED_SUBSTRATE_NEAR_FIELD_PACKAGE",
+  "case": "bare_Eb",
+  "substrate": {
+    "mode": "sio2_si_reduced_285nm",
+    "domain_z_min_m": -1.2e-06,
+    "bottom_flux_monitor_z_m": -7e-07,
+    "Au_mirror_bounds_m": [
+      -2.35e-07,
+      -3.5e-08
+    ],
+    "SiO2_bounds_m": [
+      -5.2e-07,
+      -2.35e-07
+    ],
+    "Si_bounds_m": [
+      -1.2e-06,
+      -5.2e-07
+    ],
+    "paper_identity": "reduced 285-nm optical-SiO2 / intrinsic-Si closure; physical thermal thickness is not implied"
+  },
+  "mesh": {
+    "available": true,
+    "shape": [
+      151,
+      101,
+      132
+    ],
+    "yee_cell_estimate": 1965000,
+    "max_dx_m": 1.000000000000001e-08,
+    "max_dy_m": 1.000000000000001e-08,
+    "max_structure_dz_m": 5.000000000000005e-09,
+    "min_dx_m": 9.999999999998845e-09,
+    "min_dy_m": 9.999999999999057e-09,
+    "min_dz_m": 4.9999999999996345e-09,
+    "bounds_m": {
+      "x": [
+        -7.5e-07,
+        7.5e-07
+      ],
+      "y": [
+        -4.999999999999999e-07,
+        4.999999999999999e-07
+      ],
+      "z": [
+        -1.2e-06,
+        1.2e-06
+      ]
+    }
+  },
+  "runtime_s": 29.571875229477882,
+  "P_Q_W": 3.8420081153856464e-16,
+  "P_flux_W": 3.8485044659612436e-16,
+  "closure_relative": 0.0016880194977179446,
+  "auto_shutoff": 5.81448e-08,
+  "bottom_transmission": 5.751355525353393e-10,
+  "common_grid_power_error": 0.0,
+  "field_collocation": "component-specific native Yee coordinates -> common physical-plane interpolation; no same-index pairing",
+  "figures": [
+    "00_reduced_substrate_setup_xy_xz_yz.png",
+    "01_field_xy_tairte4_midplane.png",
+    "02_field_xz_y0.png",
+    "03_field_yz_x0.png",
+    "04_Q_components_depth_integrated.png",
+    "05_Qtotal_xz_yz.png"
+  ],
+  "raw_npz": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si_reduced/T2024_MIR_4750_bare_Eb/T2024_TaIrTe4_native_q.npz",
+    "size_bytes": 400624,
+    "sha256": "09d072ca575a36e458bc396c849a0660170a01b83b260639e2b37c25479c77ee"
+  }
+}

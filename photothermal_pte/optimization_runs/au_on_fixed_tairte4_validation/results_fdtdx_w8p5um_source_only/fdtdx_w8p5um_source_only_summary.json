@@ -1,0 +1,138 @@
+{
+  "status": "VALIDATED_FDTDX_W8P5UM_SOURCE_ONLY",
+  "scope": "empty-air production-width source audit only; no material, thermal, PTE, adjoint, or optimization",
+  "software": {
+    "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+    "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+    "cuda_visible_devices": "5",
+    "jax_devices": [
+      "cuda:0"
+    ]
+  },
+  "source": {
+    "wavelength_m": 1e-05,
+    "requested_w0_m": 8.5e-06,
+    "source_radius_m": 1.5e-05,
+    "source_std_relative_to_radius": 0.4006938426723769,
+    "aperture_span_m_xy": [
+      2.9999999999999997e-05,
+      2.9999999999999997e-05
+    ],
+    "nominal_square_edge_intensity_over_peak": 0.001972657417347683,
+    "polarization": "x=b",
+    "direction": "-z"
+  },
+  "grid": {
+    "cell_size_m_xyz": [
+      2.5e-07,
+      2.5e-07,
+      1e-07
+    ],
+    "domain_cells_xyz": [
+      160,
+      160,
+      80
+    ],
+    "domain_span_m_xyz": [
+      3.9999999999999996e-05,
+      3.9999999999999996e-05,
+      8e-06
+    ],
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      8
+    ],
+    "source_slice": [
+      [
+        20,
+        140
+      ],
+      [
+        20,
+        140
+      ],
+      [
+        59,
+        60
+      ]
+    ],
+    "target_slice": [
+      [
+        8,
+        152
+      ],
+      [
+        8,
+        152
+      ],
+      [
+        39,
+        40
+      ]
+    ],
+    "closed_surface_slice": [
+      [
+        12,
+        148
+      ],
+      [
+        12,
+        148
+      ],
+      [
+        25,
+        55
+      ]
+    ]
+  },
+  "results": {
+    "beam_fit_primary_Ex": {
+      "center_x_m": 1.2497649361096974e-07,
+      "center_y_m": 9.610780605680444e-13,
+      "w0_x_m": 8.614000367539741e-06,
+      "w0_y_m": 8.300611684384615e-06,
+      "mean_w0_m": 8.457306025962177e-06,
+      "w0_relative_error": 0.005022820475037946,
+      "ellipticity": 0.03705537935993898,
+      "gaussian_fit_nrmse": 0.012621220367999944,
+      "square_boundary_intensity_over_peak": 0.00011375819897428764
+    },
+    "beam_fit_vector_total": {
+      "center_x_m": 1.2489585956543708e-07,
+      "center_y_m": 9.567861789733096e-13,
+      "w0_x_m": 8.92537953920624e-06,
+      "w0_y_m": 8.314277221994508e-06,
+      "mean_w0_m": 8.619828380600374e-06,
+      "w0_relative_error": 0.014097456541220436,
+      "ellipticity": 0.07089495175879225,
+      "gaussian_fit_nrmse": 0.013361050090000364,
+      "square_boundary_intensity_over_peak": 0.00019608631615772757
+    },
+    "field_component_intensity_fractions_xyz": [
+      0.9619259834289551,
+      0.000427888473495841,
+      0.037646207958459854
+    ],
+    "incident_target_plane_power_W": 3.1278568602376156e-14,
+    "closed_surface_phasor_inward_W": -1.1431556656144037e-16,
+    "closed_surface_time_domain_inward_W": -5.799837745408637e-17,
+    "closed_surface_residual_over_incident_power": 0.003654756968410508,
+    "compile_seconds": 0.4606579840183258,
+    "execution_seconds": 0.4628036841750145,
+    "time_steps_total": 1838,
+    "steps_per_period": 230
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "primary_Ex_mean_w0_within_5pct": true,
+    "primary_Ex_center_shift_lt_0p25um": true,
+    "primary_Ex_ellipticity_lt_5pct": true,
+    "primary_Ex_boundary_intensity_lt_1pct": true,
+    "closed_surface_residual_lt_0p5pct_incident": true
+  },
+  "files": {
+    "plot": "fdtdx_w8p5um_source_only.png"
+  }
+}

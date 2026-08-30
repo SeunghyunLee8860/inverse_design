@@ -1,0 +1,71 @@
+{
+  "status": "VALIDATED_LUMERICAL_AU_TAIRTE4_BINARY_ENDPOINTS",
+  "generation_command": "44_summarize_lumerical_au_on_tairte4_binary_endpoints.py --au0 /home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au0_retry/case_result.json --au1 /home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au1_retry2/case_result.json",
+  "raw_artifacts": [
+    {
+      "endpoint": 0,
+      "path": "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au0_retry/complex_material_control.fsp",
+      "size_bytes": 195845895,
+      "sha256": "728e2ceb9997a2b4c771eb556b8cb169d4a1d5664e670646c75547bad635cc53",
+      "committed": false
+    },
+    {
+      "endpoint": 0,
+      "path": "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au0_retry/complex_material_control_q.npz",
+      "size_bytes": 11463021,
+      "sha256": "8e5cc303a3d9877ba8677a9125c61f46f17807873410348b2152b5d01f12c992",
+      "committed": false
+    },
+    {
+      "endpoint": 1,
+      "path": "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au1_retry2/complex_material_control.fsp",
+      "size_bytes": 195847980,
+      "sha256": "7b9eb97f6ddcbf9c5c19ca7c973f9a7d8077cc048daea3ce5787c6c60bd80735",
+      "committed": false
+    },
+    {
+      "endpoint": 1,
+      "path": "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au1_retry2/complex_material_control_q.npz",
+      "size_bytes": 12855296,
+      "sha256": "1a46f0a67b098758941ba7faf0ed453a06b2adaebc8d7c762fdc193ae6cb8e19",
+      "committed": false
+    }
+  ],
+  "published_artifacts": [
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/43_run_lumerical_au_on_tairte4_binary_endpoint.py",
+      "size_bytes": 15135,
+      "sha256": "e381dac77e1e8ae007a2369eb017b852b707ae504dd7aafab97d05d4c97ef6b3"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/44_summarize_lumerical_au_on_tairte4_binary_endpoints.py",
+      "size_bytes": 16888,
+      "sha256": "83f60584aef404fc877f612b4d25f390edc70c99cbe5547efb2f5e763c0806ea"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/lumerical_au_on_tairte4_binary_endpoints_summary.json",
+      "size_bytes": 27013,
+      "sha256": "ca55b820494a240cf242e9d17f6fc5f9f11e75775886a0f4bb5289d38f4db0ba"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/lumerical_au_on_tairte4_binary_endpoints_cases.csv",
+      "size_bytes": 840,
+      "sha256": "bdaa182dc4c7ce28914e9b4c4d037a0cd8803d6df9efec12d800cf0f694e081e"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/lumerical_au_on_tairte4_binary_endpoints.png",
+      "size_bytes": 135471,
+      "sha256": "5826f668d8ff6b589fad8e8b3e12044326d2149ac6e97704bbbeb43a0c652507"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/LUMERICAL_AU_ON_TAIRTE4_BINARY_ENDPOINTS_REPORT.md",
+      "size_bytes": 3561,
+      "sha256": "e85f55a9f7ef7fce479a8b24d2f8665294102dac6cddfa312a73c787a8b3e3c5"
+    }
+  ],
+  "failed_attempts_preserved_external_to_git": [
+    "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au0",
+    "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au1",
+    "/home/seunghyun/tairte4/raw_au_on_tairte4_endpoint/au1_retry"
+  ]
+}

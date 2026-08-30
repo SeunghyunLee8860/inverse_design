@@ -1,0 +1,74 @@
+{
+  "status": "BLOCKED_AU_BOUNDARY_ADJOINT_UNRESOLVED_AFTER_SMOOTH_CONTROL",
+  "root_cause": "the exact high-contrast lossy-Au interface trace on the conformal Yee mesh is not a converged discrete shape derivative; sharp corners amplify the failure but a smooth in-plane boundary does not cure it",
+  "not_root_cause": [
+    "PML closure",
+    "GPU execution",
+    "forward/adjoint source round trip",
+    "component-specific Yee coordinate mismatch",
+    "thermal or Robin boundary conditions"
+  ],
+  "sharp_rectangle": {
+    "FD_step_plateau_relative_change": 0.0015358513576332255,
+    "strong_AD_FD_relative_error": 0.06769091776878235,
+    "boundary_quadrature_final_relative_change": 0.38417160959333657
+  },
+  "corner_localization": {
+    "status": "DIAGNOSED_AU_BOUNDARY_QUADRATURE_CORNER_DOMINANCE",
+    "endpoint_fraction_at_801": 0.8371828168525673,
+    "smooth_interior_201_to_6401_relative_change": 4.622739752721193e-05
+  },
+  "moved_y_corners_outside_active_support": {
+    "FD_step_plateau_relative_change": 0.0008023273796804772,
+    "center_z_final_relative_change": 0.05082302283132772,
+    "full_yz_surface_final_relative_change": 0.1975222287218452,
+    "strong_AD_FD_relative_error": 1.0892304730382398,
+    "interpretation": "moving lateral corners away is insufficient because the extruded metal retains top/bottom rim singularities"
+  },
+  "solver_discrete_depsilon": {
+    "status": "FAILED_AU_SOLVER_DISCRETE_DEPS_BOUNDARY_GRADIENT_ADFD",
+    "runsetup_only_remeshes": 8,
+    "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21,
+    "final_step_relative_change": 1.0043017996868437,
+    "strong_AD_FD_relative_error": 0.6812831505223458
+  },
+  "smooth_closed_ellipse": {
+    "status": "FAILED_AU_SMOOTH_ELLIPSE_BOUNDARY_KERNEL_ADFD",
+    "geometry": {
+      "representation": "smooth_closed_binary_scalar_Au_ellipse",
+      "ellipse_x_semi_axis_m": 8e-06,
+      "ellipse_y_semi_axis_m": 1e-05,
+      "ellipse_vertex_count": 512,
+      "shape_parameter": "x semi-axis",
+      "fixed_depth_m": 5e-08,
+      "lateral_90_degree_corners": false,
+      "polygon_vertices_sampled_by_quadrature": false
+    },
+    "FD_step_plateau_relative_change": 0.0033660829008379583,
+    "strong_AD_FD_relative_error": 1.0868786488637527,
+    "boundary_quadrature_final_relative_change": 0.013252946880594951,
+    "gates": {
+      "strong_h0p05_relative_error_lt_1pct": false,
+      "strong_sign_agrees": false,
+      "boundary_quadrature_change_lt_0p5pct": false,
+      "source_roundtrip_exact": true,
+      "coordinate_mismatch_lt_2e_18_m": true,
+      "adjoint_auto_shutoff_lt_1e_5": true
+    },
+    "interpretation": "the smooth geometry removes the in-plane corner hypothesis, but its endpoint-free boundary kernel still has the wrong AD sign and fails AD-FD; the exact-interface trace rather than corners alone is therefore unresolved"
+  },
+  "smooth_total_P_Q_FD_diagnostic": {
+    "h_0p10_W_per_um": -4.978400515012798e-18,
+    "h_0p05_W_per_um": -6.433856000594016e-18,
+    "step_relative_change": 0.22621822518981474,
+    "strong_step_fraction_of_baseline": 0.00020656315615180546,
+    "passed_1pct_plateau": false,
+    "interpretation": "diagnostic only; the total-P_Q width derivative is too weak and does not have an FD plateau at this radius"
+  },
+  "validated_scope": "no optical Au shape derivative promoted",
+  "production_Au_optimization_permitted": false,
+  "remaining_blocker": "direct moving-Au spatial absorption/P_Q contribution required by thermal-PTE objective is not yet AD-FD certified",
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "thermal_PTE_or_optimization_executed": false
+}

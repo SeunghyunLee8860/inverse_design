@@ -1,0 +1,111 @@
+{
+  "status": "AUDITED_FDTDX_PRODUCTION_CHECKPOINT_FREE_TWO_SOLVE_RUNSETUP",
+  "gpu_only": true,
+  "gradient_config": null,
+  "checkpoint_count": 0,
+  "time_history_saved": false,
+  "wavelength_m": 1e-05,
+  "waist_m": 8.5e-06,
+  "grid_shape_xyz": [
+    288,
+    288,
+    119
+  ],
+  "grid_cells": 9870336,
+  "grid_bounds_m_xyz": [
+    [
+      -2.4000000848900527e-05,
+      2.4000000848900527e-05
+    ],
+    [
+      -2.4000000848900527e-05,
+      2.4000000848900527e-05
+    ],
+    [
+      -7.999999979801942e-06,
+      7.999999979801942e-06
+    ]
+  ],
+  "min_spacing_m_xyz": [
+    9.999985195463523e-08,
+    9.999985195463523e-08,
+    1.499998347753717e-08
+  ],
+  "max_spacing_m_xyz": [
+    5.000001692678779e-07,
+    5.000001692678779e-07,
+    2.0000015865662135e-07
+  ],
+  "pml_cells_each_face": 8,
+  "total_periods": 16,
+  "window_periods": 4,
+  "time_steps_total": 21808,
+  "placement": {
+    "au": [
+      [
+        94,
+        194
+      ],
+      [
+        94,
+        194
+      ],
+      [
+        72,
+        74
+      ]
+    ],
+    "tairte4": [
+      [
+        44,
+        244
+      ],
+      [
+        44,
+        244
+      ],
+      [
+        67,
+        72
+      ]
+    ],
+    "sio2": [
+      [
+        8,
+        280
+      ],
+      [
+        8,
+        280
+      ],
+      [
+        48,
+        67
+      ]
+    ],
+    "adjoint": [
+      [
+        8,
+        280
+      ],
+      [
+        8,
+        280
+      ],
+      [
+        48,
+        74
+      ]
+    ]
+  },
+  "adjoint_complex_profile_shape": [
+    3,
+    272,
+    272,
+    26
+  ],
+  "adjoint_complex_profile_bytes": 46166016,
+  "weight_sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+  "reference_sha256": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+  "scenario": "thermally_grown"
+}

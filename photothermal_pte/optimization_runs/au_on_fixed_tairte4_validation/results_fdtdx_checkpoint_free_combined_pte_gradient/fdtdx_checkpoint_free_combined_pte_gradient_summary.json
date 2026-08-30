@@ -1,0 +1,146 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_COMBINED_PTE_GRADIENT_EQUIVALENCE",
+  "scope": "offline assembly of the validated production checkpoint-free Maxwell-source gradient with frozen independently validated thermal/contact and electrical/weighting direct gradients; no new solve or optimization",
+  "scenario": "thermally_grown",
+  "method": {
+    "gradient_equation": "g_total = g_Maxwell,no-checkpoint + g_thermal + g_electrical",
+    "forward_solves_per_optical_gradient": 1,
+    "adjoint_solves_per_optical_gradient": 1,
+    "checkpoint_count": 0,
+    "time_history_saved": false,
+    "empirical_gradient_rescaling": false
+  },
+  "gradient_decomposition": {
+    "optical_norm_A": 6.3349918762177205e-18,
+    "thermal_direct_norm_A": 4.1494230043113627e-19,
+    "electrical_direct_norm_A": 1.5146147416252981e-18,
+    "combined_norm_A": 6.459939521318368e-18
+  },
+  "optical_equivalence": {
+    "candidate_norm_A": 6.3349918762177205e-18,
+    "reference_norm_A": 6.328594206499118e-18,
+    "normalized_vector_error": 0.0015691886255471041,
+    "norm_relative_error": 0.0010109148271874673,
+    "angle_deg": 0.06872985611018283
+  },
+  "combined_equivalence": {
+    "candidate_norm_A": 6.459939521318368e-18,
+    "reference_norm_A": 6.4530350582044696e-18,
+    "normalized_vector_error": 0.001538928264757462,
+    "norm_relative_error": 0.0010699559279660088,
+    "angle_deg": 0.06334195367166112
+  },
+  "baseline_objective_relative_error": 1.4455450493095745e-05,
+  "directions": [
+    {
+      "direction": "combined_adjoint_aligned",
+      "h": 0.01,
+      "AD_optical_A": 6.157391810222613e-18,
+      "AD_thermal_A": -3.0921739923602804e-19,
+      "AD_electrical_A": 6.117611627052803e-19,
+      "AD_total_A": 6.4599355736918646e-18,
+      "frozen_FD_total_A": 6.452153139304581e-18,
+      "direction_strength_vs_gradient_norm": 0.9987946664224809,
+      "strong": true,
+      "strong_relative_error": 0.0012061763289336269,
+      "gradient_l2_normalized_error": 0.0012047224841039545
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.01,
+      "AD_optical_A": -1.0740089290330654e-18,
+      "AD_thermal_A": 3.2105652330573435e-20,
+      "AD_electrical_A": -8.177561074968465e-20,
+      "AD_total_A": -1.1236788874521765e-18,
+      "frozen_FD_total_A": -1.1238247520339577e-18,
+      "direction_strength_vs_gradient_norm": 0.17396830857707526,
+      "strong": true,
+      "strong_relative_error": 0.000129792996209776,
+      "gradient_l2_normalized_error": 2.2579868015765468e-05
+    },
+    {
+      "direction": "central_localized",
+      "h": 0.01,
+      "AD_optical_A": 5.585886343400555e-19,
+      "AD_thermal_A": -2.429265585658137e-20,
+      "AD_electrical_A": 2.318328546451704e-20,
+      "AD_total_A": 5.574792639479912e-19,
+      "frozen_FD_total_A": 5.560443394112679e-19,
+      "direction_strength_vs_gradient_norm": 0.08607578098467839,
+      "strong": true,
+      "strong_relative_error": 0.0025805937315043883,
+      "gradient_l2_normalized_error": 0.00022212662084340566
+    },
+    {
+      "direction": "design_edge_localized",
+      "h": 0.01,
+      "AD_optical_A": -1.9172153433574745e-20,
+      "AD_thermal_A": -4.381130244767007e-20,
+      "AD_electrical_A": 5.744616196241311e-20,
+      "AD_total_A": -5.5372939188317066e-21,
+      "frozen_FD_total_A": -5.344112513595774e-21,
+      "direction_strength_vs_gradient_norm": 0.0008272697439286751,
+      "strong": false,
+      "strong_relative_error": 0.036148453975185985,
+      "gradient_l2_normalized_error": 2.990452226346961e-05
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.01,
+      "AD_optical_A": 6.237501957698627e-19,
+      "AD_thermal_A": -1.435868891413189e-20,
+      "AD_electrical_A": 1.6948152760353727e-19,
+      "AD_total_A": 7.78873034459268e-19,
+      "frozen_FD_total_A": 7.77936678206764e-19,
+      "direction_strength_vs_gradient_norm": 0.12042476181696511,
+      "strong": true,
+      "strong_relative_error": 0.0012036407059022064,
+      "gradient_l2_normalized_error": 0.00014494814532147696
+    }
+  ],
+  "worst_strong_direction_relative_error": 0.0025805937315043883,
+  "worst_all_direction_gradient_l2_normalized_error": 0.0012047224841039545,
+  "runtime": {
+    "forward_compile_seconds": 23.31944604218006,
+    "forward_execution_seconds": 107.22613240778446,
+    "adjoint_compile_seconds": 24.23093033954501,
+    "adjoint_execution_seconds": 105.0685628131032,
+    "two_solve_execution_seconds": 212.29469522088766,
+    "two_solve_compile_plus_execution_seconds": 259.84507160261273,
+    "frozen_checkpointed_execution_seconds": 2920.0205346643925,
+    "execution_speedup_vs_checkpointed": 13.754561938658803
+  },
+  "known_material_scope": {
+    "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_10um_substrate_material/10um_substrate_material_readback.json",
+    "status": "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK",
+    "source_class": "explicit offline diagnostic; Palik readback remains blocked",
+    "Palik_Si_readback_validated": false
+  },
+  "gates": {
+    "all_input_statuses_and_SHA256_verified": true,
+    "baseline_density_exactly_identical": true,
+    "direct_thermal_gradient_exactly_preserved": true,
+    "direct_electrical_gradient_exactly_preserved": true,
+    "checkpoint_free_optical_vector_error_lt_1pct": true,
+    "combined_vector_error_lt_1pct": true,
+    "combined_norm_error_lt_1pct": true,
+    "combined_angle_lt_1deg": true,
+    "strong_direction_error_lt_1pct": true,
+    "all_direction_normalized_error_lt_1pct": true,
+    "checkpoint_count_zero": true,
+    "time_history_saved_false": true,
+    "no_empirical_gradient_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_checkpoint_free_combined_pte_gradient/fdtdx_checkpoint_free_combined_pte_gradient_raw.npz",
+    "bytes": 18187,
+    "sha256": "26f91afa347dc090267626268cdd8daf5f2cc72af936fb39aaf6e2e0062414fb",
+    "committed_to_git": false
+  },
+  "outputs": {
+    "cases_csv": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_combined_pte_gradient/fdtdx_checkpoint_free_combined_pte_gradient_cases.csv",
+    "figure": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_combined_pte_gradient/fdtdx_checkpoint_free_combined_pte_gradient.png",
+    "manifest": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_combined_pte_gradient/RAW_ARTIFACT_MANIFEST.json"
+  },
+  "next_gate": "replace the checkpointed Maxwell VJP inside the already validated latent/filter/projection chain, then run a short production optimizer smoke; the substrate material provenance remains explicitly blocked"
+}

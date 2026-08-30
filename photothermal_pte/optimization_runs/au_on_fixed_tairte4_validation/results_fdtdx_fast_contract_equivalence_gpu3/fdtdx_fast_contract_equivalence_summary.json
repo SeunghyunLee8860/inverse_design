@@ -1,0 +1,49 @@
+{
+  "status": "VALIDATED_FDTDX_DIAGNOSTIC_16PERIOD4WINDOW_OBJECTIVE_DIRECTIONAL_GRADIENT_EQUIVALENCE",
+  "scope": "32-period versus 16-period/4-window substrate-bearing total-Q objective, gradient norm, and one identical smooth direction; no full-vector angle, spatial PTE adjoint, thermal/electrical coupling, or optimization",
+  "reference": {
+    "json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_smoke_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+    "periods": 32,
+    "window_periods": 4,
+    "P_Q_W": 2.4779738316799997e-13,
+    "gradient_l2_W": 1.6418346726331387e-14,
+    "directional_AD_W": 8.936886345917136e-16,
+    "ad_seconds": 5773.955443710089
+  },
+  "candidate": {
+    "json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_16period_4window_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+    "periods": 16,
+    "window_periods": 4,
+    "P_Q_W": 2.4779613798399997e-13,
+    "gradient_l2_W": 1.6418808063355705e-14,
+    "directional_AD_W": 8.936808578296561e-16,
+    "directional_FD_W": 8.937471999991327e-16,
+    "ad_seconds": 2919.0088265016675,
+    "central_fd_seconds": 216.11384278535843
+  },
+  "metrics": {
+    "P_Q_relative_difference": 5.025008674743581e-06,
+    "gradient_l2_relative_difference": 2.809808254884607e-05,
+    "same_direction_AD_relative_difference": 8.701869707714817e-06,
+    "candidate_AD_FD_relative_error": 7.422923336341636e-05,
+    "candidate_Q_flux_closure_relative": 0.0012310916210873466,
+    "candidate_late_window_relative_change": 0.0001981850794796282,
+    "substrate_only_Q_flux_closure_relative": 0.004757758618114774,
+    "AD_runtime_speedup_reference_over_candidate": 1.9780534376218304
+  },
+  "gradient_angle": {
+    "available": false,
+    "reason": "the immutable 32-period checkpoint stored gradient L2 and directional contractions but not the 20x20 gradient vector",
+    "consequence": "this diagnostic does not certify full-vector angle or authorize combined PTE optimization"
+  },
+  "gates": {
+    "P_Q_difference_lt_0p5pct": true,
+    "gradient_l2_difference_lt_0p5pct": true,
+    "same_direction_AD_difference_lt_0p5pct": true,
+    "candidate_AD_FD_error_lt_1pct": true,
+    "candidate_Q_flux_closure_lt_0p5pct": true,
+    "candidate_window_change_lt_0p5pct": true,
+    "substrate_only_Q_flux_closure_lt_0p5pct": true,
+    "no_clipping_smoothing_gain_or_gradient_rescaling": true
+  }
+}

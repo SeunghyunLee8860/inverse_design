@@ -1,0 +1,387 @@
+{
+  "status": "READY_PERIODIC_T_Z_SIX_POLARIZATION_OPTICAL_SCREEN",
+  "scope": "periodic optical R/T/A first; selected volumetric Q only after closure; no thermal/weighting/PTE",
+  "wavelength_range_um": [
+    4.0,
+    12.0
+  ],
+  "axis_mapping": {
+    "x": "b",
+    "y": "a",
+    "z": "c=b closure"
+  },
+  "polarizations": {
+    "x_b": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "y_a": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "linear_plus_45": [
+      0.7071067811865476,
+      0.7071067811865476,
+      0.0
+    ],
+    "linear_minus_45": [
+      0.7071067811865476,
+      -0.7071067811865476,
+      0.0
+    ],
+    "CP_plus": [
+      0.7071067811865476,
+      0.7071067811865476,
+      90.0
+    ],
+    "CP_minus": [
+      0.7071067811865476,
+      0.7071067811865476,
+      -90.0
+    ]
+  },
+  "T_geometry": {
+    "key": "T2024_MIR_4750_FIGURE_DIGITIZED_TAIRTE4",
+    "wavelength_nm": 4750.0,
+    "period_x_nm": 1500.0,
+    "period_y_nm": 1000.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "inverse_T_effective_Au",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -600.0,
+            -350.0
+          ],
+          [
+            600.0,
+            -350.0
+          ],
+          [
+            600.0,
+            -250.0
+          ],
+          [
+            100.0,
+            -250.0
+          ],
+          [
+            100.0,
+            350.0
+          ],
+          [
+            -100.0,
+            350.0
+          ],
+          [
+            -100.0,
+            -250.0
+          ],
+          [
+            -600.0,
+            -250.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 133.0,
+        "provenance_kind": "figure_digitized_geometry+paper_thickness",
+        "provenance": "2024 Supplementary Fig. 14 axes; 33-nm MIR resonator thickness stated in Supplementary Note 7 scenario"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 133.0,
+        "z_max_nm": null,
+        "provenance_kind": "paper"
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0,
+        "provenance_kind": "project_active_material_substitution"
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -35.0,
+        "z_max_nm": 0.0,
+        "provenance_kind": "paper_fabricated_value"
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -235.0,
+        "z_max_nm": -35.0,
+        "provenance_kind": "200nm_numerical_opaque_closure"
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave from +z"
+    },
+    "unresolved": [
+      "arm numbers are digitized from Fig. S14, not published CAD",
+      "Ti adhesion layer omitted from first optical smoke",
+      "100-nm TaIrTe4 is a deliberate substitution for monolayer graphene",
+      "the paper MIR control omitted top passivation"
+    ]
+  },
+  "Z_paper_v3_preserved": {
+    "key": "Z2022_M2_5300_LH_FIGURE_PERIOD_CORRECTED_V3",
+    "wavelength_nm": 5300.0,
+    "period_x_nm": 5100.0,
+    "period_y_nm": 2600.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "Z2022_M2_FIGURE_PERIOD_CORRECTED_V3_LH_upper_right",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            0.0,
+            -1000.0
+          ],
+          [
+            1360.0,
+            -1000.0
+          ],
+          [
+            1360.0,
+            1300.0
+          ],
+          [
+            0.0,
+            1300.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+figure_period_corrected_edge_joined_v3",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2: P1 horizontal, P2 vertical, W1/W2 horizontal, L1/L2 vertical; edge-joined y-offset closure digitized from the figure because exact author CAD/relative offset is not disclosed"
+      },
+      {
+        "name": "Z2022_M2_FIGURE_PERIOD_CORRECTED_V3_LH_lower_left",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -1100.0,
+            -1300.0
+          ],
+          [
+            0.0,
+            -1300.0
+          ],
+          [
+            0.0,
+            400.0
+          ],
+          [
+            -1100.0,
+            400.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+figure_period_corrected_edge_joined_v3",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2: P1 horizontal, P2 vertical, W1/W2 horizontal, L1/L2 vertical; edge-joined y-offset closure digitized from the figure because exact author CAD/relative offset is not disclosed"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 150.0,
+        "z_max_nm": null
+      },
+      {
+        "name": "effective_Au_Z",
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -200.0,
+        "z_max_nm": 0.0
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -400.0,
+        "z_max_nm": -200.0
+      },
+      {
+        "name": "optical_SiO2_reduced",
+        "z_min_nm": -685.0,
+        "z_max_nm": -400.0
+      },
+      {
+        "name": "Si",
+        "z_min_nm": null,
+        "z_max_nm": -685.0
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave"
+    },
+    "unresolved": [
+      "exact author CAD and relative two-bar offset are not disclosed",
+      "edge-joined figure-constrained closure is used and explicitly audited",
+      "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+      "5-nm Cr adhesion is omitted from the first effective-Au screen"
+    ]
+  },
+  "Z_centered_expanded_v4": {
+    "key": "Z2022_M2_5300_LH_CENTERED_EXPANDED_SUPERCELL_V4",
+    "wavelength_nm": 5300.0,
+    "period_x_nm": 5100.0,
+    "period_y_nm": 5100.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "Z2022_M2_CENTERED_EXPANDED_V4_LH_upper_right",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -130.0,
+            -1000.0
+          ],
+          [
+            1230.0,
+            -1000.0
+          ],
+          [
+            1230.0,
+            1300.0
+          ],
+          [
+            -130.0,
+            1300.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "project_centered_expanded_supercell_v4",
+        "provenance": "project centered-expanded-supercell scenario derived from the v3 figure-constrained M2 reconstruction; original bar dimensions and relative placement retained; x/y period deliberately set to 5.1 um; not the published M2 lattice and not exact author CAD"
+      },
+      {
+        "name": "Z2022_M2_CENTERED_EXPANDED_V4_LH_lower_left",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -1230.0,
+            -1300.0
+          ],
+          [
+            -130.0,
+            -1300.0
+          ],
+          [
+            -130.0,
+            400.0
+          ],
+          [
+            -1230.0,
+            400.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "project_centered_expanded_supercell_v4",
+        "provenance": "project centered-expanded-supercell scenario derived from the v3 figure-constrained M2 reconstruction; original bar dimensions and relative placement retained; x/y period deliberately set to 5.1 um; not the published M2 lattice and not exact author CAD"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 150.0,
+        "z_max_nm": null
+      },
+      {
+        "name": "effective_Au_Z",
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -200.0,
+        "z_max_nm": 0.0
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -400.0,
+        "z_max_nm": -200.0
+      },
+      {
+        "name": "optical_SiO2_reduced",
+        "z_min_nm": -685.0,
+        "z_max_nm": -400.0
+      },
+      {
+        "name": "Si",
+        "z_min_nm": null,
+        "z_max_nm": -685.0
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave"
+    },
+    "unresolved": [
+      "expanded square lattice is a project optical scenario, not the paper M2 period",
+      "exact author CAD and relative two-bar offset remain undisclosed",
+      "100-nm TaIrTe4 substitutes for the original 2-D material",
+      "5-nm Cr adhesion remains omitted from the effective-Au screen"
+    ]
+  },
+  "Z_bounds": {
+    "paper_v3": {
+      "xmin_nm": -1100.0,
+      "xmax_nm": 1360.0,
+      "ymin_nm": -1300.0,
+      "ymax_nm": 1300.0
+    },
+    "centered_expanded_v4": {
+      "xmin_nm": -1230.0,
+      "xmax_nm": 1230.0,
+      "ymin_nm": -1300.0,
+      "ymax_nm": 1300.0
+    }
+  },
+  "important_interpretation": "CP_plus/minus are explicit Ey-Ex phase offsets, not assigned LCP/RCP labels; the expanded square Z supercell is a project scenario, not the paper M2 lattice"
+}

@@ -1,0 +1,40 @@
+{
+  "status": "VALIDATED_FDTDX_EXPLICIT_THERMAL_INTERFACE_SCENARIO_COMPARISON",
+  "raw_artifacts_committed_to_git": false,
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+      "bytes": 10089714,
+      "sha256": "8889b69aad1cb311dd862343c04d2f9bc515c72d001ffe45e486b58024d0af49",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_evaporated/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+      "bytes": 10178765,
+      "sha256": "e24f70fc91cb836acfa76f3e795cd9ef1744f395f529a1a0461e8de5ef55988f",
+      "committed_to_git": false
+    }
+  ],
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_interface_comparison/fdtdx_explicit_thermal_interface_comparison_summary.json",
+      "bytes": 4146,
+      "sha256": "e9f5303e02fe1f37138a45361b47f6b9b2deb21d6b8ca46ea5e94f10a1dc0be3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_interface_comparison/fdtdx_explicit_thermal_interface_comparison.csv",
+      "bytes": 1266,
+      "sha256": "477e24a45643963377cd7847a21317591d2b3919338ee6bf2d764781bae2456d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_interface_comparison/FDTDX_EXPLICIT_THERMAL_INTERFACE_COMPARISON_REPORT.md",
+      "bytes": 1448,
+      "sha256": "4b3191f8da13b58117b09f833230b4219d79a331cae77a0563c4a0d06868a8a1"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_interface_comparison/fdtdx_explicit_thermal_interface_comparison.png",
+      "bytes": 81784,
+      "sha256": "d4de975667a5f0f8c7d192a4b37f1a91c745ca2263812c8f3966880e2659d9f9"
+    }
+  ]
+}

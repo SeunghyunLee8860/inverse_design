@@ -1,5 +1,5 @@
 {
-  "status": "protocol only; do not enable production optimization until every gate passes",
+  "status": "gradient and fixed-mesh Robin-to-hard blocker gates PASS; initial 0.5 um production optimization completed; refinement gates remain",
   "signed_branches": [-1, 1],
   "scaled_variable_order": ["u0=c0/P", "l0=L0/P", "u1=c1/P", "l1=L1/P"],
   "center_bounds": [null, null],
@@ -7,7 +7,9 @@
   "boundary_quadrature_orders": [3, 5, 7, 9],
   "transition_width_over_boundary_mesh": [2.0, 1.0, 0.5],
   "central_fd_steps_scaled": [0.01, 0.005, 0.001, 0.0005, 0.0001],
-  "contact_conductance_S_m2_sweep": [10000000000.0, 100000000000.0, 1000000000000.0, 10000000000000.0, 100000000000000.0, 1000000000000000.0],
+  "contact_conductance_S_m2_sweep": [10000000000.0, 100000000000.0, 1000000000000.0, 10000000000000.0, 100000000000000.0, 1000000000000000.0, 10000000000000000.0, 30000000000000000.0, 100000000000000000.0, 300000000000000000.0, 1000000000000000000.0],
+  "selected_optimization_contact_conductance_S_m2": 1000000000000.0,
+  "contact_discretization": "nodal_lumped",
   "required_reports": [
     "raw current A",
     "four adjoint derivatives with respect to scaled variables",

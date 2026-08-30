@@ -1,0 +1,141 @@
+{
+  "status": "VALIDATED_FINITE_T_GAUSSIAN_SOURCE",
+  "promoted_case": {
+    "label": "12 um second calibration (promoted)",
+    "target_w0_um": 12.0,
+    "source_object_w0_um": 11.857571384365608,
+    "fitted_wx_um": 11.987549127890244,
+    "fitted_wy_um": 12.01319164567315,
+    "fit_NRMSE": 0.0009077125765338185,
+    "ellipticity": 0.0021368105280442826,
+    "center_displacement_m": 7.381579800787927e-16,
+    "source_power_W": 2.8558620694322075e-13,
+    "target_transmission": -1.0006972149068143,
+    "auto_shutoff": 8.43091e-07,
+    "solver_wall_time_s": 166.94493517279625,
+    "gates": {
+      "GPU_completed": true,
+      "auto_shutoff_lt_1e_5": true,
+      "waist_x_within_0p5pct": true,
+      "waist_y_within_0p5pct": true,
+      "Gaussian_fit_NRMSE_lt_0p5pct": true,
+      "ellipticity_lt_0p5pct": true,
+      "center_displacement_lt_50nm": true,
+      "target_transmission_magnitude_within_0p5pct": true
+    },
+    "pass": true,
+    "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_target_w0_12um_calibrated_source_only"
+  },
+  "all_cases": [
+    {
+      "label": "uncalibrated target 4.0 um",
+      "target_w0_um": 4.0,
+      "source_object_w0_um": 4.0,
+      "fitted_wx_um": 4.90663389280781,
+      "fitted_wy_um": 5.100882553139391,
+      "fit_NRMSE": 0.020502984246920992,
+      "ellipticity": 0.0388205528076341,
+      "center_displacement_m": 9.988995729056047e-16,
+      "source_power_W": 2.6199775340937546e-14,
+      "incident_power_W": 2.7751733827046275e-14,
+      "incident_power_relative_error": 0.0592355646532499,
+      "gates": {
+        "waist_x_within_0p5pct": false,
+        "waist_y_within_0p5pct": false,
+        "Gaussian_fit_NRMSE_lt_0p5pct": false,
+        "ellipticity_lt_0p5pct": false,
+        "center_displacement_lt_50nm": true,
+        "incident_power_vs_sourcepower_lt_0p5pct": false
+      },
+      "pass": false,
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_w0_4um_source_only"
+    },
+    {
+      "label": "uncalibrated target 8.5 um",
+      "target_w0_um": 8.5,
+      "source_object_w0_um": 8.5,
+      "fitted_wx_um": 8.612287497768085,
+      "fitted_wy_um": 8.684753471321164,
+      "fit_NRMSE": 0.0015689681790110573,
+      "ellipticity": 0.008379002360297247,
+      "center_displacement_m": 1.4583887093356854e-16,
+      "source_power_W": 1.4327210721788844e-13,
+      "incident_power_W": 1.4391518759696017e-13,
+      "incident_power_relative_error": 0.004488524609285851,
+      "gates": {
+        "waist_x_within_0p5pct": false,
+        "waist_y_within_0p5pct": false,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "ellipticity_lt_0p5pct": false,
+        "center_displacement_lt_50nm": true,
+        "incident_power_vs_sourcepower_lt_0p5pct": true
+      },
+      "pass": false,
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_w0_8p5um_source_only"
+    },
+    {
+      "label": "12 um first calibration",
+      "target_w0_um": 12.0,
+      "source_object_w0_um": 11.916864889699998,
+      "fitted_wx_um": 12.047407526023004,
+      "fitted_wy_um": 12.072617080648865,
+      "fit_NRMSE": 0.0009614349658645536,
+      "ellipticity": 0.002090342363820525,
+      "center_displacement_m": 3.8685290971823563e-16,
+      "source_power_W": 2.8851861224960977e-13,
+      "target_transmission": -1.0006802195509965,
+      "auto_shutoff": 9.05041e-07,
+      "solver_wall_time_s": 167.89356069266796,
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "waist_x_within_0p5pct": true,
+        "waist_y_within_0p5pct": false,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "ellipticity_lt_0p5pct": true,
+        "center_displacement_lt_50nm": true,
+        "target_transmission_magnitude_within_0p5pct": true
+      },
+      "pass": false,
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_target_w0_12um_source_only"
+    },
+    {
+      "label": "12 um second calibration (promoted)",
+      "target_w0_um": 12.0,
+      "source_object_w0_um": 11.857571384365608,
+      "fitted_wx_um": 11.987549127890244,
+      "fitted_wy_um": 12.01319164567315,
+      "fit_NRMSE": 0.0009077125765338185,
+      "ellipticity": 0.0021368105280442826,
+      "center_displacement_m": 7.381579800787927e-16,
+      "source_power_W": 2.8558620694322075e-13,
+      "target_transmission": -1.0006972149068143,
+      "auto_shutoff": 8.43091e-07,
+      "solver_wall_time_s": 166.94493517279625,
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "waist_x_within_0p5pct": true,
+        "waist_y_within_0p5pct": true,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "ellipticity_lt_0p5pct": true,
+        "center_displacement_lt_50nm": true,
+        "target_transmission_magnitude_within_0p5pct": true
+      },
+      "pass": true,
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_target_w0_12um_calibrated_source_only"
+    }
+  ],
+  "field_comparator": {
+    "primary": "downward transverse incident field from E/H decomposition",
+    "Ex_down": "(Ex-eta0*Hy)/2",
+    "Ey_down": "(Ey+eta0*Hx)/2",
+    "total_E2_including_Ez_primary": false
+  },
+  "source_object_calibration": {
+    "classification": "numerical source-object calibration",
+    "incident_power_or_Q_rescaling": false,
+    "clipping_smoothing_gain": false
+  },
+  "full_finite_array_Q_executed": false
+}

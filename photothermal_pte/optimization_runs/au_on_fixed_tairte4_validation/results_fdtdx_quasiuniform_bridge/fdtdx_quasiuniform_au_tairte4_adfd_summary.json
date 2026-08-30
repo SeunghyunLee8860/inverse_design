@@ -1,0 +1,286 @@
+{
+  "status": "FAILED_FDTDX_QUASIUNIFORM_AU_TAIRTE4_ADFD_BRIDGE",
+  "scope": "compact 3-D physical-thickness bridge on a quasi-uniform FDTDX grid; not the production w0=8.5 um beam, thermal/PTE model, electrode model, or optimization",
+  "software": {
+    "fdtdx_source_path": "/home/seunghyun/.local/fdtdx_main_src",
+    "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+    "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+    "fdtdx_version": "unknown",
+    "jax_version": "0.11.1",
+    "jax_devices": [
+      "cuda:0"
+    ],
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "platform": "Linux-5.4.0-204-generic-x86_64-with-glibc2.31",
+    "cuda_visible_devices": "5"
+  },
+  "grid": {
+    "type": "RectilinearGrid",
+    "nonuniform": true,
+    "cell_size_m_xyz": [
+      1e-07,
+      1e-07,
+      2.5e-08
+    ],
+    "domain_cells_xyz": [
+      40,
+      40,
+      160
+    ],
+    "domain_span_m_xyz": [
+      4e-06,
+      4e-06,
+      4e-06
+    ],
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      32
+    ],
+    "pml_physical_thickness_m_xyz": [
+      8e-07,
+      8e-07,
+      8e-07
+    ],
+    "realized_au_cells_xyz": [
+      10,
+      10,
+      2
+    ],
+    "realized_au_thickness_m": 5.000015335099306e-08,
+    "realized_tairte4_cells_xyz": [
+      14,
+      14,
+      4
+    ],
+    "realized_tairte4_thickness_m": 9.999985195463523e-08,
+    "au_slice": [
+      [
+        15,
+        25
+      ],
+      [
+        15,
+        25
+      ],
+      [
+        82,
+        84
+      ]
+    ],
+    "tairte4_slice": [
+      [
+        13,
+        27
+      ],
+      [
+        13,
+        27
+      ],
+      [
+        78,
+        82
+      ]
+    ],
+    "placement_audit": {
+      "source_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          119,
+          120
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          29
+        ],
+        [
+          70,
+          92
+        ]
+      ],
+      "net_down_detector_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          103,
+          104
+        ]
+      ]
+    }
+  },
+  "source": {
+    "kind": "FDTDX compact GaussianPlaneSource diagnostic",
+    "wavelength_m": 1e-05,
+    "polarization": "x=b",
+    "direction": "-z",
+    "source_cells_xy": [
+      20,
+      20
+    ],
+    "source_radius_m": 1e-06,
+    "source_std_relative_to_radius": 0.42,
+    "derived_intensity_1_over_e2_radius_m": 5.939696961966999e-07,
+    "production_w0_8p5um": false,
+    "normalization": "FDTDX internal source-energy normalization; no gain or result rescaling"
+  },
+  "materials": {
+    "au_epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "tairte4_epsilon": {
+      "a": [
+        -39.87819057091918,
+        187.50005695474056
+      ],
+      "b": [
+        13.778527727027518,
+        23.688463190816908
+      ],
+      "c": [
+        13.778527727027518,
+        23.688463190816908
+      ]
+    },
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "causal_fits": {
+      "au": {
+        "kind": "Drude",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 0.0,
+        "gamma_rad_s": 67936407753524.11,
+        "coupling_sq_rad2_s2": 1.861782154196563e+32,
+        "omega_p_rad_s": 1.3644713826960838e+16,
+        "delta_epsilon": 0.0,
+        "fit_relative_error": 9.214645259652163e-17
+      },
+      "a": {
+        "kind": "Drude",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 0.0,
+        "gamma_rad_s": 863994654348449.5,
+        "coupling_sq_rad2_s2": 3.1965285551128327e+31,
+        "omega_p_rad_s": 5653785064107790.0,
+        "delta_epsilon": 0.0,
+        "fit_relative_error": 1.528292316000179e-16
+      },
+      "b": {
+        "kind": "Lorentz",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 376730313461770.6,
+        "gamma_rad_s": 1047561741902542.4,
+        "coupling_sq_rad2_s2": 6.034491586899156e+30,
+        "omega_p_rad_s": 0.0,
+        "delta_epsilon": 42.518658357252306,
+        "fit_relative_error": 3.2410282569849e-16
+      },
+      "c": {
+        "kind": "Lorentz",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 376730313461770.6,
+        "gamma_rad_s": 1047561741902542.4,
+        "coupling_sq_rad2_s2": 6.034491586899156e+30,
+        "omega_p_rad_s": 0.0,
+        "delta_epsilon": 42.518658357252306,
+        "fit_relative_error": 3.2410282569849e-16
+      }
+    },
+    "gray_law": "Au passive Drude oscillator strength rho^3 on a fixed physical support; numerical topology relaxation, not a physical gray alloy"
+  },
+  "numerics": {
+    "total_periods": 8,
+    "phasor_periods_per_window": 2,
+    "time_steps_total": 6788,
+    "period_steps": 849,
+    "time_step_s": 2.4072915019330884e-17,
+    "courant_factor": 0.5,
+    "checkpoint_count": 4,
+    "gradient_method": "checkpointed JAX reverse-mode AD through full dispersive FDTD",
+    "dtype": "float32/complex64"
+  },
+  "results": {
+    "powers_W": {
+      "au": 2.5978484375e-19,
+      "tairte4": 7.755198124999999e-19,
+      "total": 1.0353046249999999e-18
+    },
+    "component_powers_W": {
+      "au_xyz": [
+        2.409588125e-19,
+        1.8454986328125e-20,
+        3.7105148315429687e-22
+      ],
+      "tairte4_xyz": [
+        3.1512921875e-19,
+        4.1542537499999996e-19,
+        4.496519140625e-20
+      ]
+    },
+    "previous_window_powers_W": {
+      "au": 2.6394296874999997e-19,
+      "tairte4": 7.814083124999999e-19,
+      "total": 1.04535125e-18
+    },
+    "window_relative_change": {
+      "au": 0.016006033839300816,
+      "tairte4": 0.007592971714052803,
+      "total": 0.009704027932841607
+    },
+    "closed_surface_inward_raw_power_W": 8.208367199999999e-17,
+    "closed_surface_inward_empty_air_power_W": -1.741711497791655e-17,
+    "closed_surface_inward_material_minus_empty_power_W": 9.950078697791654e-17,
+    "closed_surface_raw_closure_relative_error": 0.9873872038156383,
+    "closed_surface_background_subtracted_closure_relative_error": 0.9895950106884102,
+    "net_downward_power_above_structure_W": 4.751384639999999e-16,
+    "net_downward_empty_air_power_W": 4.880986065696727e-16,
+    "gradient_l2_W_per_rho": {
+      "au": 2.061876423154246e-19,
+      "tairte4": 1.6148780183408455e-19,
+      "total": 3.010275720027442e-19
+    },
+    "gradient_sum_relative_error": 2.012485590558485e-05,
+    "max_total_strong_relative_error_finest_step": 0.005915308984317337,
+    "max_total_gradient_l2_normalized_error_finest_step": 0.0012296231113682302,
+    "compile_seconds": 8.84943251311779,
+    "ad_execution_seconds": 478.0593691840768,
+    "fd_sweep_seconds": 59.572075590491295
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "physical_50nm_Au_and_100nm_TaIrTe4": true,
+    "observable_window_changes_lt_0p5pct": false,
+    "closed_surface_closure_lt_1pct": false,
+    "closed_surface_background_subtracted_closure_lt_1pct": false,
+    "gradient_component_sum_error_lt_1e-6": false,
+    "total_finest_strong_direction_error_lt_1pct": true,
+    "total_finest_multidirection_gradient_normalized_error_lt_1pct": true
+  },
+  "files": {
+    "directions_csv": "fdtdx_quasiuniform_au_tairte4_adfd_directions.csv",
+    "plot": "fdtdx_quasiuniform_au_tairte4_adfd.png"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "status": "VALIDATED_FDTDX_EXPLICIT_THERMAL_INTERFACE_SCENARIO_COMPARISON",
+  "scope": "same literal FDTDX spatial Maxwell Q, geometry, explicit 3-D thermal operator and Au-aware weighting/PTE forward; only named TaIrTe4/SiO2 interface scenario differs",
+  "common_contract": {
+    "spatial_Q_input_identical": true,
+    "source_power_bitwise_equal": true,
+    "geometry_equal": true,
+    "non_interface_parameters_equal": true
+  },
+  "source_P_Q_W": 2.4779539329878437e-13,
+  "scenarios": {
+    "thermally_grown": {
+      "G_TaIrTe4_SiO2_W_m2K": 7370000.0,
+      "metrics": {
+        "P_Q_W": 2.4779539329878437e-13,
+        "Tmax_rise_K": 5.577354020816086e-10,
+        "Au_Tmax_K": 4.74601182303446e-10,
+        "Au_Tavg_K": 4.2486551938822136e-10,
+        "TaIrTe4_Tmax_K": 5.577354020816086e-10,
+        "TaIrTe4_Tavg_K": 2.3839892700511413e-10,
+        "SiO2_Tmax_K": 2.8130960675241266e-10,
+        "SiO2_Tavg_K": 1.2468513248119259e-11,
+        "Si_Tmax_K": 4.534153128753067e-11,
+        "Si_Tavg_K": 2.9836204562591687e-12,
+        "PTE_current_A": 2.6848754389160125e-18,
+        "thermal_residual": 8.261206845622885e-10,
+        "thermal_energy_balance": 1.2430896225112153e-11,
+        "thermal_GPU_solve_seconds": 6.105743583291769,
+        "electrical_residual": 7.802671884424135e-12,
+        "electrical_terminal_balance": 2.12207014007118e-12
+      },
+      "summary_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_summary.json",
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+        "bytes": 10089714,
+        "sha256": "8889b69aad1cb311dd862343c04d2f9bc515c72d001ffe45e486b58024d0af49",
+        "committed_to_git": false
+      }
+    },
+    "evaporated": {
+      "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+      "metrics": {
+        "P_Q_W": 2.4779539329878437e-13,
+        "Tmax_rise_K": 9.156692620445046e-09,
+        "Au_Tmax_K": 8.869200471722072e-09,
+        "Au_Tavg_K": 8.76969564908583e-09,
+        "TaIrTe4_Tmax_K": 9.156692620445046e-09,
+        "TaIrTe4_Tavg_K": 6.686495170435489e-09,
+        "SiO2_Tmax_K": 1.854265111144229e-10,
+        "SiO2_Tavg_K": 1.2432943519477802e-11,
+        "Si_Tmax_K": 4.036855457345167e-11,
+        "Si_Tavg_K": 2.9615275536619552e-12,
+        "PTE_current_A": 3.371736983314957e-17,
+        "thermal_residual": 5.38150629448529e-10,
+        "thermal_energy_balance": 1.9963352683553053e-11,
+        "thermal_GPU_solve_seconds": 6.533078230917454,
+        "electrical_residual": 7.802671884424135e-12,
+        "electrical_terminal_balance": 2.12207014007118e-12
+      },
+      "summary_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_weighting_pte_evaporated/fdtdx_explicit_thermal_weighting_pte_summary.json",
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_evaporated/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+        "bytes": 10178765,
+        "sha256": "e24f70fc91cb836acfa76f3e795cd9ef1744f395f529a1a0461e8de5ef55988f",
+        "committed_to_git": false
+      }
+    }
+  },
+  "evaporated_over_thermally_grown": {
+    "Tmax_rise": 16.417628478073958,
+    "Au_volume_average_temperature": 20.641109360236197,
+    "TaIrTe4_volume_average_temperature": 28.04750530732066,
+    "PTE_current": 12.558262236091881
+  },
+  "provenance_and_limits": {
+    "literal_FDTDX_normalization_not_experimental_prediction": true,
+    "Au_TaIrTe4_thermal_G_is_unmeasured_analogue_scenario": true,
+    "Au_TaIrTe4_electrical_contact_is_unmeasured_numerical_scenario": true,
+    "lossless_Si_is_diagnostic_not_Lumerical_Palik_readback": true,
+    "forward_only_no_combined_gradient_ADFD_or_optimization": true
+  },
+  "next_gate": "combined Maxwell spatial-Q + explicit thermal + Au-aware electrical directional AD-FD"
+}

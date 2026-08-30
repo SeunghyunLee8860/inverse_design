@@ -1,0 +1,40 @@
+{
+  "status": "VALIDATED_PAPER_ARCHITECTURE_CONTRACT_OFFLINE",
+  "raw_FSP_or_NPZ_committed": false,
+  "inputs": {
+    "/home/seunghyun/tairte4/papers/41467_2024_51599_MOESM1_ESM.pdf": {
+      "bytes": 4283237,
+      "sha256": "72c2c1264c8d53e4fc22b356fbfd1cf99c229a5b7cabd3f8069f516d156cc2fb"
+    },
+    "/home/seunghyun/tairte4/papers/41467_2022_32309_MOESM1_ESM.pdf": {
+      "bytes": 2417257,
+      "sha256": "927d41f1d6f62916ba15cdf0eb0ec9a37edf457e0cb7b8133365d1d0f13b342b"
+    }
+  },
+  "artifacts": {
+    "PAPER_ARCHITECTURE_CONTRACT_REPORT.md": {
+      "bytes": 1801,
+      "sha256": "3b5b58de32c7cd5961c6f57a3e1bd9c51216a424e79876e47712bdf82d27614c"
+    },
+    "optical_backplane_attenuation.csv": {
+      "bytes": 508,
+      "sha256": "cb393bc33c0f11cef89e3f97086374a5f795a5d73a24feee5c45d6ad53730273"
+    },
+    "paper_architecture_contract.json": {
+      "bytes": 17068,
+      "sha256": "af7cdced6b0c9d7c8674ef615beea4e08dec6e8aa9d5d42bc945825b6cbc3c2d"
+    },
+    "paper_architecture_geometry.png": {
+      "bytes": 269824,
+      "sha256": "6a9a8a0c089d8ccb27be2f67654381ad22e91e0f6148577f825d06d1f3d78580"
+    },
+    "paper_architecture_layers.csv": {
+      "bytes": 2703,
+      "sha256": "e44ec722cc8a91695eb87be62546f28386900a6d899c0ad6d5823228bb44bcbe"
+    },
+    "z_metamaterial_published_dimensions.csv": {
+      "bytes": 369,
+      "sha256": "4b8318c7c732baa4a0a3116ed5a8b87ec3e1c58ac24ec8962a5b0fc75282eb52"
+    }
+  }
+}

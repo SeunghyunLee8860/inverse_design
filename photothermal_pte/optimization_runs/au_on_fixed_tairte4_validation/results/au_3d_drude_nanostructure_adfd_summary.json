@@ -1,0 +1,105 @@
+{
+  "status": "VALIDATED_3D_CAUSAL_DRUDE_AU_ADFD_CONTROL",
+  "scope": "small 3-D algorithmic Au nanostructure control; not production TaIrTe4 device",
+  "physical_contract": {
+    "wavelength_m": 1e-05,
+    "au_n": 12.1,
+    "au_k": 69.2,
+    "epsilon_target": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "epsilon_infinity": 1.0,
+    "omega_p_rad_s": 1.3644725516892122e+16,
+    "gamma_rad_s": 67936291346284.76,
+    "endpoint_fit_relative_error": 0.0,
+    "density_law": "Drude pole strength s(rho)=rho^3; numerical causal relaxation, not effective-medium claim",
+    "geometry": "2-D rho extruded through a fixed two-cell Au thickness on a fixed Yee grid",
+    "objective": "Au-only absorbed power from late-window E phasor and Im(epsilon_Au)*rho^3"
+  },
+  "numerics": {
+    "resolution_m": 1e-07,
+    "domain_cells_xyz": [
+      40,
+      40,
+      40
+    ],
+    "domain_span_m_xyz": [
+      4e-06,
+      4e-06,
+      4e-06
+    ],
+    "pml_cells_each_face": 8,
+    "design_cells_xyz": [
+      10,
+      10,
+      2
+    ],
+    "design_slice": [
+      [
+        15,
+        25
+      ],
+      [
+        15,
+        25
+      ],
+      [
+        19,
+        21
+      ]
+    ],
+    "source_z_index": 29,
+    "source_span_cells_xy": 22,
+    "total_periods": 18,
+    "period_steps": 693,
+    "time_steps_total": 12471,
+    "phasor_periods_per_window": 4,
+    "checkpoint_count": 8,
+    "courant_factor": 0.25,
+    "omega_p_dt": 0.6569366356604794,
+    "dtype": "float32/complex64",
+    "gradient_method": "checkpointed reverse-mode AD",
+    "jax_devices": [
+      "cuda:0"
+    ]
+  },
+  "results": {
+    "au_absorbed_power_W": 1.7469953749999998e-18,
+    "previous_window_power_W": 1.7469902499999998e-18,
+    "late_window_power_W": 1.7469953749999998e-18,
+    "observable_window_relative_change": 2.9336082243491914e-06,
+    "gradient_l2_W_per_rho": 2.8429819444113426e-18,
+    "gradient_finite": true,
+    "max_strong_relative_error_all_steps": 0.0001404697941437038,
+    "max_symmetric_normalized_error_all_steps": 0.01530422649583829,
+    "max_strong_relative_error_finest_step": 0.0001404697941437038,
+    "max_symmetric_normalized_error_finest_step": 0.01530422649583829,
+    "max_gradient_l2_normalized_error_finest_step": 2.7362879370270103e-05,
+    "near_null_directions_finest_step": [
+      "central_localized"
+    ],
+    "compile_seconds": 5.325817961245775,
+    "ad_execution_seconds": 35.31860772892833,
+    "fd_sweep_seconds": 77.32290293648839
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "late_vs_previous_phasor_power_change_lt_0p5pct": true,
+    "finest_strong_direction_error_lt_1pct": true,
+    "finest_multi_direction_gradient_normalized_error_lt_1pct": true,
+    "note": "observable settling is reported but is not used to hide or rescale AD-FD error"
+  },
+  "software": {
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "platform": "Linux-5.4.0-204-generic-x86_64-with-glibc2.31",
+    "fdtdx_version": "unknown",
+    "jax_version": "0.11.1",
+    "cuda_visible_devices": "4"
+  },
+  "files": {
+    "directions_csv": "au_3d_drude_nanostructure_adfd_directions.csv",
+    "plot": "au_3d_drude_nanostructure_adfd.png"
+  }
+}

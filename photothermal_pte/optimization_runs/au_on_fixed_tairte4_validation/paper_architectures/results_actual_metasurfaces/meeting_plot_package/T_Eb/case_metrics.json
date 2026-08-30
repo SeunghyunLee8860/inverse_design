@@ -1,0 +1,31 @@
+{
+  "case": "T_Eb",
+  "raw_result": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.json",
+  "polarization": "x_b",
+  "top_Au_T_present": true,
+  "P_Q_periodic_W": 4.2364297860257765e-16,
+  "P_flux_absorbed_W": 4.24260310175034e-16,
+  "P_Q_native_W": 4.230314572900735e-16,
+  "Q_component_power_native_W": {
+    "x": 2.8697240974415305e-16,
+    "y": 7.818428343192898e-17,
+    "z": 5.787476411399149e-17
+  },
+  "material_power_native_W": {
+    "TaIrTe4_geometric": 3.7101527502496274e-16,
+    "top_Au_T_geometric": 1.310595950561865e-17,
+    "Au_backplane_geometric": 7.804214062749985e-18,
+    "unassigned_interface_or_other": 3.1106008696742144e-17
+  },
+  "common_grid": {
+    "power_W": 4.230314572900735e-16,
+    "relative_power_error": 0.0,
+    "coordinate_checks": {
+      "Qz_x_equals_common_x": true,
+      "Qz_y_equals_common_y": true,
+      "Qy_z_equals_common_z": true
+    }
+  },
+  "closure_relative": 0.0014550773608817168,
+  "auto_shutoff": 5.66851e-07
+}

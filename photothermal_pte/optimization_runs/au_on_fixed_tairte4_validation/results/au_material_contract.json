@@ -1,0 +1,66 @@
+{
+  "status": "OFFLINE_AU_MATERIAL_CONTRACT_READY_FDTD_READBACK_PENDING",
+  "scope": "offline material and differentiable density-path audit; no FDTD, thermal, electrical, adjoint, or optimization solve",
+  "wavelength_m": 1e-05,
+  "gold_optical_endpoint": {
+    "n_plus_ik": {
+      "real": 12.1,
+      "imag": 69.2
+    },
+    "epsilon_r": {
+      "real": -4642.2300000000005,
+      "imag": 1674.64
+    },
+    "source": "Ordal et al., Applied Optics 26, 744-752 (1987), exact tabulated 10.0-um row",
+    "source_url": "https://doi.org/10.1364/AO.26.000744",
+    "data_url": "https://raw.githubusercontent.com/polyanskiy/refractiveindex.info-database/main/database/data/main/Au/nk/Ordal.yml"
+  },
+  "transport_references_at_approximately_300K": {
+    "electrical_conductivity_S_m": 41152263.3744856,
+    "electrical_resistivity_ohm_m": 2.43e-08,
+    "electrical_source": "Ordal 1985 optical resistivity 2.43 micro-ohm cm; used only as a bulk reference until film data are fixed",
+    "thermal_conductivity_W_mK": 317.0,
+    "thermal_source": "NIST compilation value for well-annealed high-purity bulk Au at 300 K",
+    "wiedemann_franz_k_W_mK": 301.2345679012346,
+    "wiedemann_franz_relative_difference_from_317": 0.04973322428632623,
+    "seebeck_V_K_sensitivity_only": 1.94e-06,
+    "seebeck_baseline_for_first_electrical_control_V_K": 0.0,
+    "thin_film_warning": "sigma, kappa, and Seebeck are fabrication- and thickness-dependent; bulk values are references, not promoted film values"
+  },
+  "skin_depth_estimates": {
+    "field_amplitude_1_over_e_m": 2.2999269232932856e-08,
+    "intensity_1_over_e_m": 1.1499634616466428e-08
+  },
+  "production_candidate": {
+    "law": "linear complex refractive index followed by epsilon=n^2",
+    "meaning": "numerical topology relaxation only; gray rho is not claimed to be a physical Au/air effective medium",
+    "fallback": "sharp-interface level-set/shape optimization if solver readback, binary equivalence, or AD-FD fails"
+  },
+  "laws": [
+    {
+      "law": "linear_epsilon_legacy_diagnostic",
+      "passive_no_negative_imaginary_epsilon": true,
+      "minimum_imaginary_epsilon": 0.0,
+      "maximum_imaginary_epsilon": 1674.64,
+      "first_Re_epsilon_zero_rho": 0.00021536731973216918,
+      "maximum_endpoint_absolute_error": 0.0,
+      "maximum_abs_d_epsilon_d_rho": 4935.990676905702
+    },
+    {
+      "law": "linear_n_then_square_candidate",
+      "passive_no_negative_imaginary_epsilon": true,
+      "minimum_imaginary_epsilon": 0.0,
+      "maximum_imaginary_epsilon": 1674.64,
+      "first_Re_epsilon_zero_rho": 0.017211688862996715,
+      "maximum_endpoint_absolute_error": 0.0,
+      "maximum_abs_d_epsilon_d_rho": 9846.872669533206
+    }
+  ],
+  "gates": {
+    "endpoints_exact": true,
+    "all_paths_passive": true,
+    "FDTD_readback_complete": false,
+    "Maxwell_AD_FD_complete": false,
+    "combined_AD_FD_complete": false
+  }
+}

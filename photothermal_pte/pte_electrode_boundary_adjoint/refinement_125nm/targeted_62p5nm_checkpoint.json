@@ -1,0 +1,66 @@
+{
+  "identity": {
+    "config_sha256": "01d9bfcb69a06c3498742185aab0a23f16044a60d817a1b9fcbd38bd4827cf22",
+    "source_125nm_sha256": "4102909887e8c0d286b3f635dce2f57c480f131bd9c3021e716c3b09f960fac9",
+    "target_indices": [
+      0,
+      1
+    ]
+  },
+  "beams": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "solve_seconds": 445.79620802402496,
+      "iterations": 2927,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 2.841546112385473e-10,
+      "energy_balance_relative_error": 1.0282415962881754e-12,
+      "source_power_W": 6.834188690698566e-07,
+      "temperature_min_K": 7.805443460823803e-06,
+      "temperature_max_K": 0.0034275398145994364,
+      "hard_current_125nm_A": 8.725195928658731e-10,
+      "same_geometry_hard_current_62p5nm_A": 8.888152093729142e-10,
+      "relative_current_change_125_to_62p5": 0.01867650496364962,
+      "hard_residual_relative": 1.1252217435397192e-14,
+      "canonical_scaled": [
+        0.9552446636734858,
+        0.08712295321847396,
+        0.03586093814794501,
+        0.0636929290637775
+      ],
+      "field_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/refinement_125nm/field_checkpoints_62p5nm/beam_00.npz",
+      "field_sha256": "375b23411b2c823d49534e182d5d290326bb345b31dea03f236ffb30c2049542"
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "solve_seconds": 422.0615992806852,
+      "iterations": 2747,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 2.9831256107010444e-10,
+      "energy_balance_relative_error": 1.2063116232515856e-12,
+      "source_power_W": 8.227648949198848e-07,
+      "temperature_min_K": 1.4626024718566714e-05,
+      "temperature_max_K": 0.0034449713477505556,
+      "hard_current_125nm_A": 6.968201684938191e-10,
+      "same_geometry_hard_current_62p5nm_A": 7.039255280265853e-10,
+      "relative_current_change_125_to_62p5": 0.010196833923628357,
+      "hard_residual_relative": 9.361866589262035e-15,
+      "canonical_scaled": [
+        0.8899866084680449,
+        0.09782030540762521,
+        0.007282418918318413,
+        0.12635464882625527
+      ],
+      "field_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/refinement_125nm/field_checkpoints_62p5nm/beam_01.npz",
+      "field_sha256": "ef6c60b2fe0c24a67b5ddefdc9de0ce6078a8b5b291982a9d34038bf345f1a1c"
+    }
+  ]
+}

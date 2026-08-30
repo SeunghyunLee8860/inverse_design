@@ -1,0 +1,63 @@
+{
+  "status": "BLOCKED_AU_SHARP_INTERFACE_BOUNDARY_QUADRATURE_UNRESOLVED",
+  "raw_files_committed": false,
+  "generation_command": "python 12_run_au_sharp_interface_external_field_adjoint.py --output-dir <raw_case> --gpu-device 'GPU 0'",
+  "Maxwell_forward_solves": 0,
+  "Maxwell_adjoint_solves": 1,
+  "raw_files": [
+    {
+      "role": "adjoint_template_fsp",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_template.fsp",
+      "bytes": 1211527987,
+      "sha256": "8c07ba40501d941ebc50ece83b2f2d6b8c61c30e127dc038ae36b36a098fdfa6"
+    },
+    {
+      "role": "adjoint_gpu_fsp",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_gpu.fsp",
+      "bytes": 1844726648,
+      "sha256": "88cd9c2723932735b8a5be435c0628d4cea63428632f9215f49a20d75d2f4b06"
+    },
+    {
+      "role": "adjoint_log",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_gpu_p0.log",
+      "bytes": 5455,
+      "sha256": "58758cfa11ec19c729964560dca3a52d1d640a02c50bbe72a951439c14d8875e"
+    },
+    {
+      "role": "raw_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_sharp_interface_external_field_result.json",
+      "bytes": 12249,
+      "sha256": "911e00b37f39af4b183f3be462971b7d9793d9eb531e202d727739ce513f0d6c"
+    },
+    {
+      "role": "forward_fsp_sharp_width_7p95_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_7p95_edge25_forward/complex_material_control.fsp",
+      "bytes": 737188272,
+      "sha256": "b16a03fb853f26b2983198123ea399a0f8368e60b2270380a9d944f0824773ca"
+    },
+    {
+      "role": "forward_fsp_sharp_width_7p9_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_7p9_edge25_forward/complex_material_control.fsp",
+      "bytes": 734606776,
+      "sha256": "1970e182efb2b44c1baeb3412bd127b440969e3b312efbd17bc6107bbd21c4ca"
+    },
+    {
+      "role": "forward_fsp_sharp_width_8p05_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p05_edge25_forward/complex_material_control.fsp",
+      "bytes": 737188224,
+      "sha256": "5c489f6e987804847f8ed90daf670fa2eb8f8654e585729ab9a9ef43d4b29d57"
+    },
+    {
+      "role": "forward_fsp_sharp_width_8p0_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_forward/complex_material_control.fsp",
+      "bytes": 734606704,
+      "sha256": "d87e50b56b515b73deddc0a1779414f298642e42cecd147ec1b8646aea0c5c3e"
+    },
+    {
+      "role": "forward_fsp_sharp_width_8p1_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p1_edge25_forward/complex_material_control.fsp",
+      "bytes": 734606656,
+      "sha256": "d2d64f7f1860732080ced731acf60ebae7bfbb6f5867515778c1fd84bb29d78c"
+    }
+  ]
+}

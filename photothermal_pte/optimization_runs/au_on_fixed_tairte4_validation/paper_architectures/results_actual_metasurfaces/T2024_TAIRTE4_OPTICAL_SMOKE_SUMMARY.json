@@ -1,0 +1,75 @@
+{
+  "status": "VALIDATED_T2024_FIGURE_DIGITIZED_TAIRTE4_OPTICAL_SMOKE",
+  "identity_limit": "paper-derived scenario with TaIrTe4 substitution; not graphene-experiment reproduction and not exact paper CAD",
+  "source_result": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.json",
+  "metrics": {
+    "solver_version": "8.35.4522",
+    "solver_wall_time_s": 27.476449228823185,
+    "source_power_W": 1.972769480157694e-15,
+    "P_flux_absorbed_W": 4.24260310175034e-16,
+    "P_Q_pabs_periodic_W": 4.2364297860257765e-16,
+    "P_Q_native_uncorrected_W": 4.230314572900735e-16,
+    "Q_component_power_native_W": {
+      "x": 2.8697240974415305e-16,
+      "y": 7.818428343192898e-17,
+      "z": 5.787476411399149e-17
+    },
+    "closure_relative": 0.0014550773608817168,
+    "reflection": 0.784941771229591,
+    "transmission_inside_Au_diagnostic": 1.3859804508950002e-16,
+    "log_audit": {
+      "logs": [
+        "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke_p0.log"
+      ],
+      "final_auto_shutoff": 5.66851e-07,
+      "logged_grid": {
+        "shape_xyz": [
+          153,
+          103,
+          233
+        ],
+        "grid_points": 3671847
+      },
+      "precise_GPU_memory_GiB": 0.096,
+      "simulation_completed_successfully": true
+    },
+    "gates": {
+      "GPU_completed": true,
+      "auto_shutoff_lt_1e_5": true,
+      "closure_lt_0p5pct": true,
+      "all_Q_arrays_finite": true,
+      "no_negative_Q": true
+    }
+  },
+  "geometric_material_partition_native_W": {
+    "x": {
+      "TaIrTe4_geometric": 2.45893472526776e-16,
+      "top_Au_T_geometric": 1.208419489396703e-17,
+      "Au_backplane_geometric": 7.698684576906923e-18,
+      "native_component_total": 2.8697240974415305e-16,
+      "unassigned_interface_or_other": 2.12960577465031e-17
+    },
+    "y": {
+      "TaIrTe4_geometric": 6.738449962422702e-17,
+      "top_Au_T_geometric": 9.201956455472084e-19,
+      "Au_backplane_geometric": 1.0274916861204987e-19,
+      "native_component_total": 7.818428343192898e-17,
+      "unassigned_interface_or_other": 9.776838993542696e-18
+    },
+    "z": {
+      "TaIrTe4_geometric": 5.773730287395972e-17,
+      "top_Au_T_geometric": 1.0156896610441018e-19,
+      "Au_backplane_geometric": 2.7803172310119724e-21,
+      "native_component_total": 5.787476411399149e-17,
+      "unassigned_interface_or_other": 3.3111956696350124e-20
+    }
+  },
+  "rules": {
+    "only_active_2d_material_replaced": true,
+    "active_material": "100-nm TaIrTe4",
+    "axis_mapping": "Lumerical x=b, y=a, z=c=b closure",
+    "no_clipping_smoothing_gain_rescaling": true,
+    "thermal_PTE_adjoint_optimization_run": false
+  },
+  "Z2022_next_gate": "exact chiral-Z topology must be recovered or an explicitly named approximation must be approved; Table S1 envelopes are not Maxwell CAD"
+}

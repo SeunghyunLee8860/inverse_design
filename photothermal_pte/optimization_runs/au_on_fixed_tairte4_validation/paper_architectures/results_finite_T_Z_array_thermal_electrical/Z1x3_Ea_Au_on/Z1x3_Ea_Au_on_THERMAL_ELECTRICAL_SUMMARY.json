@@ -1,0 +1,302 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_ARRAY_THERMAL_ELECTRICAL_FORWARD",
+  "case": "Z1x3_Ea_Au_on",
+  "architecture": "Z",
+  "polarization": "Ea",
+  "top_Au_present": true,
+  "axes": {
+    "x": "b",
+    "y": "a",
+    "z": "c"
+  },
+  "source": {
+    "raw_source_power_W": 3.07976869423879e-14,
+    "reported_incident_power_W": 0.000285,
+    "linear_response_scale": 9253941717.543236,
+    "raw_absorbed_power_W": 5.309618586636354e-15,
+    "absorbed_power_at_285uW_W": 4.91349009431171e-05,
+    "no_raw_Q_modification": true
+  },
+  "thermal_contract": {
+    "domain_xy_m": [
+      -1.6e-05,
+      1.6e-05
+    ],
+    "Si_depth_m": 2e-05,
+    "far_xy_deltaT_K": 0.0,
+    "bottom_deltaT_K": 0.0,
+    "top_convection_W_m2K": 10.0,
+    "k_W_mK": {
+      "air": [
+        0.026,
+        0.026,
+        0.026
+      ],
+      "Si": [
+        145.0,
+        145.0,
+        145.0
+      ],
+      "SiO2": [
+        1.38,
+        1.38,
+        1.38
+      ],
+      "Au": [
+        317.0,
+        317.0,
+        317.0
+      ],
+      "Al2O3": [
+        30.0,
+        30.0,
+        30.0
+      ],
+      "TaIrTe4": [
+        3.8,
+        14.4,
+        1.0
+      ]
+    },
+    "G_SiO2_Si_W_m2K": 1100000000.0,
+    "G_TaIrTe4_Al2O3_W_m2K": 7370000.0,
+    "G_TaIrTe4_air_W_m2K": 1.0,
+    "G_Au_TaIrTe4_W_m2K": 17241379.310344826,
+    "G_Au_TaIrTe4_provenance": "Au/MoS2 analogue; numerical scenario, not measured TaIrTe4"
+  },
+  "thermal": {
+    "shape": [
+      234,
+      234,
+      73
+    ],
+    "Tmax_K": 0.4473949102743559,
+    "TaIrTe4_volume_average_K": 0.057003813339568096,
+    "material_temperature": {
+      "Si": {
+        "maximum_K": 0.016894886001180737,
+        "volume_average_K": 0.005872192823097987
+      },
+      "SiO2": {
+        "maximum_K": 0.08900585946377639,
+        "volume_average_K": 0.020626803755306355
+      },
+      "Au_mirror": {
+        "maximum_K": 0.09422369805940631,
+        "volume_average_K": 0.02945562047488414
+      },
+      "Al2O3": {
+        "maximum_K": 0.10467967706083905,
+        "volume_average_K": 0.029766273167488273
+      },
+      "TaIrTe4": {
+        "maximum_K": 0.4473949102743559,
+        "volume_average_K": 0.057003813339568096
+      },
+      "top_Au_support": {
+        "maximum_K": 0.23246545176548375,
+        "volume_average_K": 0.17031933865978693
+      }
+    },
+    "linear_residual_relative": 7.643885155256235e-10,
+    "iterations": 5650,
+    "GPU_solve_seconds": 17.943280071020126,
+    "energy_balance_relative": 6.779683650990685e-11,
+    "numerical_boundary_power_W": {
+      "x_min": 2.528347075519142e-08,
+      "x_max": 2.5023943202916865e-08,
+      "y_min": 2.5079633406446367e-08,
+      "y_max": 2.513048625264142e-08,
+      "z_min": 4.903408808153995e-05,
+      "surface_robin_z_max": 2.953246287642379e-10
+    }
+  },
+  "electrical_contract": {
+    "sigma_TaIrTe4_ba_S_m": [
+      110000.0,
+      491000.0
+    ],
+    "S_TaIrTe4_ba_V_K": [
+      2.7e-05,
+      -6e-06
+    ],
+    "sigma_Au_S_m": 41152263.3744856,
+    "S_Au_V_K": 0.0,
+    "G_electrical_Au_TaIrTe4_S_m2": 10000000000.0,
+    "G_provenance": "named numerical scenario, not measured TaIrTe4/Au contact",
+    "top_Au_is_floating": true,
+    "terminal_short_circuit_V": 0.0
+  },
+  "electrical": {
+    "top_bottom": {
+      "low_terminal_current_A": -5.117010054296492e-10,
+      "high_terminal_current_A": 5.117010045799449e-10,
+      "weighting_identity_current_A": 5.11701004958481e-10,
+      "thermoelectric_characteristic_current_A": 3.631103228933942e-06,
+      "terminal_balance_relative_to_terminal_current": 1.6605484805117531e-09,
+      "weighting_identity_relative_to_terminal_current": 7.397604186961334e-10,
+      "terminal_balance_relative_to_thermoelectric_scale": 2.3400720758137343e-13,
+      "weighting_identity_relative_to_thermoelectric_scale": 1.0424824793164938e-13,
+      "near_null_terminal_current": false,
+      "weighting_residual": 7.018020941237597e-12,
+      "short_circuit_residual": 8.305411437479868e-12
+    },
+    "left_right": {
+      "low_terminal_current_A": -9.168644698260753e-10,
+      "high_terminal_current_A": 9.168644705977106e-10,
+      "weighting_identity_current_A": 9.168644698180758e-10,
+      "thermoelectric_characteristic_current_A": 3.631103228933942e-06,
+      "terminal_balance_relative_to_terminal_current": 8.41602391375773e-10,
+      "weighting_identity_relative_to_terminal_current": 8.503271889498705e-10,
+      "terminal_balance_relative_to_thermoelectric_scale": 2.1250713140674336e-13,
+      "weighting_identity_relative_to_thermoelectric_scale": 2.147101689973865e-13,
+      "near_null_terminal_current": false,
+      "weighting_residual": 8.274329135779777e-12,
+      "short_circuit_residual": 8.421612619644218e-12
+    }
+  },
+  "gates": {
+    "mapping_input_SHA_match": true,
+    "thermal_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_residuals_lt_1e-8": true,
+    "electrical_terminal_balance_lt_1pct_or_near_null_scaled_lt_1e-8": true,
+    "weighting_terminal_identity_lt_1pct_or_near_null_scaled_lt_1e-8": true,
+    "finite_fields": true,
+    "GPU_linear_solves_no_CPU_fallback": true,
+    "no_Q_clipping_smoothing_gain_or_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_thermal_electrical/Z1x3_Ea_Au_on_finite_thermal_electrical.npz",
+    "bytes": 21698674,
+    "sha256": "2710d4ffbba4f10902db16883f52057b8bd8f48f286d68fe78e5cb97f2014858",
+    "committed_to_git": false
+  },
+  "array_contract": {
+    "architecture": "Z",
+    "nx_along_b": 1,
+    "ny_along_a": 3,
+    "period_b_m": 5.1e-06,
+    "period_a_m": 2.6e-06,
+    "primitive": {
+      "key": "Z2022_M2_5300_LH_FIGURE_PERIOD_CORRECTED_V3",
+      "wavelength_nm": 5300.0,
+      "period_x_nm": 5100.0,
+      "period_y_nm": 2600.0,
+      "active_material": "TaIrTe4",
+      "active_thickness_nm": 100.0,
+      "axis_mapping": {
+        "x": "b",
+        "y": "a",
+        "z": "c=b closure"
+      },
+      "polygons": [
+        {
+          "name": "Z2022_M2_FIGURE_PERIOD_CORRECTED_V3_LH_upper_right",
+          "material": "Au",
+          "vertices_nm": [
+            [
+              0.0,
+              -1000.0
+            ],
+            [
+              1360.0,
+              -1000.0
+            ],
+            [
+              1360.0,
+              1300.0
+            ],
+            [
+              0.0,
+              1300.0
+            ]
+          ],
+          "z_min_nm": 100.0,
+          "z_max_nm": 150.0,
+          "provenance_kind": "published_dimensions+figure_period_corrected_edge_joined_v3",
+          "provenance": "2022 Fig. 1b and Supplementary Table 1 M2: P1 horizontal, P2 vertical, W1/W2 horizontal, L1/L2 vertical; edge-joined y-offset closure digitized from the figure because exact author CAD/relative offset is not disclosed"
+        },
+        {
+          "name": "Z2022_M2_FIGURE_PERIOD_CORRECTED_V3_LH_lower_left",
+          "material": "Au",
+          "vertices_nm": [
+            [
+              -1100.0,
+              -1300.0
+            ],
+            [
+              0.0,
+              -1300.0
+            ],
+            [
+              0.0,
+              400.0
+            ],
+            [
+              -1100.0,
+              400.0
+            ]
+          ],
+          "z_min_nm": 100.0,
+          "z_max_nm": 150.0,
+          "provenance_kind": "published_dimensions+figure_period_corrected_edge_joined_v3",
+          "provenance": "2022 Fig. 1b and Supplementary Table 1 M2: P1 horizontal, P2 vertical, W1/W2 horizontal, L1/L2 vertical; edge-joined y-offset closure digitized from the figure because exact author CAD/relative offset is not disclosed"
+        }
+      ],
+      "layers": [
+        {
+          "name": "air",
+          "z_min_nm": 150.0,
+          "z_max_nm": null
+        },
+        {
+          "name": "effective_Au_Z",
+          "z_min_nm": 100.0,
+          "z_max_nm": 150.0
+        },
+        {
+          "name": "TaIrTe4_active_substitution",
+          "z_min_nm": 0.0,
+          "z_max_nm": 100.0
+        },
+        {
+          "name": "Al2O3_spacer",
+          "z_min_nm": -200.0,
+          "z_max_nm": 0.0
+        },
+        {
+          "name": "Au_backplane",
+          "z_min_nm": -400.0,
+          "z_max_nm": -200.0
+        },
+        {
+          "name": "optical_SiO2_reduced",
+          "z_min_nm": -685.0,
+          "z_max_nm": -400.0
+        },
+        {
+          "name": "Si",
+          "z_min_nm": null,
+          "z_max_nm": -685.0
+        }
+      ],
+      "boundary_contract": {
+        "x_min_x_max": "Periodic",
+        "y_min_y_max": "Periodic",
+        "z_min_z_max": "PML",
+        "illumination": "normal-incidence plane wave"
+      },
+      "unresolved": [
+        "exact author CAD and relative two-bar offset are not disclosed",
+        "edge-joined figure-constrained closure is used and explicitly audited",
+        "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+        "5-nm Cr adhesion is omitted from the first effective-Au screen"
+      ]
+    },
+    "identity": "finite Z 1x3 column using paper P1/P2 directions and pitches",
+    "finite_not_periodic": true,
+    "top_Au_is_floating_in_electrical_stage": true
+  },
+  "top_Au_geometry_source": "exact cut-cell rectangles from stage 86; no whole-cell assignment"
+}

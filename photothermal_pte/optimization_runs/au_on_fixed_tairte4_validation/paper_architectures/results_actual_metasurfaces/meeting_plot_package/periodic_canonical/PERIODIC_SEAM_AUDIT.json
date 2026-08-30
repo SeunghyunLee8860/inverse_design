@@ -1,0 +1,98 @@
+{
+  "status": "PUBLISHED_PERIODIC_CANONICAL_DISPLAY_WITH_RAW_SEAM_PRESERVED",
+  "warning": "canonical/tiled maps are display-only; all power metrics remain raw conservative integrals",
+  "cases": {
+    "T_Ea": {
+      "raw_x_min_to_inward_mean_ratio": 0.49425283074297605,
+      "raw_x_max_to_inward_mean_ratio": 0.49425403735898027,
+      "raw_y_min_to_inward_mean_ratio": 0.6653144508266186,
+      "raw_y_max_to_inward_mean_ratio": 0.9978430052137054,
+      "display_only": true,
+      "used_for_power_or_metrics": false,
+      "excluded_raw_seam_planes_for_display": {
+        "x_each_side": 1,
+        "y_each_side": 2
+      },
+      "raw_x_bounds_nm": [
+        -750.0,
+        750.0
+      ],
+      "raw_y_bounds_nm": [
+        -499.9999999999999,
+        499.9999999999999
+      ],
+      "canonical_x_sample_count": 150,
+      "canonical_y_sample_count": 100,
+      "raw_common_component_sum_power_W": 3.741816626216373e-16
+    },
+    "T_Eb": {
+      "raw_x_min_to_inward_mean_ratio": 0.6650431990918505,
+      "raw_x_max_to_inward_mean_ratio": 0.99817248638739,
+      "raw_y_min_to_inward_mean_ratio": 0.5427497850223528,
+      "raw_y_max_to_inward_mean_ratio": 0.6296669304503981,
+      "display_only": true,
+      "used_for_power_or_metrics": false,
+      "excluded_raw_seam_planes_for_display": {
+        "x_each_side": 1,
+        "y_each_side": 2
+      },
+      "raw_x_bounds_nm": [
+        -750.0,
+        750.0
+      ],
+      "raw_y_bounds_nm": [
+        -499.9999999999999,
+        499.9999999999999
+      ],
+      "canonical_x_sample_count": 150,
+      "canonical_y_sample_count": 100,
+      "raw_common_component_sum_power_W": 4.230314572900735e-16
+    },
+    "bare_Ea": {
+      "raw_x_min_to_inward_mean_ratio": 0.494197948188863,
+      "raw_x_max_to_inward_mean_ratio": 0.49419794820600976,
+      "raw_y_min_to_inward_mean_ratio": 0.6666666658736013,
+      "raw_y_max_to_inward_mean_ratio": 0.9999999991072736,
+      "display_only": true,
+      "used_for_power_or_metrics": false,
+      "excluded_raw_seam_planes_for_display": {
+        "x_each_side": 1,
+        "y_each_side": 2
+      },
+      "raw_x_bounds_nm": [
+        -750.0,
+        750.0
+      ],
+      "raw_y_bounds_nm": [
+        -499.9999999999999,
+        499.9999999999999
+      ],
+      "canonical_x_sample_count": 150,
+      "canonical_y_sample_count": 100,
+      "raw_common_component_sum_power_W": 3.957786845327137e-16
+    },
+    "bare_Eb": {
+      "raw_x_min_to_inward_mean_ratio": 0.6666666666666855,
+      "raw_x_max_to_inward_mean_ratio": 0.9999999999999892,
+      "raw_y_min_to_inward_mean_ratio": 0.49534438854463625,
+      "raw_y_max_to_inward_mean_ratio": 0.49534438854463625,
+      "display_only": true,
+      "used_for_power_or_metrics": false,
+      "excluded_raw_seam_planes_for_display": {
+        "x_each_side": 1,
+        "y_each_side": 2
+      },
+      "raw_x_bounds_nm": [
+        -750.0,
+        750.0
+      ],
+      "raw_y_bounds_nm": [
+        -499.9999999999999,
+        499.9999999999999
+      ],
+      "canonical_x_sample_count": 150,
+      "canonical_y_sample_count": 100,
+      "raw_common_component_sum_power_W": 3.835593666215297e-16
+    }
+  }
+}

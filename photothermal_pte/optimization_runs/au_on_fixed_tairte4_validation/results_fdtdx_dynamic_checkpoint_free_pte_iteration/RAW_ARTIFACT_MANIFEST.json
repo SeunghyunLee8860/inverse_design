@@ -1,0 +1,39 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_DYNAMIC_CHECKPOINT_FREE_PTE_ITERATION",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_dynamic_checkpoint_free_pte_iteration/fdtdx_dynamic_checkpoint_free_pte_iteration_raw.npz",
+    "bytes": 24645,
+    "sha256": "f2edfb4c3e9c4f72edc92dc42eb5ec36d3a4478acd3961f3c957061a3107eb5e",
+    "committed_to_git": false
+  },
+  "inputs": {
+    "frozen_combined": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+      "bytes": 33527,
+      "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6"
+    }
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_dynamic_checkpoint_free_pte_iteration/fdtdx_dynamic_checkpoint_free_pte_iteration_summary.json",
+      "bytes": 7009,
+      "sha256": "f28e66730ff4cdd35b88015287dc50599bab11bc6331a876959827897494bad3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_dynamic_checkpoint_free_pte_iteration/fdtdx_dynamic_checkpoint_free_pte_iteration_metrics.csv",
+      "bytes": 581,
+      "sha256": "e8fd4311e7e2d691072d605583a77ca9bb54409159225af5e235b7fe78841a47"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_dynamic_checkpoint_free_pte_iteration/fdtdx_dynamic_checkpoint_free_pte_iteration.png",
+      "bytes": 121814,
+      "sha256": "b23de018a37c638fbc06d3b37a166801ace5f1003d10e8f8c40f5cde166b4827"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_dynamic_checkpoint_free_pte_iteration/FDTDX_DYNAMIC_CHECKPOINT_FREE_PTE_ITERATION_REPORT.md",
+      "bytes": 1481,
+      "sha256": "e7767ea7cf301f646d162e66293a5b92b2d7047056122fdb1601b0109bf188fd"
+    }
+  ],
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 78_publish_fdtdx_dynamic_checkpoint_free_pte_iteration.py"
+}

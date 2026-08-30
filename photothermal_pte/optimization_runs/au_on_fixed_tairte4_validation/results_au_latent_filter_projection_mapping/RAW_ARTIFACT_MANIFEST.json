@@ -1,0 +1,36 @@
+{
+  "status": "VALIDATED_AU_LATENT_FILTER_PROJECTION_MAPPING",
+  "input_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+    "bytes": 33527,
+    "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_raw.npz",
+    "bytes": 10713,
+    "sha256": "3bcd3e42b79668d5e7fa63b1e59b9bb62e972cdd58306345aec77357ba663fe1",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_summary.json",
+      "bytes": 2283,
+      "sha256": "15b5efaccf982944875b14b4a3af781dee59c9a3b86e80fa9edc20e549b11ff3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_cases.csv",
+      "bytes": 6770,
+      "sha256": "e09ef1d8da0a34313b4d99a6d0a92c06997abeabfb6ea622ada75dc11b1eb14c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_latent_filter_projection_mapping/au_latent_filter_projection_mapping.png",
+      "bytes": 108452,
+      "sha256": "887f24567992abac080482a4816ea74b7a2bfbb8d2215e9ee6b38ec383173772"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_latent_filter_projection_mapping/AU_LATENT_FILTER_PROJECTION_MAPPING_REPORT.md",
+      "bytes": 917,
+      "sha256": "3ea5874e84f3ccf5ccab603c787faa9eaa5b666558e1f66af1374195679eaab2"
+    }
+  ]
+}

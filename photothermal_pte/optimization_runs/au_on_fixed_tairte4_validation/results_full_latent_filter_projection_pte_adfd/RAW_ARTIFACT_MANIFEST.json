@@ -1,0 +1,61 @@
+{
+  "status": "VALIDATED_FULL_LATENT_FILTER_PROJECTION_FDTDX_PTE_ADFD",
+  "inputs": {
+    "physical_summary": {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_summary.json",
+      "sha256": "37a62b1be279ad26a04e4bd357c96a279f3b1e25297049e9217d5f547c7f5e64"
+    },
+    "physical_gradient": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+      "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6"
+    },
+    "exact_baseline_summary": {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_summary.json",
+      "sha256": "9007565338434a5581710dab4186cdfa32acda6e40476fd9908b0d3eef279145"
+    },
+    "exact_baseline_raw": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_raw.npz",
+      "sha256": "47a861e937435158cb2eb54640fb0c0b0166ed60be2c984e2f880383a9a8bd5e"
+    },
+    "mapping_summary": {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_summary.json",
+      "sha256": "15b5efaccf982944875b14b4a3af781dee59c9a3b86e80fa9edc20e549b11ff3"
+    },
+    "mapping_raw": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_raw.npz",
+      "sha256": "3bcd3e42b79668d5e7fa63b1e59b9bb62e972cdd58306345aec77357ba663fe1"
+    }
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd_raw.npz",
+    "bytes": 24445,
+    "sha256": "92f496f9763e537e5b314a0e87450f3236ebc74bd1f65b25a58df13b327fda5b",
+    "committed_to_git": false
+  },
+  "forward_case_root": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/forward_cases",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd_summary.json",
+      "bytes": 20158,
+      "sha256": "54470888a8d3da8ccfdf9e0e5e2bdd095dae0643eab325e4f15a3d44f63a0ef6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd.csv",
+      "bytes": 887,
+      "sha256": "f844c632eca47d7a7f53e81c593ec58a282e3dc2d7496edef353b8d5bb3516be"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd.png",
+      "bytes": 148919,
+      "sha256": "94c180dda39730ffde227986d3274ad4d0ae2a7b80b930ebb9714de8bf9829d8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_latent_filter_projection_pte_adfd/FULL_LATENT_FILTER_PROJECTION_PTE_ADFD_REPORT.md",
+      "bytes": 1302,
+      "sha256": "51daf9d376b172788f78d8b4ccc5ba0e91373f096dde3de1f7b424ff18dc32e9"
+    }
+  ]
+}

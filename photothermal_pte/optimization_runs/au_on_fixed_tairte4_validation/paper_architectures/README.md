@@ -1,0 +1,229 @@
+# Paper-like Au architectures with a fixed TaIrTe4 active layer
+
+This folder separates three structures that must not be mixed:
+
+1. `A_DIRECT_AU_TAIRTE4`: the project's simple floating-Au-on-TaIrTe4
+   control. It has no opaque backplane, so its SiO2/Si optical substrate
+   cannot be silently removed.
+2. `B_T_2024_TAIRTE4_SUBSTITUTION`: the 2024 inverse-T
+   metamaterial-perfect-absorber stack. The top Ti/Au T touches the active
+   layer; the Al2O3 spacer is **below** the active layer and above the Au
+   mirror.
+3. `B_Z_2022_TAIRTE4_SUBSTITUTION`: the 2022 chiral Z stack. The Cr/Au
+   antenna chip is fabricated first and the 2-D thermoelectric material is
+   dry-transferred over the patterned topography.
+
+Only the active 2-D material is replaced by the fixed 100-nm TaIrTe4 flake.
+Unknown TaIrTe4 contact/topography properties and all extrapolated 10-um
+dimensions remain named scenarios.
+
+Run the offline contract audit:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/01_audit_and_plot_contracts.py
+```
+
+Run tests:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m pytest -q \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/tests
+```
+
+The architecture contract is offline, and the substrate discriminator has now
+also been run with v261 GPU FDTD.  See
+`results/SUBSTRATE_REDUCTION_DECISION.md`.
+
+The GPU-only discriminator is `02_run_v261_backplane_truncation_control.py`.
+Run a `full` and an `au_truncated` case into raw directories outside Git, then
+compare them with `03_summarize_backplane_truncation_control.py`.  A failed or
+missing run is never interpreted as evidence that the substrate is removable.
+
+The substrate rules are deliberately asymmetric:
+
+- the 2022 paper's published FDTD stack explicitly contains Si, 285-nm
+  thermal SiO2, the 200-nm Au backplate, Al2O3, and the Au antenna.  That is
+  the paper-reference model;
+- the 2024 main Methods state 1.5-um thermal SiO2, whereas Supplementary
+  Fig. 17's RF cross-section states 1.0 um.  These are separate provenance
+  scenarios, not a value to average;
+- omitting everything below an opaque Au backplane is an accelerated optical
+  candidate only.  It must pass the numerical backplane-truncation gate;
+- a one-substrate thermal model is not implied by optical opacity.  It needs
+  a separate explicit-3D versus reduced-impedance thermal comparison.
+
+Published numerical outcome:
+
+- 2022 Z, full 285-nm SiO2/Si versus Au-truncated: absorbed-flux difference
+  `0.005404%`, top-field NRMSE `0.000359%`, full-stack transmission
+  `1.181e-9`;
+- 2024 T main 1.5-um SiO2 scenario versus Au-truncated: absorbed-flux
+  difference `0.001259%`, top-field NRMSE `0.000399%`, full-stack
+  transmission `5.382e-10`.
+
+The strict periodic `pabs_adv` volume-Q versus flux closure remains
+`2.54--2.56%` and is kept fail-closed.  The field/flux result therefore
+certifies optical insensitivity below the opaque backplane, not an absolute-Q
+closure and not a thermal substrate reduction.
+
+Reproduce the published decision after the paired raw cases exist:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/04_publish_substrate_reduction_decision.py
+```
+
+## Actual inverse-T optical smoke
+
+`05_actual_metasurface_geometry.py` and
+`07_run_v261_t2024_tairte4_optical_smoke.py` implement the 2024 MIR inverse-T
+scenario with only the active 2-D material replaced by fixed 100-nm TaIrTe4.
+The T vertices are a figure-digitized approximation to Supplementary Fig. 14,
+not author CAD. Both normal-incidence polarizations have been run on the v261
+GPU solver and pass closure, shutoff, finite-Q, and nonnegative-Q gates.
+
+The physical full-thickness control is:
+
+`air / Au inverse-T / 100-nm TaIrTe4 / 35-nm Al2O3 / 200-nm Au mirror /
+1.5-um thermally grown SiO2 / intrinsic Si`.
+
+At 4.75 um, SiO2 and Si are read directly from the installed Lumerical v261
+Palik database and their complex-index readbacks are stored in every raw case
+JSON. A four-case comparison showed that the 200-nm Au mirror makes the full
+1.5-um oxide optically indistinguishable from the old Au truncation: bottom
+transmission is below `1e-9`, and active-region power/field metrics agree far
+inside their gates. Therefore the optical-forward default is the faster
+`--substrate-mode sio2_si_reduced_285nm` closure:
+
+`200-nm Au mirror / 285-nm optical SiO2 buffer / Si to bottom PML`.
+
+This is a numerical **optical** closure, not a claim that the fabricated or
+thermal oxide is 285 nm. The full 1.5-um control remains available as
+`--substrate-mode sio2_si_full_1500nm`; the later thermal model retains its
+physical SiO2/Si geometry. The legacy `Au-to-bottom-PML` model remains only as
+the explicit `--substrate-mode au_truncated` diagnostic.
+
+Publish the paired comparison without rerunning FDTD:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/09_compare_t2024_tairte4_polarizations.py
+```
+
+See `results_actual_metasurfaces/T2024_TAIRTE4_TWO_POLARIZATION_REPORT.md`.
+The 2022 M5 scalar dimensions are audited, but the Z Maxwell case remains
+fail-closed because the PDFs do not disclose a unique polygon/junction CAD.
+
+The inverse-T contribution is isolated with matched no-top-T controls using
+the same solver entry point plus `--omit-top-t-control`. Publish the four-case
+comparison with `10_summarize_t2024_top_t_enhancement.py`.
+
+The explicit-substrate four-case results and direct comparison against the
+legacy optical truncation are in `results_actual_metasurfaces_sio2_si/`.
+Reproduce the offline equivalence check with:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/14_compare_t2024_explicit_substrate.py
+```
+
+This comparison modifies no Q array. Components below a documented `1e-8`
+native-power fraction are reported as numerical zero and are not normalized
+for a spatial-shape metric, because doing so would amplify roundoff. All
+active-component lateral-Q, total-power, and TaIrTe4-power equivalence gates
+pass by a wide margin. Optical equivalence below an opaque Au mirror does not
+remove SiO2 or Si from the later thermal model.
+
+For presentations, run `11_publish_meeting_plot_package.py`. It creates one
+folder per case with separate structure, Qx, Qy, Qz, conservative common-grid
+Qtotal, power breakdown, overview, and machine-readable metrics.
+
+`15_publish_reduced_substrate_fields.py` publishes the reduced-stack setup and
+actual collocated Lumerical near fields at the TaIrTe4 midplane and in xz/yz
+cross sections. It also publishes Qx/Qy/Qz/Qtotal maps. Field components are
+paired on their component-specific Yee coordinates before interpolation; they
+are never multiplied or summed by raw array index.
+
+`12_publish_detailed_meeting_materials.py` adds xy/xz/yz setup and Q sections,
+top-monitor total fields, absorption-depth profiles, geometric material maps,
+T-vs-bare/polarization comparisons, a CSV table, and a meeting Q&A guide.
+
+`13_publish_periodic_and_finite_scope_materials.py` preserves the raw Yee
+endpoint seam as a diagnostic while publishing a display-only periodic
+canonical cell and 3x3 tiling. It also separates the paper's periodic optical
+screening problem from the finite all-PML Maxwell plus thermal/electrical PTE
+device that is required for terminal-current inverse design.
+
+## Broadband resonance first, finite Gaussian device second
+
+`17_run_v261_t2024_periodic_broadband_rta.py` is the fast periodic resonance
+screen. It removes the heavy 3-D Q analysis group and records flux-derived
+`R`, `T`, and `A=1-R-T` from 4--12 um for one polarization and either the top-T
+or matched-bare geometry. Run the four `T_Ea`, `T_Eb`, `bare_Ea`, and
+`bare_Eb` cases, then publish them with
+`18_summarize_t2024_periodic_broadband_rta.py`.
+
+This spectrum is not a finite-device or PTE calculation. After a physical
+resonance is selected, only that wavelength is rerun with component-resolved
+volumetric Q and closure. A separate finite array then places multiple T
+resonators inside an all-PML domain and illuminates them with a Gaussian beam.
+
+`19_run_v261_z2022_m2_periodic_broadband_rta.py` applies the same 4--12 um
+screen to the paper's published M2 scalar dimensions. The two rectangular
+parts are centered and corner-joined according to Fig. 1b; because the paper
+does not disclose junction overlap/gap CAD, this remains a named reconstructed
+scenario. `20_summarize_z2022_m2_periodic_broadband_rta.py` compares LH/RH and
+the explicit CP+/CP- source-phase definitions without prematurely renaming
+them LCP/RCP.
+
+`22_audit_finite_t_array_gaussian_contract.py` separates the wavelength sweep
+from the later Gaussian-device size.  Its current cost audit compares a
+`w0=4 um` smoke (187 inverse-T elements) with the established `w0=8.5 um`
+scenario (805 elements).  Both are finite, six-PML Maxwell candidates; neither
+uses periodic boundaries.  The larger beam is not launched until v261
+`runsetup` records the realized mesh and GPU-memory requirement.  The audit is
+offline and must not be called an FDTD, thermal, or PTE result.
+
+`21_run_periodic_screening_queue.py` waits for an unclaimed licensed GPU and
+runs the four T spectra followed by the four reconstructed-Z spectra.  It does
+not kill, pre-empt, or attach to another user's solver.  A failed case stops the
+queue fail-closed instead of silently advancing.
+
+## Finite 187-T Gaussian Q and terminal-PTE handoff
+
+The calibrated `w0=12 um`, `lambda=11.825 um`, `E||b` finite 11 x 17 inverse-T
+case now has a validated component-resolved volumetric-Q certificate in
+`results_finite_187T_w12_Q_11p825um_Eb/`.  Its native-Yee Q versus six-face
+closure is `0.059750%`; raw FSP/NPZ files remain outside Git and are identified
+by size and SHA-256 in the manifest.
+
+This finite-array optical result is not yet a finite-flake terminal-PTE model.
+In the Maxwell certificate only the top inverse-T array is finite; TaIrTe4 and
+the lower stack extend through the lateral PML.  Script
+`38_audit_finite_thermal_electrical_handoff.py` therefore performs a read-only
+handoff audit without cropping Q.  It records status
+`BLOCKED_FINITE_PTE_GEOMETRY_UNDEFINED` until a finite TaIrTe4 footprint, two
+electrode footprints/polarity, and a physical (not merely optical-closure)
+thermal stack are fixed.  A finite-device Maxwell rerun is then required before
+the conservative thermal/electrical solve.
+
+As a deliberately named alternative, `39_run_finite_187t_large_sheet_thermal_pte.py`
+retains the complete certified optical-Q support and solves a **large finite
+computational sheet diagnostic** with ideal full-width y-edge contacts.  Its
+published package in `results_finite_187T_large_sheet_thermal_pte/` contains
+the remapped volumetric Q, temperature, signed b/a gradients, gradient
+magnitude, weighting potential, weighting field, b/a current components, total
+PTE integrand, cross sections, and profiles.  It must not be described as an
+experimental finite-contact prediction.
+
+## Reconstructed Z selected-Q checkpoint
+
+`41_run_v261_z2022_m2_selected_q.py` performs the single-frequency v261 GPU
+Maxwell/Q certificate at 5.25 um for explicit CP+ and CP- phase definitions.
+`43_summarize_z2022_m2_selected_q.py` publishes the raw depth-integrated Q,
+equal-power spatial difference, component powers, closure, auto-shutoff, and
+raw-artifact provenance in `results_Z_M2_selected_Q_5p25um/`.  The result is a
+periodic optical certificate only.  A finite Z array, Gaussian illumination,
+finite thermal geometry, and two electrical contacts must be explicitly fixed
+before temperature, weighting field, or terminal PTE current is evaluated.

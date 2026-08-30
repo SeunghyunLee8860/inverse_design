@@ -1,0 +1,38 @@
+{
+  "status": "VALIDATED_AU_MATERIAL_READBACK_DENSITY_PATH_NOT_YET_CERTIFIED",
+  "FDTD_solve_run": false,
+  "GPU_engine_acquired": false,
+  "files": [
+    {
+      "path": "results/au_material_contract.json",
+      "bytes": 2900,
+      "sha256": "35998da9a32ba9a765aace82521fe2a40783ac81d30526bf58fb0ba512000c77"
+    },
+    {
+      "path": "results/au_density_paths.csv",
+      "bytes": 3265,
+      "sha256": "13639a54323fc944da3d856211e767ab2737b0246ea9ec75d26cd5d802819641"
+    },
+    {
+      "path": "results/au_density_interpolation_audit.png",
+      "bytes": 289686,
+      "sha256": "2edf3ae2783748095fdc582c1fa3b161c702258ffee82fcf07a33274dce4271a"
+    },
+    {
+      "path": "results/AU_MATERIAL_AND_INTERPOLATION_AUDIT.md",
+      "bytes": 1938,
+      "sha256": "3fa93222caa95977ee6e7d81054c7ba0f57bcb2f8ef28da97df66c710602a493"
+    },
+    {
+      "path": "results/lumerical_au_readback.json",
+      "bytes": 1689,
+      "sha256": "1066eb0cb7dff688e8c42c9489ea8fd9152d7c4199c804cbe0c8bdbb254d0faa"
+    },
+    {
+      "path": "results/AU_VALIDATION_CHECKPOINT.md",
+      "bytes": 1821,
+      "sha256": "9fd9b155a91606461acc69c6e013a4c98243b7184e946d253c8645e82026cbef"
+    }
+  ],
+  "raw_FSP_or_NPZ_committed": false
+}

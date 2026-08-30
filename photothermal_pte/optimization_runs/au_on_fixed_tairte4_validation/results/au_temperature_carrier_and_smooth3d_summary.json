@@ -1,0 +1,162 @@
+{
+  "status": "BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_NO_STABLE_GPU_DIFFERENTIABLE_AU_PATH",
+  "production_Au_optimization_permitted": false,
+  "solver_version": "8.35.4522",
+  "Au_optical_endpoint_10um": {
+    "n": 12.1,
+    "k": 69.2,
+    "epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "source": "Ordal endpoint already frozen by the repository material audit"
+  },
+  "temperature_attribute_contract": {
+    "attribute_is_physical_temperature": false,
+    "may_be_exported_to_thermal_solver": false,
+    "PVA_result": "attribute ignored in the material solution",
+    "conformal_variant_1_moderate_endpoint": {
+      "requested_epsilon": [
+        3.75,
+        2.0
+      ],
+      "component_relative_errors": {
+        "x": 1.0449157878825003e-16,
+        "y": 1.0449157878825003e-16,
+        "z": 1.0449157878825003e-16
+      },
+      "P_Q_W": 3.5538409220365626e-14,
+      "P_six_W": 3.5532754936826e-14,
+      "six_face_closure_relative": 0.00015910345070772048,
+      "auto_shutoff": 6.23581e-08,
+      "passed": true
+    },
+    "exact_Au_50nm_cases": {
+      "au_span1": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": null,
+        "temperature_model": null,
+        "interpolation_direction": null,
+        "dt_stability_factor": 0.99,
+        "CPU_FDTD_fallback": false
+      },
+      "au_span1000_linear": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": 1000.0,
+        "temperature_model": "linear_sensitivity",
+        "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.99,
+        "CPU_FDTD_fallback": false
+      },
+      "au_span1000_table": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": 1000.0,
+        "temperature_model": "nonlinear_table",
+        "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.99,
+        "CPU_FDTD_fallback": false
+      },
+      "au_span1000_dt0p5_short": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": 1000.0,
+        "temperature_model": "linear_sensitivity",
+        "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.5,
+        "CPU_FDTD_fallback": false
+      },
+      "au_reverse": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": null,
+        "temperature_model": null,
+        "interpolation_direction": "exact_target_base_toward_air",
+        "dt_stability_factor": 0.99,
+        "CPU_FDTD_fallback": false
+      }
+    },
+    "conclusion": "the v261 conformal GPU path honors a moderate complex-index temperature carrier, but every exact-Au endpoint variant diverges, including 1000 K numerical spans, a nonlinear table, and a reduced 0.5 CFL stability factor"
+  },
+  "smooth3D_boundary_trace": {
+    "FD_J_proxy_per_um": -2.665238476049999e-30,
+    "tested_offsets_nm": [
+      -100.00000000000001,
+      -50.00000000000001,
+      -25.000000000000004,
+      -12.500000000000002,
+      -5.0,
+      0.0,
+      5.0,
+      12.500000000000002,
+      25.000000000000004,
+      50.00000000000001,
+      100.00000000000001
+    ],
+    "any_trace_sign_agrees": false,
+    "minimum_trace_relative_error": 1.0022120616978272,
+    "geometric_trace_relative_error": 1.2129843786838521,
+    "interpretation": "neither Au-inside, geometric, air-outside, nor symmetric one-sided traces recover the independent central-FD sign"
+  },
+  "smooth3D_solver_discrete_epsilon": {
+    "strong_h0p05": {
+      "h_um": 0.05,
+      "minus_case": "pva5_smooth3d_ellipsoid_a7p95_b18_c1_forward",
+      "plus_case": "pva5_smooth3d_ellipsoid_a8p05_b18_c1_forward",
+      "FD_J_proxy_per_um": -2.665238476049999e-30,
+      "discrete_epsilon_AD_J_proxy_per_um": 4.4432541258343275e-28,
+      "complex_contraction_J_proxy_per_um": [
+        4.4432541258343275e-28,
+        -1.995895827870739e-27
+      ],
+      "relative_error": 1.0059983930708658,
+      "sign_agrees": false,
+      "component_terms": {
+        "x": {
+          "real_J_proxy_per_um": 3.7449851345262088e-28,
+          "imag_J_proxy_per_um": -1.4298595816459944e-27,
+          "d_epsilon_nonzero_cell_count": 612770,
+          "d_epsilon_l2_per_um": 12444591.434475493,
+          "d_epsilon_max_abs_per_um": 49359.90676905672,
+          "all_finite": true
+        },
+        "y": {
+          "real_J_proxy_per_um": 8.788637196368272e-30,
+          "imag_J_proxy_per_um": -3.4290847338115933e-29,
+          "d_epsilon_nonzero_cell_count": 612826,
+          "d_epsilon_l2_per_um": 12445308.196941568,
+          "d_epsilon_max_abs_per_um": 49359.90676905672,
+          "all_finite": true
+        },
+        "z": {
+          "real_J_proxy_per_um": 6.103826193444362e-29,
+          "imag_J_proxy_per_um": -5.317453988866288e-28,
+          "d_epsilon_nonzero_cell_count": 612330,
+          "d_epsilon_l2_per_um": 12444076.546705844,
+          "d_epsilon_max_abs_per_um": 49359.90676905672,
+          "all_finite": true
+        }
+      }
+    },
+    "derivative_step_relative_change": 0.6811420341657793,
+    "passed": false,
+    "interpretation": "the conformal geometry-to-diagonal-epsilon Jacobian is not step converged and its adjoint contraction has the wrong sign"
+  },
+  "preserved_previous_controls": {
+    "exact_scalar_Au_forward": "stable GPU reference; closure 0.108011% in the existing 20x20x0.05 um binary control",
+    "fixed_geometry_material_AD_FD": "passed previously at 0.003896%",
+    "original_smooth3D_boundary_status": "FAILED_AU_SMOOTH3D_ELLIPSOID_BOUNDARY_ADJOINT"
+  },
+  "excluded_causes": [
+    "forward/adjoint coordinate mismatch",
+    "FieldRegion source roundtrip or cwnorm mixing",
+    "only sharp polygon corners or top/bottom rims",
+    "only exact-boundary versus one-sided field interpolation",
+    "only a too-large one-kelvin material sensitivity coefficient"
+  ],
+  "remaining_blocker": "no tested v261 GPU representation is simultaneously stable at the exact Au endpoint and differentiable with a validated gradient",
+  "next_research_route_not_yet_validated": "a causal dispersive Drude/ADE density parameterization whose spatial oscillator-strength Jacobian is exposed by the solver, or a different Maxwell backend with a certified metal topology adjoint",
+  "no_thermal_electrical_PTE_or_optimization_executed": true
+}

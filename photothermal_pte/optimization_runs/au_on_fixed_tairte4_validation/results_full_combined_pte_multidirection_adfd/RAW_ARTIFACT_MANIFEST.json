@@ -1,0 +1,43 @@
+{
+  "status": "VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_MULTIDIRECTION_ADFD",
+  "input_SHAs": {
+    "optical_summary": "ab23daf23e49924af9db092967e9e9745c7c625e8d066b7dd216b880860f9840",
+    "optical_gradient": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "direct_summary": "ac61cd62c6ee78521b2490650b6fa9ecbdc9968f54ec7cc605bea6d6f6389bdf",
+    "direct_gradient": "a09c1418bc9abd8c8b47b9fd8fcd6ff4971903f918d72cefa8e28d4305a2d98e",
+    "stage70_summary": "9007565338434a5581710dab4186cdfa32acda6e40476fd9908b0d3eef279145",
+    "stage70_raw": "47a861e937435158cb2eb54640fb0c0b0166ed60be2c984e2f880383a9a8bd5e"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+    "bytes": 33527,
+    "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6",
+    "committed_to_git": false
+  },
+  "forward_case_root": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/forward_cases",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_summary.json",
+      "bytes": 27605,
+      "sha256": "37a62b1be279ad26a04e4bd357c96a279f3b1e25297049e9217d5f547c7f5e64"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd.csv",
+      "bytes": 1816,
+      "sha256": "1db12aac7bb440bc31d3352124db326494f67adde926ae317011693d761f4fe1"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd.png",
+      "bytes": 208676,
+      "sha256": "ed9fab8589657b274ca026a48f582b48f79287e8d03c506c543f8da72e8cd32a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_multidirection_adfd/FULL_COMBINED_PTE_MULTIDIRECTION_ADFD_REPORT.md",
+      "bytes": 1498,
+      "sha256": "e74758c12690494c229b4613246ffec9e8db2dc122cd933912cbc452ef0454d4"
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "status": "VALIDATED_FDTDX_DISPERSIVE_EXACT_DISCRETE_ADJOINT",
+  "scope": "production-width 10-um optical total-Q gradient for a nonuniform 20x20 Au density; no thermal, electrical, PTE, or optimization claim",
+  "method": {
+    "name": "checkpointed reverse-mode discrete adjoint",
+    "meaning": "reverse-mode differentiation of the complete 6788-step FDTDX update, including Drude/Lorentz ADE polarization states, PML, source, and phasor detectors",
+    "is_exact_for_implemented_discretization": true,
+    "is_conventional_two_solve_frequency_domain_adjoint": false,
+    "reason_two_solve_not_promoted": "the pinned FDTDX implementation rejects its reversible gradient path when dispersive ADE arrays are active; a hand-written overlap formula was not substituted"
+  },
+  "baseline": {
+    "P_Q_W": 4.78252957696e-13,
+    "component_power_W": {
+      "au_xyz": [
+        6.2494441472e-14,
+        1.7726259199999999e-16,
+        1.2368132999999999e-17
+      ],
+      "tairte4_xyz": [
+        4.0508001484799996e-13,
+        7.17249536e-15,
+        3.31638784e-15
+      ]
+    },
+    "incident_plane_W": 7.486701688284858e-13,
+    "closed_surface_inward_W": 4.774020805412005e-13,
+    "empty_subtracted_closed_surface_W": 4.782622226468025e-13,
+    "Q_flux_closure_relative": 1.9372115052883033e-05,
+    "late_window_relative_change": 0.0017105183059247901,
+    "gradient_l2_W": 2.3146202915261107e-14
+  },
+  "design": {
+    "latent_shape_xy": [
+      20,
+      20
+    ],
+    "latent_pitch_m": 5e-07,
+    "yee_shape_xy": [
+      100,
+      100
+    ],
+    "yee_pitch_m": 1e-07,
+    "au_z_cells": 2,
+    "au_thickness_m": 5e-08,
+    "relaxation": "passive Drude coupling strength s(rho)=rho^3",
+    "rho_min": 0.4436955451965332,
+    "rho_max": 0.5900406837463379
+  },
+  "adjoint_aligned": {
+    "rows": [
+      {
+        "direction": "adjoint_aligned",
+        "h": 0.01,
+        "ad_W_per_unit_direction": 2.3146202915261104e-14,
+        "fd_W_per_unit_direction": 2.3147315200003772e-14,
+        "strong_direction": true,
+        "strong_relative_error": 4.8052429971143386e-05,
+        "gradient_l2_normalized_error": 4.805473911812964e-05,
+        "power_plus_W": 4.78484955136e-13,
+        "power_minus_W": 4.780220088319999e-13
+      },
+      {
+        "direction": "adjoint_aligned",
+        "h": 0.005,
+        "ad_W_per_unit_direction": 2.3146202915261104e-14,
+        "fd_W_per_unit_direction": 2.3147315199998724e-14,
+        "strong_direction": true,
+        "strong_relative_error": 4.805242975304176e-05,
+        "gradient_l2_normalized_error": 4.805473890000704e-05,
+        "power_plus_W": 4.78368858112e-13,
+        "power_minus_W": 4.7813738496e-13
+      }
+    ],
+    "max_relative_error": 4.8052429971143386e-05,
+    "max_relative_error_percent": 0.0048052429971143385
+  },
+  "other_directions": {
+    "smooth_asymmetric": [
+      {
+        "direction": "smooth_asymmetric",
+        "h": 0.01,
+        "ad_W_per_unit_direction": 1.4305891571694602e-15,
+        "fd_W_per_unit_direction": 1.4303232000009768e-15,
+        "strong_direction": true,
+        "strong_relative_error": 0.0001859420084098701,
+        "gradient_l2_normalized_error": 1.1490315256333425e-05,
+        "power_plus_W": 4.7826763776e-13,
+        "power_minus_W": 4.782390312959999e-13
+      },
+      {
+        "direction": "smooth_asymmetric",
+        "h": 0.005,
+        "ad_W_per_unit_direction": 1.4305891571694602e-15,
+        "fd_W_per_unit_direction": 1.4319616000027013e-15,
+        "strong_direction": true,
+        "strong_relative_error": 0.0009584355008112657,
+        "gradient_l2_normalized_error": 5.929451315473392e-05,
+        "power_plus_W": 4.78260297728e-13,
+        "power_minus_W": 4.78245978112e-13
+      }
+    ],
+    "fixed_seed_random": [
+      {
+        "direction": "fixed_seed_random",
+        "h": 0.01,
+        "ad_W_per_unit_direction": 3.856281597956754e-16,
+        "fd_W_per_unit_direction": 3.8993920000148654e-16,
+        "strong_direction": false,
+        "strong_relative_error": 0.011055672796668529,
+        "gradient_l2_normalized_error": 0.0001862525884523678,
+        "power_plus_W": 4.78257184768e-13,
+        "power_minus_W": 4.782493859839999e-13
+      },
+      {
+        "direction": "fixed_seed_random",
+        "h": 0.005,
+        "ad_W_per_unit_direction": 3.856281597956754e-16,
+        "fd_W_per_unit_direction": 3.801087999961882e-16,
+        "strong_direction": false,
+        "strong_relative_error": 0.014520473610562402,
+        "gradient_l2_normalized_error": 0.00023845638179591369,
+        "power_plus_W": 4.782549565439999e-13,
+        "power_minus_W": 4.78251155456e-13
+      }
+    ]
+  },
+  "runtime": {
+    "compile_seconds": 16.221511125564575,
+    "ad_seconds": 503.6633055768907,
+    "central_fd_forward_count": 12,
+    "central_fd_forward_seconds": 270.9257684610784
+  },
+  "gates": {
+    "upstream_production_width_smoke_validated": true,
+    "all_upstream_physics_gates": true,
+    "adjoint_aligned_two_step_relative_error_lt_1pct": true,
+    "no_empirical_gradient_rescaling": true,
+    "same_nonuniform_density_and_full_dispersive_ADE_chain": true
+  },
+  "provenance": {
+    "raw_result_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_production_gradient_adjoint_aligned/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+    "raw_result_sha256": "bf68df89697d0b34796c80158c8b2971be264f679f0ea1e5e42ce27ec9f633db",
+    "fdtdx_source_path": "/home/seunghyun/.local/fdtdx_main_src",
+    "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+    "gpu": "5"
+  },
+  "no_clipping_smoothing_gain_or_gradient_rescaling": true
+}

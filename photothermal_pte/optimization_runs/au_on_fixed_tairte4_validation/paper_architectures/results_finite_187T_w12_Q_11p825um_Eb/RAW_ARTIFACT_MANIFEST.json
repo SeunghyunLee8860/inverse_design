@@ -1,0 +1,25 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.fsp",
+      "size_bytes": 1422559208,
+      "sha256": "8a4a81142e2ab0a9e5665c3946e1e90c946dea7f9af72cbbc27c47826d3b4035"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.npz",
+      "size_bytes": 634969241,
+      "sha256": "c4dbbdce0038a5b3a0c8529dc867a266245ef6d37672e20245790d8429b08f09"
+    }
+  ],
+  "generation": {
+    "forward_code": "33_run_v261_finite_multi_t_gaussian_q.py",
+    "read_only_extraction_code": "36_extract_completed_finite_187t_q.py",
+    "reservation_launcher": "/home/dhkim/bin/runres",
+    "CPU_FDTD_fallback": false
+  },
+  "diagnostic_failures_preserved": [
+    "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb_blocked_common_import_20260822T1000Z",
+    "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb_blocked_flux_dcard_20260822T1003Z"
+  ]
+}

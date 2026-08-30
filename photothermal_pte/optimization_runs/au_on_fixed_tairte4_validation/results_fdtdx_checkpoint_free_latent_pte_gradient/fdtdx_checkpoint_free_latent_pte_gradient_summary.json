@@ -1,0 +1,93 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_LATENT_PTE_GRADIENT",
+  "scope": "offline VJP of the validated checkpoint-free combined physical-density gradient through the certified finite conic filter and tanh projection; comparison uses frozen end-to-end latent finite differences",
+  "beta": 2.0,
+  "physical_density_reconstruction_max_abs": 1.3322676295501878e-15,
+  "serialized_float32_latent_max_abs_difference": 2.970448531591785e-08,
+  "physical_gradient_equivalence": {
+    "candidate_norm_A": 6.459939521318368e-18,
+    "reference_norm_A": 6.4530350582044696e-18,
+    "normalized_vector_error": 0.001538928264757462,
+    "norm_relative_error": 0.0010699559279660088,
+    "angle_deg": 0.06334195367166112
+  },
+  "latent_gradient_equivalence": {
+    "candidate_norm_A": 8.2477676730944e-18,
+    "reference_norm_A": 8.239196135901991e-18,
+    "normalized_vector_error": 0.0013585596061870696,
+    "norm_relative_error": 0.0010403365875778713,
+    "angle_deg": 0.05003436364833332
+  },
+  "directions": [
+    {
+      "direction": "latent_adjoint_aligned",
+      "beta": 2.0,
+      "h": 0.01,
+      "AD_checkpoint_free_A": 8.247764517945211e-18,
+      "frozen_end_to_end_FD_A": 8.239379933904032e-18,
+      "direction_strength_vs_gradient_norm": 0.9989830291634267,
+      "strong": true,
+      "strong_relative_error": 0.0010176231838366465,
+      "gradient_norm_normalized_error": 0.0010165882907360638
+    },
+    {
+      "direction": "latent_smooth_asymmetric",
+      "beta": 2.0,
+      "h": 0.01,
+      "AD_checkpoint_free_A": -1.4632427086308029e-18,
+      "frozen_end_to_end_FD_A": -1.4623489017250437e-18,
+      "direction_strength_vs_gradient_norm": 0.17730238771097673,
+      "strong": true,
+      "strong_relative_error": 0.000611213168556961,
+      "gradient_norm_normalized_error": 0.00010836955418554086
+    },
+    {
+      "direction": "latent_fixed_seed_random",
+      "beta": 2.0,
+      "h": 0.01,
+      "AD_checkpoint_free_A": 1.6114242341574894e-19,
+      "frozen_end_to_end_FD_A": 1.6048152070071223e-19,
+      "direction_strength_vs_gradient_norm": 0.019457570467731507,
+      "strong": true,
+      "strong_relative_error": 0.00411824808333697,
+      "gradient_norm_normalized_error": 8.013110228512932e-05
+    }
+  ],
+  "worst_strong_direction_relative_error": 0.00411824808333697,
+  "worst_all_direction_gradient_norm_normalized_error": 0.0010165882907360638,
+  "runtime_contract": {
+    "forward_compile_seconds": 23.31944604218006,
+    "forward_execution_seconds": 107.22613240778446,
+    "adjoint_compile_seconds": 24.23093033954501,
+    "adjoint_execution_seconds": 105.0685628131032,
+    "two_solve_execution_seconds": 212.29469522088766,
+    "two_solve_compile_plus_execution_seconds": 259.84507160261273,
+    "frozen_checkpointed_execution_seconds": 2920.0205346643925,
+    "execution_speedup_vs_checkpointed": 13.754561938658803
+  },
+  "gates": {
+    "input_statuses_and_SHA256_verified": true,
+    "physical_density_reconstruction_lt_1e-12": true,
+    "physical_gradient_vector_error_lt_1pct": true,
+    "latent_gradient_vector_error_lt_1pct": true,
+    "latent_gradient_norm_error_lt_1pct": true,
+    "latent_gradient_angle_lt_1deg": true,
+    "strong_direction_error_lt_1pct": true,
+    "all_direction_normalized_error_lt_1pct": true,
+    "checkpoint_count_zero": true,
+    "time_history_saved_false": true,
+    "no_empirical_gradient_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_checkpoint_free_latent_pte_gradient/fdtdx_checkpoint_free_latent_pte_gradient_raw.npz",
+    "bytes": 14441,
+    "sha256": "801aff666d2fb10d4c18749a2a07abdaff31c2622ec9ca485fe8b3513fe3e7ce",
+    "committed_to_git": false
+  },
+  "outputs": {
+    "cases_csv": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_latent_pte_gradient/fdtdx_checkpoint_free_latent_pte_gradient_cases.csv",
+    "figure": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_latent_pte_gradient/fdtdx_checkpoint_free_latent_pte_gradient.png",
+    "manifest": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_checkpoint_free_latent_pte_gradient/RAW_ARTIFACT_MANIFEST.json"
+  },
+  "next_gate": "wire the checkpoint-free two-solve callback into a short optimization smoke; do not claim paper-certified substrate material while its recorded provenance status remains blocked"
+}

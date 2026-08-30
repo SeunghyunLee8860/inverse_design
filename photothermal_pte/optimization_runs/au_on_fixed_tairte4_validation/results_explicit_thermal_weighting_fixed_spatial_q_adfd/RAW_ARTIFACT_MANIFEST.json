@@ -1,0 +1,43 @@
+{
+  "status": "VALIDATED_EXPLICIT_THERMAL_WEIGHTING_FIXED_SPATIAL_Q_ADFD",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd_raw.npz",
+    "bytes": 35788964,
+    "sha256": "a09c1418bc9abd8c8b47b9fd8fcd6ff4971903f918d72cefa8e28d4305a2d98e",
+    "committed_to_git": false
+  },
+  "input_spatial_Q": {
+    "summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_summary.json",
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_spatial_q_16period_4window/fdtdx_substrate_spatial_native_yee_q.npz",
+    "bytes": 18009578,
+    "sha256": "f513473ecd38425bbbefe01ff026ee40ba2484f8c0edd5ab687306b458ddc7ff"
+  },
+  "input_thermal_Q": {
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_material_overlap_thermal_remap_16period_4window/fdtdx_substrate_material_overlap_thermal_q.npz",
+    "bytes": 23624266,
+    "sha256": "6ab62c06174cd1a0a2b2b1cd8778dcc30e09a3832c2fa09d9b56397bba278d61",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd_summary.json",
+      "bytes": 15877,
+      "sha256": "ac61cd62c6ee78521b2490650b6fa9ecbdc9968f54ec7cc605bea6d6f6389bdf"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd_cases.csv",
+      "bytes": 5454,
+      "sha256": "aaedca5611d5bbdfdbcb9fe34767348e3558f564982bda856958d4b659c1b412"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd.png",
+      "bytes": 69278,
+      "sha256": "95876ec31365e8acb4a75f60077212c1b06d831d7745ee6e76959204d93d781a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_explicit_thermal_weighting_fixed_spatial_q_adfd/EXPLICIT_THERMAL_WEIGHTING_FIXED_SPATIAL_Q_ADFD_REPORT.md",
+      "bytes": 1072,
+      "sha256": "a9c9858519cdfddc60f73e5210e9b59cb91d4686c238365023af898f83fa04ae"
+    }
+  ]
+}

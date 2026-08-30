@@ -1,0 +1,162 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_AU_ON_OFF_EA_EB_VOLUMETRIC_Q",
+  "raw_files_committed_to_git": false,
+  "valid_cases": [
+    {
+      "case": "T_Ea_Au_on",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on_v2/FINITE_T_Ea_Au_on_Q.json",
+      "result_json_size_bytes": 7857,
+      "result_json_sha256": "e9255c155241d6c8278fbf49bb1159efb67735206686c7213e2a26f3a690bc26",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on_v2/finite_T_Ea_Au_on.fsp",
+          "size_bytes": 386601552,
+          "sha256": "9a5c6100e410fb3d1811cb9907c961598f55e3e62208c112fdec322724ce4edc"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on_v2/finite_T_Ea_Au_on_Q.npz",
+          "size_bytes": 129422380,
+          "sha256": "0406de3199b040d7732d5d8374e5148756bd6b3306b6d58291c943e254041428"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "T_Eb_Au_on",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_on/FINITE_T_Eb_Au_on_Q.json",
+      "result_json_size_bytes": 7857,
+      "result_json_sha256": "ccbf4050242cf1aaabb764939cb8953e50fcc42f926bd34ead84f1f7d6946134",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_on/finite_T_Eb_Au_on.fsp",
+          "size_bytes": 386601288,
+          "sha256": "ccb15c87a6451cdb244e27b6c7ae678dd3c57b95344318a6e9122dd52da436fe"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_on/finite_T_Eb_Au_on_Q.npz",
+          "size_bytes": 129199093,
+          "sha256": "382e691f0842fefd3c8fe53994643667c1c6cf54b18770510eebfb4ca0ab53dd"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "T_Ea_Au_off",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_off/FINITE_T_Ea_Au_off_Q.json",
+      "result_json_size_bytes": 6962,
+      "result_json_sha256": "d904292df4f18d569cffb28d6ddd2f36d4f965013064f77c466e1559dfc4252e",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_off/finite_T_Ea_Au_off.fsp",
+          "size_bytes": 386600239,
+          "sha256": "ec37b3872bd9b6c99a5adb3107b1b5b6c46c9d18d56862d1abf5e888effff3cc"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_off/finite_T_Ea_Au_off_Q.npz",
+          "size_bytes": 129507467,
+          "sha256": "8494e6b41031731e6f83c3ffa9d9ee25be808d799c3405bd38c3416aed4424a0"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "T_Eb_Au_off",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_off/FINITE_T_Eb_Au_off_Q.json",
+      "result_json_size_bytes": 6970,
+      "result_json_sha256": "f9403d29b392ab74cb89b6b3933b47cc50b091160024bc93ea1cadac0b0b31a8",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_off/finite_T_Eb_Au_off.fsp",
+          "size_bytes": 386600287,
+          "sha256": "79a75d63963bcb31e1e1756ae565b57016a7bda5c80805a2fda30e49ba16b194"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_off/finite_T_Eb_Au_off_Q.npz",
+          "size_bytes": 129305804,
+          "sha256": "37ebce3863d284217ae96500d2bcd4c63593b5fe0468f7d209f87007025295e6"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "Z_Ea_Au_on",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_on/FINITE_Z_Ea_Au_on_Q.json",
+      "result_json_size_bytes": 8727,
+      "result_json_sha256": "6dd8cc70e67d0963cb382846dac7f8c807672b39cd4aafcacb4a4e4ded61ef4b",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_on/finite_Z_Ea_Au_on.fsp",
+          "size_bytes": 553360676,
+          "sha256": "57411319f2430c80a3a91a817efba1103283acd132f2790bdace4b48e7d48e55"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_on/finite_Z_Ea_Au_on_Q.npz",
+          "size_bytes": 157463139,
+          "sha256": "3d9d2a8eb02fdc0f1e965059a460bed647fa4b0eae84e526b9855ca859f53d4f"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "Z_Eb_Au_on",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_on/FINITE_Z_Eb_Au_on_Q.json",
+      "result_json_size_bytes": 8694,
+      "result_json_sha256": "2c8915d1e79b741d557352a0c648d6af6a747aa3b0735510e38f22f9c8d30283",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_on/finite_Z_Eb_Au_on.fsp",
+          "size_bytes": 553361180,
+          "sha256": "99e988fd6745d8605e64702c2ce29c49d9b6d03dd99654cdd388ce72055e5f5b"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_on/finite_Z_Eb_Au_on_Q.npz",
+          "size_bytes": 157467250,
+          "sha256": "8fd4d3f78ad722d126408bb20a2bd8b93767b8a3399ea3bca992c75279b2baed"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "Z_Ea_Au_off",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_off/FINITE_Z_Ea_Au_off_Q.json",
+      "result_json_size_bytes": 6999,
+      "result_json_sha256": "8a0a2476a4f65849457ae69825c0274f87cd150cd8c5e70fac334af7f5b748c1",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_off/finite_Z_Ea_Au_off.fsp",
+          "size_bytes": 553358503,
+          "sha256": "b176824f52203a6a472d81b2af94f85509f99b7e76157dac51da62cffeb80abc"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_off/finite_Z_Ea_Au_off_Q.npz",
+          "size_bytes": 153873537,
+          "sha256": "4111c9499212ebd49650f0d9679709c6f4faa19a454650f7c59657ee023efb05"
+        }
+      ],
+      "committed_to_git": false
+    },
+    {
+      "case": "Z_Eb_Au_off",
+      "result_json": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_off/FINITE_Z_Eb_Au_off_Q.json",
+      "result_json_size_bytes": 7007,
+      "result_json_sha256": "1a6cd2095009358f451fc634eb306a07ee1f3dfe5b38f1317b2442551c24d3e6",
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_off/finite_Z_Eb_Au_off.fsp",
+          "size_bytes": 553358575,
+          "sha256": "27a3c67345889c8b1e54d1c0beeb6d5b7c45bc84246e6270529440c7b7f8d6a1"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_off/finite_Z_Eb_Au_off_Q.npz",
+          "size_bytes": 153919413,
+          "sha256": "e0c505812601b6ae9b58e37b1515075e6639c94e4b52fbbb590abacf0dbf8427"
+        }
+      ],
+      "committed_to_git": false
+    }
+  ],
+  "failed_diagnostic": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on",
+    "reason": "post-solve Python import failed; completed FSP retained; not used"
+  }
+}

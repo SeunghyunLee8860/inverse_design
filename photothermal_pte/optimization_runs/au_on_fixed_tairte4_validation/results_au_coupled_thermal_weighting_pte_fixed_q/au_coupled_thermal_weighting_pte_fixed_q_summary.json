@@ -1,0 +1,230 @@
+{
+  "status": "VALIDATED_COUPLED_AU_THERMAL_WEIGHTING_PTE_FIXED_Q_CONTROL",
+  "scope": "fixed-Q coupled Au thermal/contact and floating-Au electrical/weighting PTE operator; no Maxwell optical gradient or optimization",
+  "geometry": {
+    "TaIrTe4_shape": [
+      40,
+      40
+    ],
+    "Au_design_shape": [
+      20,
+      20
+    ],
+    "pitch_m": 5e-07,
+    "TaIrTe4_thickness_m": 1e-07,
+    "Au_thickness_m": 5e-08
+  },
+  "parameters": {
+    "k_Ta_x_b_y_a_z_W_mK": [
+      3.8,
+      14.4,
+      1.0
+    ],
+    "k_Au_W_mK": 317.0,
+    "G_Ta_SiO2_W_m2K": 7370000.0,
+    "G_Ta_air_W_m2K": 1.0,
+    "G_Au_Ta_W_m2K": 17241379.310344826,
+    "G_Au_Ta_provenance": "Au/MoS2 calculated analogue; numerical scenario, not TaIrTe4 measurement",
+    "electrical_contact_S_m2": 10000000000.0,
+    "electrical_contact_provenance": "numerical scenario, not measured Au/TaIrTe4 contact",
+    "S_Au_V_K": 0.0
+  },
+  "base": {
+    "objective_A": 2.019832534874051e-10,
+    "source_power_W": 1e-06,
+    "Tmax_K": 0.007918477141966604,
+    "gradient_norms_A": {
+      "total": 4.4274256560330984e-11,
+      "thermal": 4.545253050897928e-12,
+      "electrical": 4.552538005923861e-11
+    },
+    "residual_max": 7.0996362672163695e-12,
+    "thermal_energy_balance": 2.2869889575866106e-14,
+    "electrical_terminal_balance": 1.8279854404196224e-12
+  },
+  "directions": [
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.01,
+      "AD_A": 4.4274256560331e-11,
+      "FD_A": 4.427428718477389e-11,
+      "strong": true,
+      "strong_relative_error": 6.916981580474637e-07,
+      "gradient_l2_normalized_error": 6.916986364941367e-07,
+      "plus_A": 2.0242607941624624e-10,
+      "minus_A": 2.0154059367255076e-10
+    },
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.005,
+      "AD_A": 4.4274256560331e-11,
+      "FD_A": 4.427426428010654e-11,
+      "strong": true,
+      "strong_relative_error": 1.7436259346936382e-07,
+      "gradient_l2_normalized_error": 1.7436262387168316e-07,
+      "plus_A": 2.0220464557298935e-10,
+      "minus_A": 2.0176190293018829e-10
+    },
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.0025,
+      "AD_A": 4.4274256560331e-11,
+      "FD_A": 4.427425854971979e-11,
+      "strong": true,
+      "strong_relative_error": 4.493330566593919e-08,
+      "gradient_l2_normalized_error": 4.493330768494125e-08,
+      "plus_A": 2.020939443248203e-10,
+      "minus_A": 2.018725730320717e-10
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.01,
+      "AD_A": 2.0988216132932249e-13,
+      "FD_A": 2.0988454096661066e-13,
+      "strong": false,
+      "strong_relative_error": 1.1337839734212945e-05,
+      "gradient_l2_normalized_error": 5.3747650961132104e-08,
+      "plus_A": 2.019852947385133e-10,
+      "minus_A": 2.0198109704769396e-10
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.005,
+      "AD_A": 2.0988216132932249e-13,
+      "FD_A": 2.0988286809721934e-13,
+      "strong": false,
+      "strong_relative_error": 3.367439673680147e-06,
+      "gradient_l2_normalized_error": 1.5963405187691085e-08,
+      "plus_A": 2.01984288503173e-10,
+      "minus_A": 2.0198218967449202e-10
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.0025,
+      "AD_A": 2.0988216132932249e-13,
+      "FD_A": 2.0988245027795218e-13,
+      "strong": false,
+      "strong_relative_error": 1.3767164873266016e-06,
+      "gradient_l2_normalized_error": 6.526334988921208e-09,
+      "plus_A": 2.0198377459388454e-10,
+      "minus_A": 2.0198272518163315e-10
+    },
+    {
+      "direction": "central_localized",
+      "h": 0.01,
+      "AD_A": 6.184273829811843e-13,
+      "FD_A": 6.184272622085479e-13,
+      "strong": false,
+      "strong_relative_error": 1.9528992364166635e-07,
+      "gradient_l2_normalized_error": 2.7278297995978405e-09,
+      "plus_A": 2.0198943058613955e-10,
+      "minus_A": 2.0197706204089538e-10
+    },
+    {
+      "direction": "central_localized",
+      "h": 0.005,
+      "AD_A": 6.184273829811843e-13,
+      "FD_A": 6.184273549665139e-13,
+      "strong": false,
+      "strong_relative_error": 4.529985448752073e-08,
+      "gradient_l2_normalized_error": 6.327530406291812e-10,
+      "plus_A": 2.019863438307011e-10,
+      "minus_A": 2.0198015955715144e-10
+    },
+    {
+      "direction": "central_localized",
+      "h": 0.0025,
+      "AD_A": 6.184273829811843e-13,
+      "FD_A": 6.184273772590314e-13,
+      "strong": false,
+      "strong_relative_error": 9.252748357062809e-09,
+      "gradient_l2_normalized_error": 1.292433435679361e-10,
+      "plus_A": 2.0198479910747599e-10,
+      "minus_A": 2.019817069705897e-10
+    },
+    {
+      "direction": "design_edge_localized",
+      "h": 0.01,
+      "AD_A": 5.734371867551313e-12,
+      "FD_A": 5.73438234648869e-12,
+      "strong": true,
+      "strong_relative_error": 1.827387283182015e-06,
+      "gradient_l2_normalized_error": 2.3668240171571473e-07,
+      "plus_A": 2.020405268501611e-10,
+      "minus_A": 2.0192583920323133e-10
+    },
+    {
+      "direction": "design_edge_localized",
+      "h": 0.005,
+      "AD_A": 5.734371867551313e-12,
+      "FD_A": 5.734374465225551e-12,
+      "strong": true,
+      "strong_relative_error": 4.5300045428820455e-07,
+      "gradient_l2_normalized_error": 5.867234008246066e-08,
+      "plus_A": 2.0201190774459925e-10,
+      "minus_A": 2.01954563999947e-10
+    },
+    {
+      "direction": "design_edge_localized",
+      "h": 0.0025,
+      "AD_A": 5.734371867551313e-12,
+      "FD_A": 5.734372528030595e-12,
+      "strong": true,
+      "strong_relative_error": 1.1517899796779325e-07,
+      "gradient_l2_normalized_error": 1.4917907901007738e-08,
+      "plus_A": 2.0199758501486229e-10,
+      "minus_A": 2.0196891315222213e-10
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.01,
+      "AD_A": 5.324800421769536e-12,
+      "FD_A": 5.324800419693677e-12,
+      "strong": true,
+      "strong_relative_error": 3.8984729157596444e-10,
+      "gradient_l2_normalized_error": 4.688636656791077e-11,
+      "plus_A": 2.0203649059535222e-10,
+      "minus_A": 2.0192999458695835e-10
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.005,
+      "AD_A": 5.324800421769536e-12,
+      "FD_A": 5.324800441800079e-12,
+      "strong": true,
+      "strong_relative_error": 3.761745264785701e-09,
+      "gradient_l2_normalized_error": 4.524196317238063e-10,
+      "plus_A": 2.020098747655383e-10,
+      "minus_A": 2.019566267611203e-10
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.0025,
+      "AD_A": 5.324800421769536e-12,
+      "FD_A": 5.324800449978827e-12,
+      "strong": true,
+      "strong_relative_error": 5.297717993281886e-09,
+      "gradient_l2_normalized_error": 6.371488387625098e-10,
+      "plus_A": 2.0199656480751344e-10,
+      "minus_A": 2.0196994080526355e-10
+    }
+  ],
+  "worst_finest_strong_error": 1.1517899796779325e-07,
+  "worst_finest_gradient_l2_normalized_error": 4.493330768494125e-08,
+  "gates": {
+    "strong_direction_error_lt_1pct": true,
+    "multi_direction_gradient_l2_normalized_error_lt_1pct": true,
+    "linear_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_terminal_balance_lt_1pct": true,
+    "unclipped_density": true,
+    "CPU_linear_solve_fallback": false
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/au_coupled_thermal_weighting_pte_fixed_q/au_coupled_thermal_weighting_pte_fixed_q_raw.npz",
+    "bytes": 42205,
+    "sha256": "2cda658da040cead9e164c335d91970ef4f9f50c5261297cb4a09bf28eb4d1a0"
+  },
+  "no_clipping_smoothing_gain_or_gradient_rescaling": true,
+  "optimization_iterations": 0
+}

@@ -1,0 +1,47 @@
+{
+  "status": "VALIDATED_OPTICAL_SUBSTRATE_INSENSITIVITY_BELOW_AU_BACKPLANE_WITH_Q_CLOSURE_UNRESOLVED",
+  "generated_files": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results/t2024_main_backplane_truncation/backplane_truncation_summary.json",
+      "size_bytes": 2052,
+      "sha256": "23af9f75cad26955d2b309954ac632af95ced5966a0885c306b95cc720f3750f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results/t2024_main_backplane_truncation/backplane_truncation_cases.csv",
+      "size_bytes": 447,
+      "sha256": "e134e48f49afad1a504819c02a7df95a0b99fbe841481d8473515ffe5542b616"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results/t2024_main_backplane_truncation/backplane_truncation_comparison.png",
+      "size_bytes": 52456,
+      "sha256": "3a8a3c1ed950645220f578983bb89853d27e94d3243350a2652995494792a9a1"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results/t2024_main_backplane_truncation/OPTICAL_BACKPLANE_TRUNCATION_REPORT.md",
+      "size_bytes": 1068,
+      "sha256": "9453295a924323407e65cf6d90b11ae6a6a72fb6ce125864bef42150d7240e22"
+    }
+  ],
+  "raw_inputs_not_copied_to_git": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_full_v1/backplane_control.fsp",
+      "size_bytes": 1244670,
+      "sha256": "7223666137cd35e537bab33a45d050fe95b7cc52416dd2599ef7ab8e4953ef99"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_full_v1/backplane_native_q.npz",
+      "size_bytes": 12654,
+      "sha256": "9fb14b87cde257cf6ae01c98a91da93cc1491ae69a712ab14e378e2ffc817969"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_au_truncated_v1/backplane_control.fsp",
+      "size_bytes": 2265742,
+      "sha256": "b324f53a7a93c3a9bed24e55c8c825024ed0b7dc9dad64815dcdf502b1f824df"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_au_truncated_v1/backplane_native_q.npz",
+      "size_bytes": 28090,
+      "sha256": "e843fb735706f50bc94b521f97a19ecdef4ca8633fa02198fad02012bfd4877b"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "raw_artifact_committed_to_git": false,
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/au_thermal_material_interface_adfd/au_thermal_material_interface_adfd_raw.npz",
+    "bytes": 41867,
+    "sha256": "3fe7e82872ddcd3045b0ee000bd2e4e20f430600f775da7b6d66517c81b1b5f1",
+    "generation_command": "CUDA_VISIBLE_DEVICES=<one GPU> python 52_validate_au_thermal_material_interface_adfd.py ..."
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_thermal_material_interface_adfd/au_thermal_material_interface_adfd_summary.json",
+      "bytes": 7746,
+      "sha256": "643b0d4fafb86ef2b50d03c0b8d583d513c12d54b8dad28fd6b9a0ec04b64653"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_thermal_material_interface_adfd/au_thermal_material_interface_adfd_cases.csv",
+      "bytes": 16337,
+      "sha256": "7b8a62fe5d8b4cc5ea48f6430b71e3ee6ae501926a64a2a6e9e079e8f835c064"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_thermal_material_interface_adfd/au_thermal_material_interface_fields.png",
+      "bytes": 306359,
+      "sha256": "89e2be64836520ab3f29e89dc5e4a5f68f08595089f49f16b261278f18cc98d6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_thermal_material_interface_adfd/au_thermal_material_interface_adfd_validation.png",
+      "bytes": 287356,
+      "sha256": "776fd7d70e3afde5929fe6e22be8906b9a557ae5255610aa19ec9e28cb0c8f83"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_thermal_material_interface_adfd/AU_THERMAL_MATERIAL_INTERFACE_ADFD_REPORT.md",
+      "bytes": 3432,
+      "sha256": "8ce9ffe13ecd9a9e121f13aedf2393e8476b526f3d880acb69ac17a862ab9f5a"
+    }
+  ]
+}

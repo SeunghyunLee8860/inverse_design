@@ -1,0 +1,43 @@
+{
+  "status": "VALIDATED_3D_CAUSAL_DRUDE_AU_ADFD_CONTROL",
+  "generation_command": "env PYTHONPATH=/home/seunghyun/.local/au_fdtdx CUDA_VISIBLE_DEVICES=4 XLA_PYTHON_CLIENT_PREALLOCATE=false /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 39_validate_3d_drude_nanostructure_adfd.py",
+  "external_dependency": {
+    "fdtdx_version": "0.6.2",
+    "fdtdx_source_commit": "bf7e45a406c8ee6026daa95bec6fbb57e4f595ca",
+    "jax_version": "0.11.1",
+    "targeted_upstream_tests": "20 passed",
+    "raw_cache_committed": false
+  },
+  "artifacts": [
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/39_validate_3d_drude_nanostructure_adfd.py",
+      "bytes": 20748,
+      "sha256": "11482521cf1c39cd27cc025808dde9df0a8477796a6f4577138e768824052c26"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/40_summarize_3d_drude_nanostructure_adfd.py",
+      "bytes": 6947,
+      "sha256": "3d6086c95534a9accbb279b207f3893b74fedcf9d19d90b35f22d40a2e42dcbd"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_3d_drude_nanostructure_adfd_summary.json",
+      "bytes": 3215,
+      "sha256": "951b24e71a142f9c5d5dae9475860aa7986fc1dfbd5734be1926dcf39c2389ce"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_3d_drude_nanostructure_adfd_directions.csv",
+      "bytes": 2833,
+      "sha256": "8eba414a031ec3b7f4fc8165720431dd4b76a464d7b94154ccfc5f2fb2b71aeb"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_3d_drude_nanostructure_adfd.png",
+      "bytes": 150081,
+      "sha256": "bc269691775c8774137fa885005e7f6483a9078ae9fbfb782f934f90035f3c65"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/AU_3D_CAUSAL_DRUDE_NANOSTRUCTURE_ADFD_REPORT.md",
+      "bytes": 3733,
+      "sha256": "3f7ad0d8ad028ea976cdb2058c6db12a3e25df75dc45b6ac88922c1877b5d444"
+    }
+  ]
+}

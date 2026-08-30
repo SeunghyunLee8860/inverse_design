@@ -1,0 +1,174 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_MULTIPHYSICS_AND_AU_EFFECT_FORWARD",
+  "raw_files_committed_to_git": false,
+  "artifacts": [
+    {
+      "case": "T_Ea_Au_on",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/T_Ea_Au_on/T_Ea_Au_on_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5438,
+        "sha256": "a51cb7d5982627a3806c7265e06ab0c0962c1f612dd0412eb765a109b6cb58ae"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/T_Ea_Au_on_finite_thermal_electrical.npz",
+        "bytes": 26251451,
+        "sha256": "65b51c8e61df24b98958d8cc199c6897569b5beeb8d6d2e98bc61df49350a166",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T_Eb_Au_on",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/T_Eb_Au_on/T_Eb_Au_on_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5440,
+        "sha256": "16af012fdce47f625c31fb9c4b5f228674037b82049cde12e25832fcbb12e533"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/T_Eb_Au_on_finite_thermal_electrical.npz",
+        "bytes": 26187595,
+        "sha256": "e64c307837ae60ae2b3a95355e381ce37f3781120bd9f4f239485ea49df5f5a5",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T_Ea_Au_off",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/T_Ea_Au_off/T_Ea_Au_off_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5309,
+        "sha256": "685836a702b23fdb7f32ea9ef4fef2e5c0c478d1f37ff73534c55d66675a8083"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/T_Ea_Au_off_finite_thermal_electrical.npz",
+        "bytes": 22743271,
+        "sha256": "040546629cf8070dc422deedc408079f9c1557a6b65ceb300bf87d5f2caee094",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T_Eb_Au_off",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/T_Eb_Au_off/T_Eb_Au_off_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5312,
+        "sha256": "60289fff5f949d2b2dab705db6ee03931e616779bc5dc9a0a476e9ed2b6ba0f2"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/T_Eb_Au_off_finite_thermal_electrical.npz",
+        "bytes": 22592225,
+        "sha256": "65711c5c5c2868c94a8f2a2c773cd4f26d0c1d2ceabd651cd1942043bbb40583",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Ea_Au_on",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/Z_Ea_Au_on/Z_Ea_Au_on_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5445,
+        "sha256": "bb5933a339d4b6250ffed1e1ee6f0ebfa35aef48a6a52b7125fba08eb60ace72"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/Z_Ea_Au_on_finite_thermal_electrical.npz",
+        "bytes": 21490069,
+        "sha256": "1a7335edf4f20cd3c68ac8f3f9fca0127411bed89a159fdb8b00f8901beb1e2e",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Eb_Au_on",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/Z_Eb_Au_on/Z_Eb_Au_on_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5425,
+        "sha256": "21de7ce1911bd0c3294c2d33108d24470fb7efc3a8478fe6b779c32f78635d4d"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/Z_Eb_Au_on_finite_thermal_electrical.npz",
+        "bytes": 21493161,
+        "sha256": "e8c44171b29174e4e5ff48d70be52f1bdb1770ff60a066af979625728ef8ba66",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Ea_Au_off",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/Z_Ea_Au_off/Z_Ea_Au_off_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5308,
+        "sha256": "1d950859766451bd82a04232ac995cbef831e5fdfb79957f14ca0c109d04c4cc"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/Z_Ea_Au_off_finite_thermal_electrical.npz",
+        "bytes": 17715510,
+        "sha256": "a9db3d02e8a476d917166540d6205c7a2418bc938b460fdd102a2af74dd135dc",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Eb_Au_off",
+      "summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_thermal_electrical/Z_Eb_Au_off/Z_Eb_Au_off_THERMAL_ELECTRICAL_SUMMARY.json",
+        "bytes": 5307,
+        "sha256": "2ca240d4589f51b691e08037959e2c6313d0b3b3d9dc0c689b50ea86ce1b0d9f"
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/Z_Eb_Au_off_finite_thermal_electrical.npz",
+        "bytes": 17312022,
+        "sha256": "994e6589631221e8811002e3f2eebe3d15b7a1ff8a08108cbcd9350a2c701dd7",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T_Ea_Au_on",
+      "decomposition_summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_Au_effect_decomposition/T_Ea/T_Ea_Au_on_AU_EFFECT_DECOMPOSITION_SUMMARY.json",
+        "bytes": 8730,
+        "sha256": "2ae21ee8804f4b1994a565c6d0ff0d0e2cf791144b86fcdb96d8219665e16e56"
+      },
+      "decomposition_raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Au_effect_decomposition/T_Ea_Au_on_Au_effect_decomposition.npz",
+        "bytes": 477562,
+        "sha256": "5efa89d0583102aac1e133b9c9860be57f392e6e1d1df6704aa330415636d5ef",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T_Eb_Au_on",
+      "decomposition_summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_Au_effect_decomposition/T_Eb/T_Eb_Au_on_AU_EFFECT_DECOMPOSITION_SUMMARY.json",
+        "bytes": 8735,
+        "sha256": "8e2a694492052f824115d23849a3f68ad33d731ff2300dc4862b2f8f4b455832"
+      },
+      "decomposition_raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Au_effect_decomposition/T_Eb_Au_on_Au_effect_decomposition.npz",
+        "bytes": 472761,
+        "sha256": "fce53ec2ab8535c5a18b9716f222a47a4f5eadc048f3bba2438f6ecba897608f",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Ea_Au_on",
+      "decomposition_summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_Au_effect_decomposition/Z_Ea/Z_Ea_Au_on_AU_EFFECT_DECOMPOSITION_SUMMARY.json",
+        "bytes": 8759,
+        "sha256": "ae5ef082302e26555ec7208ec2cd31c7641dba99897687a8d7a1c8b4b2e8cc03"
+      },
+      "decomposition_raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Au_effect_decomposition/Z_Ea_Au_on_Au_effect_decomposition.npz",
+        "bytes": 525877,
+        "sha256": "207872696a8c8c5bd1bb27477b7de3663f83d690e2c389ce5bed216b60b5dacb",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z_Eb_Au_on",
+      "decomposition_summary": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_Au_effect_decomposition/Z_Eb/Z_Eb_Au_on_AU_EFFECT_DECOMPOSITION_SUMMARY.json",
+        "bytes": 8741,
+        "sha256": "9ffb4bb1f61769176fb19a8fc6fc8f90525d22d5072b99b09d65a5512f44d172"
+      },
+      "decomposition_raw": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Au_effect_decomposition/Z_Eb_Au_on_Au_effect_decomposition.npz",
+        "bytes": 520431,
+        "sha256": "7be2f625548009c16049f4644b194a7a9c238f4a16df5156b1f958c44d6da91f",
+        "committed_to_git": false
+      }
+    }
+  ]
+}

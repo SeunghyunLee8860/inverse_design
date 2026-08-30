@@ -1,0 +1,47 @@
+{
+  "status": "VALIDATED_FDTDX_SPATIAL_Q_CONSERVATIVE_MATERIAL_OVERLAP_REMAP",
+  "input_raw": {
+    "summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_summary.json",
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_spatial_q_16period_4window/fdtdx_substrate_spatial_native_yee_q.npz",
+    "bytes": 18009578,
+    "sha256": "f513473ecd38425bbbefe01ff026ee40ba2484f8c0edd5ab687306b458ddc7ff"
+  },
+  "output_raw": {
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_material_overlap_thermal_remap_16period_4window/fdtdx_substrate_material_overlap_thermal_q.npz",
+    "bytes": 23624266,
+    "sha256": "6ab62c06174cd1a0a2b2b1cd8778dcc30e09a3832c2fa09d9b56397bba278d61",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_summary.json",
+      "bytes": 2477,
+      "sha256": "b077aea0a57421fc505891c6e1a489c1f5593b4afbc7851a1d09b1e0a3c32459"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/fdtdx_material_overlap_remap_summary.json",
+      "bytes": 2366,
+      "sha256": "bf56d134576c39c6ab812e754e4bec4cddd72d4e9ee04494d02ea9aefc01436f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/fdtdx_material_overlap_remap_cases.csv",
+      "bytes": 1274,
+      "sha256": "c4837852d2dcdf6a3ff430a001f8352f749078251791985ce324dd09bdc582e9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/fdtdx_material_overlap_thermal_q.png",
+      "bytes": 203808,
+      "sha256": "bad6806a55be4bd1b0544d5215c26b1f3fdd20c045a14e966a37316c7506b45b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/fdtdx_material_overlap_remap_audit.png",
+      "bytes": 60966,
+      "sha256": "c06ac53d8c7d5983d43e78ac5b31913b3021a5db1c45c3e102e2ada1f2220400"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/FDTDX_MATERIAL_OVERLAP_THERMAL_REMAP_REPORT.md",
+      "bytes": 1559,
+      "sha256": "81c84564bb1bb259124bdddb4c4bd8e5b339c228ba5c321cc23e64c747b5bfac"
+    }
+  ]
+}

@@ -215,8 +215,44 @@ def main() -> int:
     parser.add_argument("--gpu-device", default="GPU 4")
     parser.add_argument("--duration-ps", type=float, default=8.0)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-7)
+    parser.add_argument(
+        "--mesh-refinement",
+        choices=(
+            "conformal variant 0",
+            "conformal variant 1",
+            "precise volume average",
+        ),
+        default="conformal variant 1",
+    )
+    parser.add_argument("--meshing-refinement", type=int, default=5)
+    parser.add_argument("--dt-stability-factor", type=float, default=0.99)
+    parser.add_argument(
+        "--boundary-mode",
+        choices=("PML", "Metal"),
+        default="PML",
+        help=(
+            "Boundary-condition diagnostic. Metal on all six faces is the "
+            "official Lumerical discriminator between PML and time-step/"
+            "material divergence; it is not a production optical boundary."
+        ),
+    )
+    parser.add_argument(
+        "--mesh-wavelength-um",
+        type=float,
+        help=(
+            "When provided, override the mesh-generation bandwidth with this "
+            "single wavelength. This is required to evaluate dispersive "
+            "materials at 10 um under precise volume average."
+        ),
+    )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
+    if not 1 <= args.meshing_refinement <= 12:
+        raise ValueError("--meshing-refinement must be in [1,12]")
+    if not 0.0 < args.dt_stability_factor < 1.0:
+        raise ValueError("--dt-stability-factor must be in (0,1)")
+    if args.mesh_wavelength_um is not None and args.mesh_wavelength_um <= 0.0:
+        raise ValueError("--mesh-wavelength-um must be positive")
     output = Path(args.output_dir).expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty {output}")
@@ -263,6 +299,60 @@ def main() -> int:
             3,
             8.36043075475035e-6,
             8.5e-6,
+        )
+        if args.boundary_mode != "PML":
+            for axis in "xyz":
+                fdtd.setnamed("FDTD", f"{axis} min bc", args.boundary_mode)
+                fdtd.setnamed("FDTD", f"{axis} max bc", args.boundary_mode)
+        built["domain"]["boundary_mode_requested"] = args.boundary_mode
+        built["domain"]["boundary_readback"] = {
+            f"{axis}_{side}": str(fdtd.getnamed("FDTD", f"{axis} {side} bc"))
+            for axis in "xyz"
+            for side in ("min", "max")
+        }
+        fdtd.setnamed("FDTD", "mesh refinement", args.mesh_refinement)
+        if args.mesh_refinement == "precise volume average":
+            fdtd.setnamed("FDTD", "meshing refinement", args.meshing_refinement)
+        fdtd.setnamed("FDTD", "dt stability factor", args.dt_stability_factor)
+        if args.mesh_wavelength_um is not None:
+            mesh_wavelength_m = args.mesh_wavelength_um * 1.0e-6
+            fdtd.setnamed(
+                "FDTD", "override simulation bandwidth for mesh generation", True
+            )
+            fdtd.setnamed("FDTD", "mesh wavelength min", mesh_wavelength_m)
+            fdtd.setnamed("FDTD", "mesh wavelength max", mesh_wavelength_m)
+        built["mesh_contract"].update(
+            {
+                "mesh_refinement": str(
+                    fdtd.getnamed("FDTD", "mesh refinement")
+                ),
+                "meshing_refinement": (
+                    int(round(float(fdtd.getnamed("FDTD", "meshing refinement"))))
+                    if args.mesh_refinement == "precise volume average"
+                    else None
+                ),
+                "dt_stability_factor": float(
+                    fdtd.getnamed("FDTD", "dt stability factor")
+                ),
+                "override_simulation_bandwidth_for_mesh_generation": bool(
+                    round(
+                        float(
+                            fdtd.getnamed(
+                                "FDTD",
+                                "override simulation bandwidth for mesh generation",
+                            )
+                        )
+                    )
+                ),
+                "mesh_wavelength_bounds_m": (
+                    [
+                        float(fdtd.getnamed("FDTD", "mesh wavelength min")),
+                        float(fdtd.getnamed("FDTD", "mesh wavelength max")),
+                    ]
+                    if args.mesh_wavelength_um is not None
+                    else None
+                ),
+            }
         )
         built["source"]["model"] = (
             "Run-002 scalar Gaussian at 10 um; single-frequency FOM contract"

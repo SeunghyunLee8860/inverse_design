@@ -1,0 +1,205 @@
+{
+  "status": "VALIDATED_AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_CONTROL",
+  "scope": "small 3-D optical algorithmic control; Au nanostructure design above fixed TaIrTe4; not an electrode model or production device",
+  "material_contract": {
+    "wavelength_m": 1e-05,
+    "au_n": 12.1,
+    "au_k": 69.2,
+    "au_epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "tairte4_epsilon": {
+      "a": [
+        -39.87819057091918,
+        187.50005695474056
+      ],
+      "b": [
+        13.778527727027518,
+        23.688463190816908
+      ],
+      "c": [
+        13.778527727027518,
+        23.688463190816908
+      ]
+    },
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "permittivity_table_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/bundle/perm_data.txt",
+    "permittivity_table_sha256": "d66eb034cb977be9ef843dd0972fcb7628ea28d168ab771f5c3a757bf5e0d499",
+    "causal_fits": {
+      "au": {
+        "kind": "Drude",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 0.0,
+        "gamma_rad_s": 67936756978114.484,
+        "coupling_sq_rad2_s2": 1.861772583872679e+32,
+        "omega_p_rad_s": 1.364467875720304e+16,
+        "delta_epsilon": 0.0,
+        "fit_relative_error": 4.6073226298260816e-17
+      },
+      "a": {
+        "kind": "Drude",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 0.0,
+        "gamma_rad_s": 863999095681002.1,
+        "coupling_sq_rad2_s2": 3.1965121236450025e+31,
+        "omega_p_rad_s": 5653770532702050.0,
+        "delta_epsilon": 0.0,
+        "fit_relative_error": 1.4826613283973133e-16
+      },
+      "b": {
+        "kind": "Lorentz",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 376730313461770.6,
+        "gamma_rad_s": 1047574306787313.1,
+        "coupling_sq_rad2_s2": 6.034501926796136e+30,
+        "omega_p_rad_s": 0.0,
+        "delta_epsilon": 42.518731211533535,
+        "fit_relative_error": 1.4494318999231789e-16
+      },
+      "c": {
+        "kind": "Lorentz",
+        "fit_basis": "exact harmonic response of the finite-dt central-difference ADE recurrence",
+        "omega_0_rad_s": 376730313461770.6,
+        "gamma_rad_s": 1047574306787313.1,
+        "coupling_sq_rad2_s2": 6.034501926796136e+30,
+        "omega_p_rad_s": 0.0,
+        "delta_epsilon": 42.518731211533535,
+        "fit_relative_error": 1.4494318999231789e-16
+      }
+    },
+    "fit_note": "one-frequency passive ADE closures exact at 10 um; not measured broadband pole fits",
+    "au_density_law": "Drude pole strength rho^3 on a fixed Yee support; numerical causal relaxation, not a physical gray effective-medium claim"
+  },
+  "geometry": {
+    "description": "fixed TaIrTe4 slab in air with a face-adjacent designable Au nanostructure layer above it",
+    "resolution_m": 1e-07,
+    "domain_cells_xyz": [
+      40,
+      40,
+      40
+    ],
+    "domain_span_m_xyz": [
+      4e-06,
+      4e-06,
+      4e-06
+    ],
+    "pml_cells_each_face": 8,
+    "au_design_cells_xyz": [
+      10,
+      10,
+      2
+    ],
+    "tairte4_cells_xyz": [
+      14,
+      14,
+      2
+    ],
+    "au_slice": [
+      [
+        15,
+        25
+      ],
+      [
+        15,
+        25
+      ],
+      [
+        20,
+        22
+      ]
+    ],
+    "tairte4_slice": [
+      [
+        13,
+        27
+      ],
+      [
+        13,
+        27
+      ],
+      [
+        18,
+        20
+      ]
+    ],
+    "source_z_index": 29,
+    "source_span_cells_xy": 24,
+    "direct_optical_contact": true
+  },
+  "numerics": {
+    "total_periods": 18,
+    "phasor_periods_per_window": 4,
+    "time_steps_total": 12471,
+    "period_steps": 693,
+    "checkpoint_count": 8,
+    "courant_factor": 0.25,
+    "dtype": "float32/complex64",
+    "gradient_method": "checkpointed JAX reverse-mode AD",
+    "jax_devices": [
+      "cuda:0"
+    ],
+    "gamma_dt": {
+      "au": 0.003270871554846169,
+      "a": 0.04159795361421499,
+      "b": 0.050436334527450895,
+      "c": 0.050436334527450895
+    }
+  },
+  "results": {
+    "powers_W": {
+      "au": 1.0493365e-18,
+      "tairte4": 9.55159625e-19,
+      "total": 2.0044961249999998e-18
+    },
+    "previous_window_powers_W": {
+      "au": 1.04933425e-18,
+      "tairte4": 9.551558749999999e-19,
+      "total": 2.004490125e-18
+    },
+    "late_window_powers_W": {
+      "au": 1.0493365e-18,
+      "tairte4": 9.55159625e-19,
+      "total": 2.0044961249999998e-18
+    },
+    "observable_window_relative_change": {
+      "au": 2.1442120807359034e-06,
+      "tairte4": 3.926045345661692e-06,
+      "total": 2.9932709397316306e-06
+    },
+    "gradient_l2_W_per_rho": {
+      "au": 1.5138232871676507e-18,
+      "tairte4": 5.2014948279024534e-20,
+      "total": 1.5074192734612481e-18
+    },
+    "gradient_sum_relative_error": 6.885127026372854e-07,
+    "max_total_strong_relative_error_finest_step": 0.0001483055511805885,
+    "max_total_gradient_l2_normalized_error_finest_step": 4.0998115148813894e-05,
+    "compile_seconds": 6.7363830134272575,
+    "ad_execution_seconds": 45.39035826548934,
+    "fd_sweep_seconds": 82.19916944205761
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "all_observable_window_changes_lt_0p5pct": true,
+    "gradient_component_sum_error_lt_1e-6": true,
+    "total_finest_strong_direction_error_lt_1pct": true,
+    "total_finest_multidirection_gradient_normalized_error_lt_1pct": true
+  },
+  "software": {
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "platform": "Linux-5.4.0-204-generic-x86_64-with-glibc2.31",
+    "fdtdx_version": "unknown",
+    "jax_version": "0.11.1",
+    "cuda_visible_devices": "4"
+  },
+  "files": {
+    "directions_csv": "au_on_fixed_tairte4_optical_adfd_directions.csv",
+    "plot": "au_on_fixed_tairte4_optical_adfd.png"
+  }
+}

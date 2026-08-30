@@ -1,0 +1,18 @@
+{
+  "scope": "checkpoint time-memory diagnostic; identical physics/grid/objective",
+  "four_checkpoint_attempt": {
+    "status": "ABORTED_PERFORMANCE_ONLY_AFTER_60_MINUTES",
+    "elapsed_seconds_before_termination": 3749,
+    "observed_gpu_memory_MiB": 11244,
+    "result_generated": false,
+    "physics_failure": false
+  },
+  "sixteen_checkpoint_run": {
+    "status": "COMPLETED",
+    "compile_seconds": 16.32117998972535,
+    "value_and_gradient_seconds": 506.6034809611738,
+    "observed_gpu_memory_MiB": 35820,
+    "result_generated": true
+  },
+  "decision": "Use 16 checkpoints as the current production-width baseline on a 49-GB GPU."
+}

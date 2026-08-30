@@ -1,0 +1,62 @@
+{
+  "status": "VALIDATED_LUMERICAL_AU_MATERIAL_READBACK",
+  "FDTD_solve_run": false,
+  "GPU_engine_acquired": false,
+  "lumerical_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+  "lumerical_product_info": "8.35.4522",
+  "wavelength_m": 1e-05,
+  "fit_band_m": [
+    9.5e-06,
+    1.05e-05
+  ],
+  "production_single_frequency_nk": {
+    "requested_n_plus_ik": {
+      "real": 12.1,
+      "imag": 69.2
+    },
+    "requested_epsilon": {
+      "real": -4642.2300000000005,
+      "imag": 1674.64
+    },
+    "direct_getindex_n_plus_ik": {
+      "real": 12.1,
+      "imag": 69.2
+    },
+    "fitted_n_plus_ik": {
+      "real": 12.156302198252513,
+      "imag": 69.35863604399744
+    },
+    "fitted_epsilon": {
+      "real": -4662.844710748462,
+      "imag": 1686.289079618884
+    },
+    "relative_complex_epsilon_error": 0.0047980092170043
+  },
+  "full_Ordal_sampled_table_diagnostic_only": {
+    "fitted_n_plus_ik": {
+      "real": 12.346304424823117,
+      "imag": 69.44033497024914
+    },
+    "fitted_epsilon": {
+      "real": -4669.528887829998,
+      "imag": 1714.6630298087728
+    },
+    "relative_complex_epsilon_error": 0.00981683896354047,
+    "note": "The global 0.667-286 um fit is not the single-wavelength production endpoint."
+  },
+  "CRC_sensitivity_only": {
+    "direct_getindex_n_plus_ik": {
+      "real": 7.13467698738834,
+      "imag": 75.01796193522168
+    },
+    "fitted_getfdtdindex_n_plus_ik": {
+      "real": 7.1553273805019,
+      "imag": 75.0945343762694
+    },
+    "fitted_epsilon": {
+      "real": -5587.990383266545,
+      "imag": 1074.6519558971231
+    }
+  },
+  "gate": "Exact 10-um (n,k) fitted complex-epsilon error <0.5% and passive imaginary epsilon"
+}

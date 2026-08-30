@@ -1,0 +1,27 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_COMBINED_PTE_GRADIENT_EQUIVALENCE",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_checkpoint_free_combined_pte_gradient/fdtdx_checkpoint_free_combined_pte_gradient_raw.npz",
+    "bytes": 18187,
+    "sha256": "26f91afa347dc090267626268cdd8daf5f2cc72af936fb39aaf6e2e0062414fb",
+    "committed_to_git": false
+  },
+  "inputs": {
+    "two_solve": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_production_two_solve_equivalence/fdtdx_production_two_solve_gradient.npz",
+      "bytes": 14606,
+      "sha256": "76a731da7706f3085fb3c0327047de04371abd9a9e75a1e99c1f8b0383e8a0bc"
+    },
+    "direct": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd_raw.npz",
+      "bytes": 35788964,
+      "sha256": "a09c1418bc9abd8c8b47b9fd8fcd6ff4971903f918d72cefa8e28d4305a2d98e"
+    },
+    "frozen_combined": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+      "bytes": 33527,
+      "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6"
+    }
+  },
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 76_assemble_fdtdx_checkpoint_free_combined_pte_gradient.py"
+}

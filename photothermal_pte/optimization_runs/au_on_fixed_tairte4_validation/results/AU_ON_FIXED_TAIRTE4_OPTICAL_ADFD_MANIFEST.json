@@ -1,0 +1,70 @@
+{
+  "status": "VALIDATED_AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_CONTROL",
+  "generation_command": "env PYTHONPATH=/home/seunghyun/.local/au_fdtdx CUDA_VISIBLE_DEVICES=4 XLA_PYTHON_CLIENT_PREALLOCATE=false /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 41_validate_au_on_fixed_tairte4_optical_adfd.py",
+  "external_dependency": {
+    "fdtdx_version": "0.6.2",
+    "fdtdx_source_commit": "bf7e45a406c8ee6026daa95bec6fbb57e4f595ca",
+    "jax_version": "0.11.1",
+    "raw_compiler_cache_committed": false
+  },
+  "observable_metrics_at_h_0p005": {
+    "au": {
+      "max_strong_relative_error": 0.00012355387162774994,
+      "max_gradient_l2_normalized_error": 3.5046634824652484e-05,
+      "near_null_directions": [
+        "central_localized"
+      ]
+    },
+    "tairte4": {
+      "max_strong_relative_error": 0.03799552386136057,
+      "max_gradient_l2_normalized_error": 0.00047024209953406085,
+      "near_null_directions": [
+        "smooth_asymmetric"
+      ]
+    },
+    "total": {
+      "max_strong_relative_error": 0.0001483055511805885,
+      "max_gradient_l2_normalized_error": 4.0998115148813894e-05,
+      "near_null_directions": [
+        "central_localized"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/41_validate_au_on_fixed_tairte4_optical_adfd.py",
+      "bytes": 27869,
+      "sha256": "2d329bfa6aadf868dd3c6f8dd39defd3726105c7591b282af57e8186544156bc"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/42_summarize_au_on_fixed_tairte4_optical_adfd.py",
+      "bytes": 8759,
+      "sha256": "bc23ebf1fcb58c8645064b3287058940bd67dd168bc47e8a7fed994e5301f4ef"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/tests/test_au_on_tairte4_contract.py",
+      "bytes": 4471,
+      "sha256": "d5332d9acab2e1ef75d31fb0601ab1ae24d007aae5d9a7adb9ec4298a93384a5"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_on_fixed_tairte4_optical_adfd_summary.json",
+      "bytes": 5972,
+      "sha256": "238506ce80e0225bfc64a2579b701e7eb291c0f24e0b10a9f29790b05c951b01"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_on_fixed_tairte4_optical_adfd_directions.csv",
+      "bytes": 8376,
+      "sha256": "4c5d44e65d9e55aebe8f0257fc6a33221762660ce46df29ea83bc0de1e3fbef6"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_on_fixed_tairte4_optical_adfd.png",
+      "bytes": 224613,
+      "sha256": "50ffcd318ed8e96c4bb8d2ac064467e96b4f5e99bf085aeb79489dfe221cf197"
+    },
+    {
+      "path": "photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_REPORT.md",
+      "bytes": 4552,
+      "sha256": "00373ec7885cc4ecf89df4a777e82636b78adb6651e8747d80191c8deeb2949c"
+    }
+  ]
+}

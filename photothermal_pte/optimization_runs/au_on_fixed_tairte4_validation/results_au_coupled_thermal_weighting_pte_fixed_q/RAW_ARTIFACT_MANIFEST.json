@@ -1,0 +1,30 @@
+{
+  "status": "VALIDATED_COUPLED_AU_THERMAL_WEIGHTING_PTE_FIXED_Q_CONTROL",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/au_coupled_thermal_weighting_pte_fixed_q/au_coupled_thermal_weighting_pte_fixed_q_raw.npz",
+    "bytes": 42205,
+    "sha256": "2cda658da040cead9e164c335d91970ef4f9f50c5261297cb4a09bf28eb4d1a0"
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_coupled_thermal_weighting_pte_fixed_q/au_coupled_thermal_weighting_pte_fixed_q_summary.json",
+      "bytes": 7616,
+      "sha256": "78adf1122f4e0a30565e0658c418b7512e35f207e2d2d55b4df624619baf5b64"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_coupled_thermal_weighting_pte_fixed_q/au_coupled_thermal_weighting_pte_fixed_q_cases.csv",
+      "bytes": 2552,
+      "sha256": "fe6b1bfb4c9f0ffc7e072aee320e81bd0e80ca5fcd66146b7ca55bed1dda26f6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_coupled_thermal_weighting_pte_fixed_q/au_coupled_thermal_weighting_pte_fixed_q_fields.png",
+      "bytes": 80874,
+      "sha256": "0f001a8966b154264bc2d523636c1ee7a54531d6e65b119792db2e3d96edb22f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_coupled_thermal_weighting_pte_fixed_q/AU_COUPLED_THERMAL_WEIGHTING_PTE_FIXED_Q_REPORT.md",
+      "bytes": 1231,
+      "sha256": "df26484b54a1643c4d29379ff70c0343c3a724fd9e3fa1bedcee5ef230caddcb"
+    }
+  ]
+}

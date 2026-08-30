@@ -1,0 +1,538 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_GAUSSIAN_SOURCE_ONLY",
+  "classification": "source-only; no Q, thermal, electrical, PTE, adjoint or optimization",
+  "axes": "Lumerical x=b, y=a, propagation -z",
+  "validated_cases": {
+    "T": {
+      "status": "VALIDATED_FINITE_T_GAUSSIAN_SOURCE_ONLY",
+      "classification": "homogeneous-air source-only gate; no material, Q, thermal, electrical, PTE, adjoint or optimization result",
+      "solver_version": "8.35.4522",
+      "GPU_resource_used": "Local Host",
+      "solver_wall_time_s": 24.92273226007819,
+      "launcher_run_directory": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/launcher_T_validated/Ongoing/20260822_235935_76_run_v261_finite_t_z_gaussian_source_only_gpu4_th8",
+      "setup": {
+        "architecture": "T",
+        "wavelength_m": 4.749999999999999e-06,
+        "domain_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -2.4999999999999998e-06,
+            1.5e-06
+          ]
+        },
+        "source_bounds_m": {
+          "x": [
+            -9e-06,
+            9e-06
+          ],
+          "y": [
+            -9e-06,
+            9e-06
+          ],
+          "z": 5e-07
+        },
+        "waist_plane_z_m": 1e-07,
+        "requested_w0_m": 4e-06,
+        "Lumerical_source_object_w0_m": 3.944481782605717e-06,
+        "source_object_calibration_is_Q_rescaling": false,
+        "top_Au_mesh_bounds_m": [
+          [
+            -6.000000000000001e-07,
+            6.000000000000001e-07,
+            -3.5000000000000004e-07,
+            3.5000000000000004e-07
+          ]
+        ],
+        "top_Au_symmetric_mesh_half_extent_m": 7.000000000000001e-07
+      },
+      "source_power_W": 3.1202076155357226e-14,
+      "source_object_metrics": {
+        "moment_center_x_m": -1.258827104275623e-22,
+        "moment_center_y_m": 3.1297650287667936e-23,
+        "moment_waist_x_m": 3.946823198144364e-06,
+        "moment_waist_y_m": 3.946823198144364e-06,
+        "fitted_center_x_m": -2.7332187913989857e-24,
+        "fitted_center_y_m": -5.7493924174136146e-24,
+        "fitted_waist_x_m": 3.94740134184377e-06,
+        "fitted_waist_y_m": 3.94740134184377e-06,
+        "fitted_waist_effective_m": 3.94740134184377e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 1.0,
+        "Gaussian_fit_NRMSE": 2.4548578513284644e-16,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 0.0,
+        "E2_integral_in_source_profile_normalization": 2.4479040056837535e-11,
+        "E2_integral_is_absolute_power": false,
+        "boundary_max_intensity_over_peak": 3.0535317760048713e-05,
+        "boundary_mean_intensity_over_peak": 1.2822567569474528e-05,
+        "fitted_infinite_Gaussian_square_captured_fraction": 0.9999897674490901,
+        "fitted_infinite_Gaussian_inscribed_circle_fraction": 0.9999694646822399,
+        "E_shape": [
+          229,
+          229,
+          3
+        ]
+      },
+      "target_plane_metrics": {
+        "integrated_power_W": 3.130157032788819e-14,
+        "moment_center_x_m": -8.601757811049105e-16,
+        "moment_center_y_m": -6.197640620348541e-21,
+        "moment_waist_x_m": 4.001668670379286e-06,
+        "moment_waist_y_m": 4.013691884965224e-06,
+        "fitted_center_x_m": -4.093777089763129e-16,
+        "fitted_center_y_m": 8.779526550995869e-19,
+        "fitted_waist_x_m": 3.990274593970209e-06,
+        "fitted_waist_y_m": 4.0110854792662e-06,
+        "fitted_waist_effective_m": 4.000666504741271e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 0.9997490353325209,
+        "Gaussian_fit_NRMSE": 0.0007459458109464714,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 0.00520183696409355,
+        "power_over_sourcepower": 1.0031887035989393,
+        "incident_power_integrated_W": 3.130157032788819e-14,
+        "downward_Poynting_power_W": 3.127372303668555e-14,
+        "downward_Poynting_power_over_sourcepower": 1.0022962216030622,
+        "boundary_max_intensity_over_peak": 2.290809902346608e-05,
+        "boundary_mean_intensity_over_peak": 9.11399666150984e-06,
+        "beam_center_error_m": 4.0937865040517114e-16,
+        "maximum_lateral_cell_m": 1.0000000000000158e-07,
+        "x_polarization_E2_fraction": 0.9619725440994932,
+        "cross_polarized_Ey_E2_fraction": 0.0003384457938259904,
+        "longitudinal_Ez_E2_fraction": 0.03768901010668081,
+        "all_fields_finite": true
+      },
+      "mesh_region_audit": {
+        "flake_max_dx_m": 1.0000000000000243e-07,
+        "flake_max_dy_m": 1.0000000000000243e-07,
+        "structure_max_dz_m": 5.000000000000005e-09
+      },
+      "mesh_readback": {
+        "available": true,
+        "shape_xyz": [
+          269,
+          269,
+          88
+        ],
+        "grid_points": 6367768,
+        "bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -2.4999999999999998e-06,
+            1.5e-06
+          ]
+        },
+        "minimum_step_m": {
+          "x": 2.4999999999989067e-08,
+          "y": 2.4999999999989067e-08,
+          "z": 4.999999999999707e-09
+        },
+        "maximum_step_m": {
+          "x": 2.500000000000027e-07,
+          "y": 2.500000000000027e-07,
+          "z": 3.187499999999997e-07
+        }
+      },
+      "log_audit": {
+        "logs": [
+          "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/finite_T_gaussian_source_only_p0.log"
+        ],
+        "final_auto_shutoff": 7.83046e-07,
+        "logged_grid": {
+          "shape_xyz": [
+            316,
+            316,
+            135
+          ],
+          "grid_points": 13480560
+        },
+        "precise_GPU_memory_GiB": 0.445,
+        "simulation_completed_successfully": true
+      },
+      "gates": {
+        "GPU_completed": true,
+        "no_CPU_fallback": true,
+        "auto_shutoff_lt_1e_5": true,
+        "waist_x_within_0p5pct": true,
+        "waist_y_within_0p5pct": true,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "realized_ellipticity_lt_1pct": true,
+        "center_displacement_lt_50nm": true,
+        "incident_power_closure_lt_0p5pct": true,
+        "actual_mesh_readback_available": true,
+        "GPU_memory_readback_available": true,
+        "all_fields_finite": true
+      },
+      "Q_processing": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "global_rescaling": false
+      },
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/finite_T_gaussian_source_only.fsp",
+          "size_bytes": 5519340,
+          "sha256": "fe567ecc080328cf6b7dcbff5be194782ce89fc3cef464f2f2cb4cc6f4925628"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/finite_T_gaussian_source_only_fields.npz",
+          "size_bytes": 5961145,
+          "sha256": "02bf813c6753ea7350f40bb0a7e8dd6c042bb4447b5ac02b8d45b3d0db380da4"
+        }
+      ]
+    },
+    "Z": {
+      "status": "VALIDATED_FINITE_Z_GAUSSIAN_SOURCE_ONLY",
+      "classification": "homogeneous-air source-only gate; no material, Q, thermal, electrical, PTE, adjoint or optimization result",
+      "solver_version": "8.35.4522",
+      "GPU_resource_used": "Local Host",
+      "solver_wall_time_s": 31.02175557985902,
+      "launcher_run_directory": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/launcher_Z_validated/Ongoing/20260822_235926_76_run_v261_finite_t_z_gaussian_source_only_gpu5_th8",
+      "setup": {
+        "architecture": "Z",
+        "wavelength_m": 5.299999999999999e-06,
+        "domain_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1.8e-06,
+            1.5e-06
+          ]
+        },
+        "source_bounds_m": {
+          "x": [
+            -9e-06,
+            9e-06
+          ],
+          "y": [
+            -9e-06,
+            9e-06
+          ],
+          "z": 5e-07
+        },
+        "waist_plane_z_m": 1e-07,
+        "requested_w0_m": 4e-06,
+        "Lumerical_source_object_w0_m": 3.936280659072623e-06,
+        "source_object_calibration_is_Q_rescaling": false,
+        "top_Au_mesh_bounds_m": [
+          [
+            -1.3e-07,
+            1.23e-06,
+            -1.0000000000000002e-06,
+            1.3e-06
+          ],
+          [
+            -1.23e-06,
+            -1.3e-07,
+            -1.3e-06,
+            4.0000000000000003e-07
+          ]
+        ],
+        "top_Au_symmetric_mesh_half_extent_m": 1.4000000000000001e-06
+      },
+      "source_power_W": 3.079871372249002e-14,
+      "source_object_metrics": {
+        "moment_center_x_m": -2.527056784768777e-22,
+        "moment_center_y_m": -1.8394406648230718e-23,
+        "moment_waist_x_m": 3.939294403908629e-06,
+        "moment_waist_y_m": 3.93929440390863e-06,
+        "fitted_center_x_m": -9.058969871259932e-24,
+        "fitted_center_y_m": -4.2694863987726374e-23,
+        "fitted_waist_x_m": 3.9399378909334584e-06,
+        "fitted_waist_y_m": 3.939937890933458e-06,
+        "fitted_waist_effective_m": 3.939937890933458e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 0.9999999999999997,
+        "Gaussian_fit_NRMSE": 2.363489548046949e-16,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 2.1498637052210476e-16,
+        "E2_integral_in_source_profile_normalization": 2.438795938098819e-11,
+        "E2_integral_is_absolute_power": false,
+        "boundary_max_intensity_over_peak": 2.9354852539071467e-05,
+        "boundary_mean_intensity_over_peak": 1.4227726088945751e-05,
+        "fitted_infinite_Gaussian_square_captured_fraction": 0.9999901801651865,
+        "fitted_infinite_Gaussian_inscribed_circle_fraction": 0.9999706451474609,
+        "E_shape": [
+          271,
+          271,
+          3
+        ]
+      },
+      "target_plane_metrics": {
+        "integrated_power_W": 3.094677275016838e-14,
+        "moment_center_x_m": -7.405564471110195e-16,
+        "moment_center_y_m": 1.882310103299459e-20,
+        "moment_waist_x_m": 4.002496914966606e-06,
+        "moment_waist_y_m": 4.0214799049884564e-06,
+        "fitted_center_x_m": -6.358552492614984e-16,
+        "fitted_center_y_m": 1.662169894818134e-19,
+        "fitted_waist_x_m": 3.984605122129291e-06,
+        "fitted_waist_y_m": 4.0180385844082255e-06,
+        "fitted_waist_effective_m": 4.0012869335185325e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 0.9999053917631735,
+        "Gaussian_fit_NRMSE": 0.0008137137187245,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 0.00835560434900339,
+        "power_over_sourcepower": 1.004807312052459,
+        "incident_power_integrated_W": 3.094677275016838e-14,
+        "downward_Poynting_power_W": 3.090110615459305e-14,
+        "downward_Poynting_power_over_sourcepower": 1.0033245684552163,
+        "boundary_max_intensity_over_peak": 2.368222401445465e-05,
+        "boundary_mean_intensity_over_peak": 1.007236290006042e-05,
+        "beam_center_error_m": 6.358552709866372e-16,
+        "maximum_lateral_cell_m": 1.0000000000000243e-07,
+        "x_polarization_E2_fraction": 0.951679424917657,
+        "cross_polarized_Ey_E2_fraction": 0.000546249586853373,
+        "longitudinal_Ez_E2_fraction": 0.04777432549548958,
+        "all_fields_finite": true
+      },
+      "mesh_region_audit": {
+        "flake_max_dx_m": 1.0000000000000243e-07,
+        "flake_max_dy_m": 1.0000000000000243e-07,
+        "structure_max_dz_m": 5.000000000000005e-09
+      },
+      "mesh_readback": {
+        "available": true,
+        "shape_xyz": [
+          311,
+          311,
+          86
+        ],
+        "grid_points": 8318006,
+        "bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1.8000000000000001e-06,
+            1.5e-06
+          ]
+        },
+        "minimum_step_m": {
+          "x": 2.4999999999989808e-08,
+          "y": 2.4999999999989808e-08,
+          "z": 4.999999999999628e-09
+        },
+        "maximum_step_m": {
+          "x": 2.500000000000027e-07,
+          "y": 2.500000000000027e-07,
+          "z": 3.5000000000000004e-07
+        }
+      },
+      "log_audit": {
+        "logs": [
+          "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/finite_Z_gaussian_source_only_p0.log"
+        ],
+        "final_auto_shutoff": 8.80117e-07,
+        "logged_grid": {
+          "shape_xyz": [
+            358,
+            358,
+            133
+          ],
+          "grid_points": 17045812
+        },
+        "precise_GPU_memory_GiB": 0.584,
+        "simulation_completed_successfully": true
+      },
+      "gates": {
+        "GPU_completed": true,
+        "no_CPU_fallback": true,
+        "auto_shutoff_lt_1e_5": true,
+        "waist_x_within_0p5pct": true,
+        "waist_y_within_0p5pct": true,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "realized_ellipticity_lt_1pct": true,
+        "center_displacement_lt_50nm": true,
+        "incident_power_closure_lt_0p5pct": true,
+        "actual_mesh_readback_available": true,
+        "GPU_memory_readback_available": true,
+        "all_fields_finite": true
+      },
+      "Q_processing": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "global_rescaling": false
+      },
+      "raw_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/finite_Z_gaussian_source_only.fsp",
+          "size_bytes": 7537628,
+          "sha256": "214a4d4aefa46dbbffe66af71a6fe1e2009c09359060f64a32a4c1b1ed58e630"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/finite_Z_gaussian_source_only_fields.npz",
+          "size_bytes": 8406651,
+          "sha256": "966cea96fd52bb1c04ee52b5a887f247624ac822f6caabd218fa482bc00f300e"
+        }
+      ]
+    }
+  },
+  "calibration_history": [
+    {
+      "architecture": "T",
+      "calibration_ordinal": 1,
+      "status": "FAILED_FINITE_T_GAUSSIAN_SOURCE_ONLY_GATE",
+      "source_z_um": 1.0,
+      "source_object_w0_um": NaN,
+      "fitted_wx_um": 4.044783790306962,
+      "fitted_wy_um": 4.063258231863039,
+      "fit_NRMSE_percent": 0.08256009017713016,
+      "ellipticity_percent": 0.4557066059984083,
+      "power_closure_percent": 0.2309676828365692,
+      "auto_shutoff": null,
+      "wall_time_s": 24.273809731006622,
+      "GPU_memory_GiB": null,
+      "gates_all": false,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T/FINITE_T_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "T",
+      "calibration_ordinal": 2,
+      "status": "VALIDATED_FINITE_T_GAUSSIAN_SOURCE_ONLY",
+      "source_z_um": 1.0,
+      "source_object_w0_um": 3.946709079729632,
+      "fitted_wx_um": 3.991723082242575,
+      "fitted_wy_um": 4.011192684685724,
+      "fit_NRMSE_percent": 0.07711058105353727,
+      "ellipticity_percent": 0.48656272314166227,
+      "power_closure_percent": 0.24097166195640174,
+      "auto_shutoff": 8.55302e-07,
+      "wall_time_s": 26.133232090622187,
+      "GPU_memory_GiB": 0.445,
+      "gates_all": true,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_calibrated/FINITE_T_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "T",
+      "calibration_ordinal": 3,
+      "status": "FAILED_FINITE_T_GAUSSIAN_SOURCE_ONLY_GATE",
+      "source_z_um": 0.5,
+      "source_object_w0_um": 3.9773199999999997,
+      "fitted_wx_um": 4.023191793375916,
+      "fitted_wy_um": 4.043434429959873,
+      "fit_NRMSE_percent": 0.07346040728896873,
+      "ellipticity_percent": 0.5018860679424358,
+      "power_closure_percent": 0.2232542714167396,
+      "auto_shutoff": 9.8582e-07,
+      "wall_time_s": 25.376850981265306,
+      "GPU_memory_GiB": 0.445,
+      "gates_all": false,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_final/FINITE_T_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "T",
+      "calibration_ordinal": 4,
+      "status": "VALIDATED_FINITE_T_GAUSSIAN_SOURCE_ONLY",
+      "source_z_um": 0.5,
+      "source_object_w0_um": 3.944481782605717,
+      "fitted_wx_um": 3.990274593970209,
+      "fitted_wy_um": 4.0110854792662005,
+      "fit_NRMSE_percent": 0.07459458109464713,
+      "ellipticity_percent": 0.520183696409355,
+      "power_closure_percent": 0.22962216030621985,
+      "auto_shutoff": 7.83046e-07,
+      "wall_time_s": 24.92273226007819,
+      "GPU_memory_GiB": 0.445,
+      "gates_all": true,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/FINITE_T_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "Z",
+      "calibration_ordinal": 1,
+      "status": "FAILED_FINITE_Z_GAUSSIAN_SOURCE_ONLY_GATE",
+      "source_z_um": 1.0,
+      "source_object_w0_um": NaN,
+      "fitted_wx_um": 4.051785724409329,
+      "fitted_wy_um": 4.082228418406602,
+      "fit_NRMSE_percent": 0.06806389695319699,
+      "ellipticity_percent": 0.7485281796358964,
+      "power_closure_percent": 0.3084684753555944,
+      "auto_shutoff": null,
+      "wall_time_s": 31.691608667373657,
+      "GPU_memory_GiB": null,
+      "gates_all": false,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z/FINITE_Z_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "Z",
+      "calibration_ordinal": 2,
+      "status": "FAILED_FINITE_Z_GAUSSIAN_SOURCE_ONLY_GATE",
+      "source_z_um": 1.0,
+      "source_object_w0_um": 3.9341244751082476,
+      "fitted_wx_um": 3.9869211346794446,
+      "fitted_wy_um": 4.019213635146865,
+      "fit_NRMSE_percent": 0.0682478357627766,
+      "ellipticity_percent": 0.806693901509741,
+      "power_closure_percent": 0.32794613452760135,
+      "auto_shutoff": 8.28669e-07,
+      "wall_time_s": 31.762919519096613,
+      "GPU_memory_GiB": 0.584,
+      "gates_all": false,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_calibrated/FINITE_Z_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "Z",
+      "calibration_ordinal": 3,
+      "status": "FAILED_FINITE_Z_GAUSSIAN_SOURCE_ONLY_GATE",
+      "source_z_um": 0.5,
+      "source_object_w0_um": 3.97197,
+      "fitted_wx_um": 4.020091992230628,
+      "fitted_wy_um": 4.052507227879296,
+      "fit_NRMSE_percent": 0.08415372408798528,
+      "ellipticity_percent": 0.8030929014267799,
+      "power_closure_percent": 0.3214593380668873,
+      "auto_shutoff": 7.66972e-07,
+      "wall_time_s": 32.399741902947426,
+      "GPU_memory_GiB": 0.584,
+      "gates_all": false,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_final/FINITE_Z_GAUSSIAN_SOURCE_ONLY.json"
+    },
+    {
+      "architecture": "Z",
+      "calibration_ordinal": 4,
+      "status": "VALIDATED_FINITE_Z_GAUSSIAN_SOURCE_ONLY",
+      "source_z_um": 0.5,
+      "source_object_w0_um": 3.936280659072623,
+      "fitted_wx_um": 3.984605122129291,
+      "fitted_wy_um": 4.018038584408226,
+      "fit_NRMSE_percent": 0.08137137187245,
+      "ellipticity_percent": 0.8355604349003389,
+      "power_closure_percent": 0.3324568455216337,
+      "auto_shutoff": 8.80117e-07,
+      "wall_time_s": 31.02175557985902,
+      "GPU_memory_GiB": 0.584,
+      "gates_all": true,
+      "raw_JSON_path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/FINITE_Z_GAUSSIAN_SOURCE_ONLY.json"
+    }
+  ],
+  "interpretation": "The source-object field is circular.  The target-plane Maxwell field has sub-1% polarization-oriented ellipticity and nonzero Ez because lambda/w0 is near unity.  No field symmetrization or power/Q rescaling was applied."
+}

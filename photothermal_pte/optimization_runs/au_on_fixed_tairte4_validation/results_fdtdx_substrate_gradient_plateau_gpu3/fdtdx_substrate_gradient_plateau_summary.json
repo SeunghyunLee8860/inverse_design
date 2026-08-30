@@ -1,0 +1,84 @@
+{
+  "status": "VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_STABLE_STEP_PLATEAU",
+  "scope": "one strong smooth direction on the 32-period diagnostic substrate contract; no thermal/PTE/electrical/optimization and not production while Palik Si readback is blocked",
+  "baseline": {
+    "P_Q_W": 2.4779738316799997e-13,
+    "component_power_W": {
+      "au_xyz": [
+        5.4951313407999995e-14,
+        4.1028348e-17,
+        1.2909677999999998e-17
+      ],
+      "tairte4_xyz": [
+        1.4780522495999998e-13,
+        1.024521344e-15,
+        3.871218944e-15
+      ],
+      "sio2_xyz": [
+        3.6012253183999996e-14,
+        4.8282388e-17,
+        4.030630656e-15
+      ]
+    },
+    "incident_plane_W": 5.644691528430834e-13,
+    "near_phasor_closed_surface_inward_W": 2.474497657559832e-13,
+    "closed_surface_inward_W": 2.4745654201956124e-13,
+    "empty_subtracted_closed_surface_W": 2.4745654201956124e-13,
+    "closure_correction": {
+      "method": "none; direct late-window local-Q versus deep-box time-domain matched-volume flux",
+      "substrate_only_Q_W": 1.31794386944e-13,
+      "substrate_only_closed_surface_W": 1.3117238957353894e-13,
+      "substrate_only_closed_minus_Q_residual_W": -6.219973704610607e-16
+    },
+    "Q_flux_closure_relative": 0.001377377804025825,
+    "late_window_relative_change": 0.0001443820316825999,
+    "gradient_l2_W": 1.6418346726331387e-14
+  },
+  "directions": [
+    {
+      "h": 0.02,
+      "AD_W_per_unit_direction": 8.936886345917136e-16,
+      "FD_W_per_unit_direction": 8.94566399999995e-16,
+      "strong_relative_error": 0.0009812188433205294,
+      "gradient_l2_normalized_error": 5.346247237388793e-05,
+      "power_plus_W": 2.4781622476799996e-13,
+      "power_minus_W": 2.4778044211199996e-13,
+      "source_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_fd_h0p02_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json"
+    },
+    {
+      "h": 0.01,
+      "AD_W_per_unit_direction": 8.936886345917136e-16,
+      "FD_W_per_unit_direction": 8.929280000007948e-16,
+      "strong_relative_error": 0.0008518431395566801,
+      "gradient_l2_normalized_error": 4.63283303488076e-05,
+      "power_plus_W": 2.47806459904e-13,
+      "power_minus_W": 2.4778860134399997e-13,
+      "source_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_fd_h0p01_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json"
+    },
+    {
+      "h": 0.005,
+      "AD_W_per_unit_direction": 8.936886345917136e-16,
+      "FD_W_per_unit_direction": 9.027584000010444e-16,
+      "strong_relative_error": 0.010046725025566496,
+      "gradient_l2_normalized_error": 0.0005524164862948697,
+      "power_plus_W": 2.4780198707199997e-13,
+      "power_minus_W": 2.4779295948799996e-13,
+      "source_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_smoke_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json"
+    }
+  ],
+  "FD_h0p02_to_h0p01_relative_change": 0.0018315018306077208,
+  "h0p005_interpretation": "fail-closed small-step diagnostic: float32 subtraction noise after the 0.02-to-0.01 stable plateau; result is retained, not deleted or rescaled",
+  "strict_runtime": {
+    "compile_seconds": 39.38384151831269,
+    "ad_seconds": 5773.955443710089,
+    "central_fd_forward_count": 2,
+    "central_fd_forward_seconds": 426.29346265643835
+  },
+  "gates": {
+    "stable_h0p02_and_h0p01_ADFD_error_lt_1pct": true,
+    "h0p02_to_h0p01_FD_plateau_lt_1pct": true,
+    "Q_flux_closure_lt_0p5pct": true,
+    "late_window_change_lt_0p5pct": true,
+    "no_clipping_smoothing_gain_or_gradient_rescaling": true
+  }
+}

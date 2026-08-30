@@ -1,0 +1,9 @@
+case,status,passed,diverged,P_Q_W,P_six_W,closure_percent,note
+moderate_synthetic,COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL,True,False,3.5538409220365626e-14,3.5532754936826e-14,0.015910345070772047,"temperature carrier is numerical, never thermal T"
+real_heat_pva,FAILED_COMPLEX_MATERIAL_FORWARD_CONTROL,False,False,5.082317498019871e-24,6.218662339307628e-19,99.99918273139453,"temperature carrier is numerical, never thermal T"
+real_heat_conformal,FAILED_COMPLEX_MATERIAL_FORWARD_CONTROL,False,False,1.494176106381279e-15,1.7382860735441959e-15,14.04314116520536,"temperature carrier is numerical, never thermal T"
+au_span1,BLOCKED_COMPLEX_MATERIAL_CONTROL,False,True,,,,span=None K; model=None; direction=None; dt_factor=0.99
+au_span1000_linear,BLOCKED_COMPLEX_MATERIAL_CONTROL,False,True,,,,span=1000.0 K; model=linear_sensitivity; direction=air_base_toward_exact_target; dt_factor=0.99
+au_span1000_table,BLOCKED_COMPLEX_MATERIAL_CONTROL,False,True,,,,span=1000.0 K; model=nonlinear_table; direction=air_base_toward_exact_target; dt_factor=0.99
+au_span1000_dt0p5_short,BLOCKED_COMPLEX_MATERIAL_CONTROL,False,True,,,,span=1000.0 K; model=linear_sensitivity; direction=air_base_toward_exact_target; dt_factor=0.5
+au_reverse,BLOCKED_COMPLEX_MATERIAL_CONTROL,False,True,,,,span=None K; model=None; direction=exact_target_base_toward_air; dt_factor=0.99

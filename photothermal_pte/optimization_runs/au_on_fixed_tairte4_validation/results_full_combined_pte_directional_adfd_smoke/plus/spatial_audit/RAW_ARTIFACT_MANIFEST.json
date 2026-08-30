@@ -1,0 +1,41 @@
+{
+  "status": "VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_ARTIFACT",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_plus.npz",
+    "bytes": 18011092,
+    "sha256": "a09392e0698a090475e217100f074cb7a899f1cd8b826e6d8631c5189b230249",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/forward/fdtdx_substrate_spatial_native_yee_q_export.json",
+      "bytes": 8427,
+      "sha256": "782068cbcc7c8576f8b01df24971e2d2350ef46325fadfb15bff822b66829e10"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/spatial_audit/fdtdx_spatial_native_yee_q_summary.json",
+      "bytes": 2454,
+      "sha256": "04fd3cd7d0c894de5373309dd913e5a31956d5918ddd3a944999b632dd65c42a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/spatial_audit/fdtdx_spatial_native_yee_q_components.csv",
+      "bytes": 2322,
+      "sha256": "116ea06f8f44b40d8de4fb357a30ba68ec59373f6f2c95f9035e856ce6f11ec1"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/spatial_audit/fdtdx_spatial_native_yee_q_components.png",
+      "bytes": 748872,
+      "sha256": "0f36b47295ef35580679938845d52968bf24e02a1ec5a0a3197be880c87f5264"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/spatial_audit/fdtdx_spatial_q_power_breakdown.png",
+      "bytes": 84338,
+      "sha256": "2815470dc76c2c1e26421b7c6ab6ff9db0e6fd1551c9a96788ffe20ac1da8e6c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/plus/spatial_audit/FDTDX_SPATIAL_NATIVE_YEE_Q_REPORT.md",
+      "bytes": 1561,
+      "sha256": "645e7840cb6315eca82879f4bcbf312caed4bcb1b67d5ec2074260177eac55c2"
+    }
+  ]
+}

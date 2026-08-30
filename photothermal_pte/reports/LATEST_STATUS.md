@@ -1,5 +1,79 @@
 # Latest photothermal validation status
 
+## Au nanoantenna/nanocube optical topology route on fixed TaIrTe4
+
+- Au is a designable optical nanostructure material in this route, not an
+  electrode.  Status is
+  `VALIDATED_AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_CONTROL` for the causal
+  fixed-grid FDTDX/JAX derivative and
+  `VALIDATED_LUMERICAL_AU_TAIRTE4_BINARY_ENDPOINTS` for independent exact
+  v261 endpoints.
+- The full 3-D causal dispersive GPU control separates Au, TaIrTe4, and total
+  absorption.  At the finest central-FD step its maximum strong-direction
+  total-gradient error is `0.014831%`; its multi-direction gradient-L2
+  normalized error is `0.004100%`.
+- The Lumerical cases use fixed anisotropic TaIrTe4 (`x=b`, `y=a`, `z=c=b`
+  closure), exact Au `epsilon=-4642.23+1674.64i`, a 10-um scalar Gaussian
+  with `w0=8.5 um`, six PML boundaries, and identical source/mesh contracts.
+  Au-absent and Au-present six-face closures are `0.003989%` and `0.007511%`;
+  both auto-shutoff values are below `1e-7`.
+- Engine logs prove GPU 4 time stepping.  All native-Yee `Qx/Qy/Qz` arrays
+  are finite and nonnegative; material readback and raw-artifact hashes pass.
+  No clipping, smoothing, gain, rescaling, or interface-power reassignment is
+  used.  Raw FSP/NPZ files remain outside Git with path, size, and SHA-256 in
+  the manifest.
+- This result does not validate Lumerical's failed moving/conformal-metal
+  derivative or gray `importnk2` route.  It does not yet include Au/TaIrTe4
+  thermal contact, electrical collection, PTE, or a production topology
+  optimization.  The compact differentiable control and the 48-um Lumerical
+  endpoint have different geometry/source normalization, so absolute
+  cross-solver power equality is not claimed.
+- Code, reports, JSON, CSV, plot, and manifests:
+  `optimization_runs/au_on_fixed_tairte4_validation/`.
+- The explicit 10-um `Au/TaIrTe4/285-nm-SiO2/lossless-Si` FDTDX diagnostic
+  now passes component-specific native-Yee loss/flux bookkeeping on a matched
+  Si/SiO2 interface grid. Deep-box time-domain closures are `0.4742%`
+  (substrate), `0.1101%` (TaIrTe4), and `0.1678%` (Au/TaIrTe4); late-window
+  changes are below `0.016%`. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE`.
+- This substrate checkpoint is not yet production-certified because the
+  installed Lumerical Palik-Si readback remains blocked; the cited lossless
+  10-um Si value is an explicit diagnostic assumption.
+- The 20x20, 500-nm-pitch nonuniform-Au optical-total-Q derivative now passes
+  a stable central-FD step plateau on that same 32-period substrate contract.
+  Strong-direction errors are `0.098122%` (`h=0.02`) and `0.085184%`
+  (`h=0.01`), while those two FD derivatives differ by `0.183150%`.
+  `h=0.005` remains published as a fail-closed `1.004673%` small-step
+  float32-cancellation diagnostic; no gradient rescaling was used.  Baseline
+  closure/window errors are `0.137738%`/`0.014438%`. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_STABLE_STEP_PLATEAU`.
+- The strict AD required `5773.955 s` and about 36.2 GB, so it is an accuracy
+  reference rather than an approved optimization iteration. The next gate is
+  shorter-period objective/gradient equivalence.
+- The 16-period/4-window candidate passes that diagnostic screening against
+  32/4: total Q, gradient L2 norm, and the same smooth directional AD differ
+  by `0.000503%`, `0.002810%`, and `0.000870%`. Candidate AD--FD error is
+  `0.007423%`; substrate-only/material-bearing closures are `0.475776%` and
+  `0.123109%`. AD time is `2919.009 s`, a `1.978x` speedup. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_16PERIOD4WINDOW_OBJECTIVE_DIRECTIONAL_GRADIENT_EQUIVALENCE`.
+- The old 32-period artifact did not retain the 20x20 gradient vector, so a
+  full gradient angle is unavailable and this is not a full production
+  promotion. The next gate is the spatially weighted combined
+  optical/thermal/electrical PTE AD--FD with vector/hash persistence.
+  Optimization remains blocked.
+- The previously separate Au thermal/contact and floating-Au
+  electrical/weighting operators now pass a common fixed-Q coupled PTE
+  AD--FD control.  Five directions and three steps were tested; at `h=0.0025`
+  the worst strong error is `0.000012%` and worst gradient-L2-normalized error
+  is `0.000004%`. Maximum residual is `7.10e-12`; thermal/electrical balances
+  are at roundoff. Status:
+  `VALIDATED_COUPLED_AU_THERMAL_WEIGHTING_PTE_FIXED_Q_CONTROL`.
+- This fixed-Q control uses an Au/MoS2 calculated thermal-contact analogue,
+  a numerical electrical-contact scenario, and `S_Au=0`; none is claimed as
+  measured Au/TaIrTe4 data. It excludes the Maxwell gradient. The remaining
+  blocker is therefore the native-Yee spatial-Q pullback and full
+  Maxwell+thermal+electrical directional AD--FD.
+
 ## Run 005 bounded low-beta topology-exploration pilot
 
 - Status: `PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT` after five accepted

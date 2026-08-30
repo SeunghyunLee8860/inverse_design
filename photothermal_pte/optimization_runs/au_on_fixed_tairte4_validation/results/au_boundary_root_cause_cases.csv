@@ -1,0 +1,5 @@
+case,method,fd_step_change_percent,quadrature_change_percent,ad_fd_error_percent,sign_agrees,passed
+sharp_rectangle,endpoint center-z,0.15358513576332256,38.41716095933366,6.769091776878235,True,False
+corners_moved_y18,full y-z midpoint,0.08023273796804772,19.752222872184518,108.92304730382398,False,False
+smooth_ellipse,endpoint-free Gauss-Legendre,0.33660829008379584,1.3252946880594951,108.68786488637528,False,False
+solver_discrete_depsilon,runsetup-only conformal d-epsilon,0.08023273796804772,100.43017996868437,68.12831505223458,True,False

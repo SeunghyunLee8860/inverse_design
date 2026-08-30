@@ -1,0 +1,32 @@
+{
+  "status": "VALIDATED_FDTDX_EXPLICIT_THERMAL_AU_AWARE_WEIGHTING_PTE_FORWARD",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+    "bytes": 10089714,
+    "sha256": "8889b69aad1cb311dd862343c04d2f9bc515c72d001ffe45e486b58024d0af49",
+    "committed_to_git": false
+  },
+  "input_remap_raw": {
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_material_overlap_thermal_remap_16period_4window/fdtdx_substrate_material_overlap_thermal_q.npz",
+    "bytes": 23624266,
+    "sha256": "6ab62c06174cd1a0a2b2b1cd8778dcc30e09a3832c2fa09d9b56397bba278d61",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_summary.json",
+      "bytes": 4593,
+      "sha256": "5ecc06fb2c65c7d10d1bdfcdac90e9887726fec0305df4e66f33d7440faed473"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_weighting_pte_thermally_grown/FDTDX_EXPLICIT_THERMAL_WEIGHTING_PTE_REPORT.md",
+      "bytes": 1365,
+      "sha256": "6eaecdcc0c268c9e89dcd19d10809fa43db95b7991a6ff71f1f2f0071896b1d8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_fields.png",
+      "bytes": 193487,
+      "sha256": "453b0fabfc6e43b628f20585962a340e9afd63a14cef4a431a75931642d724ff"
+    }
+  ]
+}

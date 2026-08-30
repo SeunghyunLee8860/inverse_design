@@ -1,0 +1,167 @@
+{
+  "identity": {
+    "beam_index": 0,
+    "config_sha256": "6946282c0fb51b3b1d0e2a242c5cea5593ea1399b2eb597210fba7fd3ad42be4",
+    "fields_sha256": "7d18808842e81696b50f45271977df7e9b70207dfb01a2199fab5d6214876d54",
+    "thermal_sha256": "144e9f911fe540a11d6c3e18316676806959c49a66a40b18a3e4350ba36a5023",
+    "relaxation_sha256": "4de3eb4215a9441415c731473f058d73756ed731ebcbd96a1ff103f8955a630d",
+    "source_250nm_sha256": "17f5323909dad7827a7f7bfe179b5af74c8e6627e4db5f8fd8f8d677974e070b",
+    "starts_per_branch": 4,
+    "transition_m": 5e-07,
+    "selected_g_S_m2": 100000000000000.0
+  },
+  "runs": [
+    {
+      "branch_sign": 1,
+      "start_index": 0,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 27,
+      "endpoint_smooth_current_A": 6.101845789481349e-10,
+      "endpoint_hard_current_A": 6.106820674354871e-10,
+      "endpoint_hard_abs_current_A": 6.106820674354871e-10,
+      "endpoint_canonical_scaled": [
+        0.7461482515614231,
+        0.21562499999999987,
+        0.21613780194907428,
+        0.21562499999999976
+      ],
+      "state_residual_relative": 3.241308372881761e-16,
+      "adjoint_residual_relative": 1.7477605965635176e-13
+    },
+    {
+      "branch_sign": 1,
+      "start_index": 1,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 9,
+      "endpoint_smooth_current_A": 8.700282179566319e-10,
+      "endpoint_hard_current_A": 8.723716273217866e-10,
+      "endpoint_hard_abs_current_A": 8.723716273217866e-10,
+      "endpoint_canonical_scaled": [
+        0.035185333638208575,
+        0.06268786908773463,
+        0.9553089523051207,
+        0.08664822691177466
+      ],
+      "state_residual_relative": 2.457964987206736e-16,
+      "adjoint_residual_relative": 6.170541871952459e-13
+    },
+    {
+      "branch_sign": 1,
+      "start_index": 2,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 30,
+      "endpoint_smooth_current_A": 3.6804347284374055e-10,
+      "endpoint_hard_current_A": 3.6811178529630817e-10,
+      "endpoint_hard_abs_current_A": 3.6811178529630817e-10,
+      "endpoint_canonical_scaled": [
+        0.7630507012026849,
+        0.1981137391538722,
+        0.36852813680040675,
+        0.21562499999999998
+      ],
+      "state_residual_relative": 3.018978831214983e-16,
+      "adjoint_residual_relative": 2.390667060360767e-13
+    },
+    {
+      "branch_sign": 1,
+      "start_index": 3,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 22,
+      "endpoint_smooth_current_A": 3.680182716129867e-10,
+      "endpoint_hard_current_A": 3.6808384571557596e-10,
+      "endpoint_hard_abs_current_A": 3.6808384571557596e-10,
+      "endpoint_canonical_scaled": [
+        0.7630509702916832,
+        0.19811243405498197,
+        0.36726895448341473,
+        0.21562499999999998
+      ],
+      "state_residual_relative": 2.6943072233725444e-16,
+      "adjoint_residual_relative": 2.3989884659359406e-13
+    },
+    {
+      "branch_sign": -1,
+      "start_index": 0,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 9,
+      "endpoint_smooth_current_A": -8.700282179566415e-10,
+      "endpoint_hard_current_A": -8.723716273221884e-10,
+      "endpoint_hard_abs_current_A": 8.723716273221884e-10,
+      "endpoint_canonical_scaled": [
+        0.9553089523052822,
+        0.08664822691144883,
+        0.03518533363820773,
+        0.06268786908773546
+      ],
+      "state_residual_relative": 4.049463980839242e-16,
+      "adjoint_residual_relative": 6.138521746750455e-13
+    },
+    {
+      "branch_sign": -1,
+      "start_index": 1,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 18,
+      "endpoint_smooth_current_A": -6.101845789453647e-10,
+      "endpoint_hard_current_A": -6.106820674353724e-10,
+      "endpoint_hard_abs_current_A": 6.106820674353724e-10,
+      "endpoint_canonical_scaled": [
+        0.21613787256165495,
+        0.21562499999999998,
+        0.7461482757986749,
+        0.21562499999999998
+      ],
+      "state_residual_relative": 2.5533429221474683e-16,
+      "adjoint_residual_relative": 1.76393387794077e-13
+    },
+    {
+      "branch_sign": -1,
+      "start_index": 2,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 23,
+      "endpoint_smooth_current_A": -8.700282179502878e-10,
+      "endpoint_hard_current_A": -8.723716273221884e-10,
+      "endpoint_hard_abs_current_A": 8.723716273221884e-10,
+      "endpoint_canonical_scaled": [
+        0.9553086061061122,
+        0.08664891143781649,
+        0.035185347036693654,
+        0.06268790375667982
+      ],
+      "state_residual_relative": 3.2434206066909583e-16,
+      "adjoint_residual_relative": 6.177490105795535e-13
+    },
+    {
+      "branch_sign": -1,
+      "start_index": 3,
+      "success": true,
+      "status_code": 0,
+      "message": "Optimization terminated successfully",
+      "iterations": 10,
+      "endpoint_smooth_current_A": -8.700282179444024e-10,
+      "endpoint_hard_current_A": -8.723716273221884e-10,
+      "endpoint_hard_abs_current_A": 8.723716273221884e-10,
+      "endpoint_canonical_scaled": [
+        0.9553085089039697,
+        0.08664908059858066,
+        0.03518528247121092,
+        0.06268779986923534
+      ],
+      "state_residual_relative": 3.4338006496701704e-16,
+      "adjoint_residual_relative": 6.16262042287513e-13
+    }
+  ]
+}

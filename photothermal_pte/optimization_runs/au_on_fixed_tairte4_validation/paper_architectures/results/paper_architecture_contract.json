@@ -1,0 +1,505 @@
+{
+  "status": "VALIDATED_PAPER_ARCHITECTURE_CONTRACT_OFFLINE",
+  "scope": "offline paper/geometry/provenance audit; no Maxwell, thermal, PTE, adjoint, or optimization solve",
+  "contracts": {
+    "A_DIRECT_AU_TAIRTE4": {
+      "key": "A_DIRECT_AU_TAIRTE4",
+      "title": "Direct floating Au nanoantenna on fixed TaIrTe4 control",
+      "paper_like": false,
+      "original_active_materials": [
+        "TaIrTe4"
+      ],
+      "substituted_active_material": "TaIrTe4",
+      "layers": [
+        {
+          "order_top_to_bottom": 0,
+          "name": "superstrate",
+          "material": "air",
+          "thickness_nm": null,
+          "role": "illumination half-space",
+          "provenance_kind": "project",
+          "provenance": "current Au validation",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 1,
+          "name": "design",
+          "material": "Au",
+          "thickness_nm": 50.0,
+          "role": "floating nanoantenna design",
+          "provenance_kind": "project",
+          "provenance": "current Au validation",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 2,
+          "name": "active_2d",
+          "material": "TaIrTe4",
+          "thickness_nm": 100.0,
+          "role": "PTE flake",
+          "provenance_kind": "project",
+          "provenance": "fixed-flake contract",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 3,
+          "name": "oxide",
+          "material": "SiO2",
+          "thickness_nm": 285.0,
+          "role": "explicit optical/thermal substrate",
+          "provenance_kind": "project_scenario",
+          "provenance": "current substrate contract",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 4,
+          "name": "substrate",
+          "material": "Si",
+          "thickness_nm": null,
+          "role": "semi-infinite substrate",
+          "provenance_kind": "project_scenario",
+          "provenance": "current substrate contract",
+          "optical_reference": true,
+          "thermal_reference": true
+        }
+      ],
+      "optical_substrate_reduction_allowed": false,
+      "optical_substrate_reduction_reason": "No opaque backplane separates the device from SiO2/Si; replacing the stack by one substrate changes reflection, phase, and TaIrTe4/Au absorption unless an endpoint equivalence test is first passed.",
+      "paper_illumination": "not applicable",
+      "project_illumination": "finite scalar Gaussian, lambda=10 um, w0=8.5 um",
+      "unresolved": [
+        "thin-film Au/TaIrTe4 electrical and thermal contact values"
+      ]
+    },
+    "B_T_2024_TAIRTE4_SUBSTITUTION": {
+      "key": "B_T_2024_TAIRTE4_SUBSTITUTION",
+      "title": "2024 inverse-T metamaterial-perfect-absorber stack with TaIrTe4",
+      "paper_like": true,
+      "original_active_materials": [
+        "CVD monolayer graphene"
+      ],
+      "substituted_active_material": "TaIrTe4",
+      "layers": [
+        {
+          "order_top_to_bottom": 0,
+          "name": "superstrate",
+          "material": "air",
+          "thickness_nm": null,
+          "role": "illumination half-space",
+          "provenance_kind": "paper",
+          "provenance": "2024 Fig. 1b",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 1,
+          "name": "passivation",
+          "material": "Al2O3",
+          "thickness_nm": 50.0,
+          "role": "top encapsulation; NIR device reference",
+          "provenance_kind": "paper_device_reference",
+          "provenance": "2024 Supplementary Fig. 17; MIR value not fixed",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 2,
+          "name": "inverse_T_resonator",
+          "material": "Ti/Au",
+          "thickness_nm": null,
+          "role": "floating asymmetric resonator",
+          "provenance_kind": "paper_unresolved_thickness",
+          "provenance": "2024 Fig. 1 and Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 3,
+          "name": "active_2d",
+          "material": "TaIrTe4",
+          "thickness_nm": 100.0,
+          "role": "graphene replaced only here",
+          "provenance_kind": "tairte4_substitution",
+          "provenance": "project fixed-flake contract",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 4,
+          "name": "cavity_spacer",
+          "material": "Al2O3",
+          "thickness_nm": 35.0,
+          "role": "MPA spacer/gate dielectric",
+          "provenance_kind": "paper",
+          "provenance": "2024 Supplementary Note 4",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 5,
+          "name": "back_reflector",
+          "material": "Au",
+          "thickness_nm": 200.0,
+          "role": "opaque mirror/gate; thickness is numerical closure",
+          "provenance_kind": "numerical_closure",
+          "provenance": "paper specifies Au mirror but not this thickness",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 6,
+          "name": "thermal_oxide",
+          "material": "SiO2",
+          "thickness_nm": 1500.0,
+          "role": "thermally grown oxide around/below buried mirror",
+          "provenance_kind": "paper",
+          "provenance": "2024 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 7,
+          "name": "substrate",
+          "material": "intrinsic Si",
+          "thickness_nm": null,
+          "role": "physical wafer and heat sink",
+          "provenance_kind": "paper",
+          "provenance": "2024 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        }
+      ],
+      "optical_substrate_reduction_allowed": true,
+      "optical_substrate_reduction_reason": "The Au mirror is optically opaque. SiO2/Si below it may be omitted from the Maxwell domain after an Au-thickness/PML convergence gate; they remain in the explicit thermal reference or are replaced by a validated reduced impedance.",
+      "paper_illumination": "normal-incidence plane wave, periodic unit cell",
+      "project_illumination": "paper unit-cell control first; then finite 10-um Gaussian",
+      "unresolved": [
+        "exact 10-um inverse-T arm dimensions (not published)",
+        "2024 MIR T-resonator thickness and passivation at 10 um",
+        "oxide thickness differs between the main Methods (1.5 um) and Supplementary Fig. 17 RF cross-section (1.0 um)",
+        "Au/Ti-induced TaIrTe4 Seebeck and conductivity change"
+      ]
+    },
+    "B_Z_2022_TAIRTE4_SUBSTITUTION": {
+      "key": "B_Z_2022_TAIRTE4_SUBSTITUTION",
+      "title": "2022 chiral Z metamaterial stack with dry-transferred TaIrTe4",
+      "paper_like": true,
+      "original_active_materials": [
+        "graphene",
+        "black phosphorus",
+        "PdSe2"
+      ],
+      "substituted_active_material": "TaIrTe4",
+      "layers": [
+        {
+          "order_top_to_bottom": 0,
+          "name": "superstrate",
+          "material": "air",
+          "thickness_nm": null,
+          "role": "illumination half-space",
+          "provenance_kind": "paper",
+          "provenance": "2022 Fig. 1",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 1,
+          "name": "active_2d",
+          "material": "TaIrTe4",
+          "thickness_nm": 100.0,
+          "role": "dry-transferred 2D material replacement",
+          "provenance_kind": "tairte4_substitution",
+          "provenance": "2022 fabrication order + project fixed-flake contract",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 2,
+          "name": "chiral_Z_resonator",
+          "material": "Cr/Au",
+          "thickness_nm": 55.0,
+          "role": "5-nm Cr + 50-nm Au antenna/electrode topography",
+          "provenance_kind": "paper",
+          "provenance": "2022 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 3,
+          "name": "cavity_spacer",
+          "material": "Al2O3",
+          "thickness_nm": null,
+          "role": "M1-M5 use D=200--270 nm",
+          "provenance_kind": "paper_table",
+          "provenance": "2022 Supplementary Table 1",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 4,
+          "name": "back_reflector",
+          "material": "Au",
+          "thickness_nm": 200.0,
+          "role": "opaque backplate",
+          "provenance_kind": "paper",
+          "provenance": "2022 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 5,
+          "name": "thermal_oxide",
+          "material": "SiO2",
+          "thickness_nm": 285.0,
+          "role": "thermally grown oxide",
+          "provenance_kind": "paper",
+          "provenance": "2022 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        },
+        {
+          "order_top_to_bottom": 6,
+          "name": "substrate",
+          "material": "heavily p-doped Si",
+          "thickness_nm": null,
+          "role": "physical wafer and heat sink",
+          "provenance_kind": "paper",
+          "provenance": "2022 Methods",
+          "optical_reference": true,
+          "thermal_reference": true
+        }
+      ],
+      "optical_substrate_reduction_allowed": true,
+      "optical_substrate_reduction_reason": "The published 200-nm Au backplate makes transmission negligible. SiO2/Si below it may be omitted optically after convergence, but not silently removed from the heat-removal model.",
+      "paper_illumination": "normal-incidence plane wave, x/y periodic unit cell",
+      "project_illumination": "published unit-cell controls; then finite 10-um Gaussian",
+      "unresolved": [
+        "10-um Z dimensions (published table stops at 8 um)",
+        "100-nm TaIrTe4 conformal contact versus bridging over 50-nm Au steps",
+        "TaIrTe4/Cr/Au electrical and thermal interface properties"
+      ]
+    }
+  },
+  "published_Z_dimensions_nm": [
+    {
+      "metamaterial": "M1",
+      "wavelength_nm": 4500.0,
+      "P1_nm": 4200.0,
+      "P2_nm": 2500.0,
+      "L1_nm": 1950.0,
+      "L2_nm": 1400.0,
+      "W1_nm": 1150.0,
+      "W2_nm": 900.0,
+      "Al2O3_D_nm": 200.0
+    },
+    {
+      "metamaterial": "M2",
+      "wavelength_nm": 5300.0,
+      "P1_nm": 5100.0,
+      "P2_nm": 2600.0,
+      "L1_nm": 2300.0,
+      "L2_nm": 1700.0,
+      "W1_nm": 1360.0,
+      "W2_nm": 1100.0,
+      "Al2O3_D_nm": 200.0
+    },
+    {
+      "metamaterial": "M3",
+      "wavelength_nm": 6000.0,
+      "P1_nm": 5600.0,
+      "P2_nm": 2700.0,
+      "L1_nm": 2700.0,
+      "L2_nm": 2000.0,
+      "W1_nm": 1570.0,
+      "W2_nm": 1300.0,
+      "Al2O3_D_nm": 200.0
+    },
+    {
+      "metamaterial": "M4",
+      "wavelength_nm": 7000.0,
+      "P1_nm": 6600.0,
+      "P2_nm": 3100.0,
+      "L1_nm": 3300.0,
+      "L2_nm": 2500.0,
+      "W1_nm": 2000.0,
+      "W2_nm": 1600.0,
+      "Al2O3_D_nm": 230.0
+    },
+    {
+      "metamaterial": "M5",
+      "wavelength_nm": 8000.0,
+      "P1_nm": 7600.0,
+      "P2_nm": 4100.0,
+      "L1_nm": 4000.0,
+      "L2_nm": 3000.0,
+      "W1_nm": 2600.0,
+      "W2_nm": 2100.0,
+      "Al2O3_D_nm": 270.0
+    }
+  ],
+  "proposed_10um_seed_sweeps": {
+    "T_2024": {
+      "paper_reference": {
+        "resonance_wavelength_um": 4.75,
+        "unit_cell_nm": [
+          1500.0,
+          1000.0
+        ],
+        "source": "2024 Supplementary Fig. 14"
+      },
+      "ten_um_initialization_only": {
+        "unit_cell_scale_factors_relative_to_4p75um_reference": [
+          1.75,
+          2.0,
+          2.25
+        ],
+        "Al2O3_spacer_nm": [
+          35.0,
+          75.0,
+          150.0,
+          300.0
+        ],
+        "passivation_nm": [
+          0.0,
+          50.0
+        ],
+        "resonator_Au_nm": [
+          33.0,
+          50.0,
+          75.0
+        ],
+        "fixed_Ti_nm": [
+          0.0,
+          5.0
+        ],
+        "label": "numerical sweep, not published 10-um dimensions"
+      }
+    },
+    "Z_2022": {
+      "paper_reference": {
+        "metamaterial": "M5",
+        "wavelength_nm": 8000.0,
+        "P1_nm": 7600.0,
+        "P2_nm": 4100.0,
+        "L1_nm": 4000.0,
+        "L2_nm": 3000.0,
+        "W1_nm": 2600.0,
+        "W2_nm": 2100.0,
+        "Al2O3_D_nm": 270.0
+      },
+      "ten_um_initialization_only": {
+        "in_plane_scale_factors_relative_to_M5": [
+          1.0,
+          1.125,
+          1.25
+        ],
+        "Al2O3_spacer_nm": [
+          200.0,
+          270.0,
+          350.0,
+          500.0
+        ],
+        "TaIrTe4_topography": [
+          "conformal_endpoint",
+          "bridged_endpoint"
+        ],
+        "label": "numerical sweep, not published 10-um dimensions"
+      }
+    }
+  },
+  "optical_backplane_bulk_propagation_diagnostic": [
+    {
+      "thickness_nm": 50.0,
+      "wavelength_um": 10.0,
+      "Au_k": 69.2,
+      "intensity_skin_depth_nm": 11.499634616466428,
+      "thickness_in_intensity_skin_depths": 4.347964232568273,
+      "bulk_intensity_propagation_factor": 0.012933114612504971
+    },
+    {
+      "thickness_nm": 100.0,
+      "wavelength_um": 10.0,
+      "Au_k": 69.2,
+      "intensity_skin_depth_nm": 11.499634616466428,
+      "thickness_in_intensity_skin_depths": 8.695928465136546,
+      "bulk_intensity_propagation_factor": 0.0001672654535801896
+    },
+    {
+      "thickness_nm": 150.0,
+      "wavelength_um": 10.0,
+      "Au_k": 69.2,
+      "intensity_skin_depth_nm": 11.499634616466428,
+      "thickness_in_intensity_skin_depths": 13.043892697704822,
+      "bulk_intensity_propagation_factor": 2.163263281865218e-06
+    },
+    {
+      "thickness_nm": 200.0,
+      "wavelength_um": 10.0,
+      "Au_k": 69.2,
+      "intensity_skin_depth_nm": 11.499634616466428,
+      "thickness_in_intensity_skin_depths": 17.391856930273093,
+      "bulk_intensity_propagation_factor": 2.7977731961386562e-08
+    },
+    {
+      "thickness_nm": 300.0,
+      "wavelength_um": 10.0,
+      "Au_k": 69.2,
+      "intensity_skin_depth_nm": 11.499634616466428,
+      "thickness_in_intensity_skin_depths": 26.087785395409643,
+      "bulk_intensity_propagation_factor": 4.679708026666274e-12
+    }
+  ],
+  "thermal_reduction_candidates": {
+    "2024_1p5um_thermal_SiO2": {
+      "oxide_thickness_nm": 1500.0,
+      "k_oxide_W_mK": 1.38,
+      "G_oxide_Si_W_m2K": 1100000000.0,
+      "oxide_resistance_m2K_W": 1.0869565217391306e-06,
+      "interface_resistance_m2K_W": 9.090909090909091e-10,
+      "one_dimensional_total_resistance_m2K_W": 1.0878656126482214e-06,
+      "candidate_Robin_G_W_m2K": 919231.1884605603,
+      "status": "UNVALIDATED_REDUCED_THERMAL_SUBSTRATE_CANDIDATE",
+      "limitation": "does not include 3-D lateral spreading in the Si substrate"
+    },
+    "2022_285nm_thermal_SiO2": {
+      "oxide_thickness_nm": 285.0,
+      "k_oxide_W_mK": 1.38,
+      "G_oxide_Si_W_m2K": 1100000000.0,
+      "oxide_resistance_m2K_W": 2.0652173913043482e-07,
+      "interface_resistance_m2K_W": 9.090909090909091e-10,
+      "one_dimensional_total_resistance_m2K_W": 2.0743083003952573e-07,
+      "candidate_Robin_G_W_m2K": 4820884.146341463,
+      "status": "UNVALIDATED_REDUCED_THERMAL_SUBSTRATE_CANDIDATE",
+      "limitation": "does not include 3-D lateral spreading in the Si substrate"
+    }
+  },
+  "paper_2022_thermal_note": {
+    "recorded_statement": "10 W/m2 heat flux across several solid interfaces",
+    "interpretation": "reported flux boundary, not an interfacial conductance G",
+    "promoted_as_G": false
+  },
+  "gates": {
+    "supplement_SHA256_verified": true,
+    "all_active_layers_are_TaIrTe4": true,
+    "direct_A_substrate_not_silently_reduced": true,
+    "2024_T_top_Au_contacts_active_layer": true,
+    "2024_spacer_is_below_active_layer": true,
+    "2022_TaIrTe4_is_transferred_above_Z": true,
+    "200nm_Au_bulk_propagation_factor_lt_1e_7": true,
+    "reduced_thermal_substrates_remain_unvalidated": true
+  },
+  "pdfs": {
+    "/home/seunghyun/tairte4/papers/41467_2024_51599_MOESM1_ESM.pdf": {
+      "bytes": 4283237,
+      "sha256": "72c2c1264c8d53e4fc22b356fbfd1cf99c229a5b7cabd3f8069f516d156cc2fb"
+    },
+    "/home/seunghyun/tairte4/papers/41467_2022_32309_MOESM1_ESM.pdf": {
+      "bytes": 2417257,
+      "sha256": "927d41f1d6f62916ba15cdf0eb0ec9a37edf457e0cb7b8133365d1d0f13b342b"
+    }
+  }
+}

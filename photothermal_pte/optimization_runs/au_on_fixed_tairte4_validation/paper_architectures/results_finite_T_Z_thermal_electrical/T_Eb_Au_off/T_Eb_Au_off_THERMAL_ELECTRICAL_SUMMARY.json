@@ -1,0 +1,171 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_THERMAL_ELECTRICAL_FORWARD",
+  "case": "T_Eb_Au_off",
+  "architecture": "T",
+  "polarization": "Eb",
+  "top_Au_present": false,
+  "axes": {
+    "x": "b",
+    "y": "a",
+    "z": "c"
+  },
+  "source": {
+    "raw_source_power_W": 3.1202076155357226e-14,
+    "reported_incident_power_W": 0.000285,
+    "linear_response_scale": 9134007576.321714,
+    "raw_absorbed_power_W": 5.893650663849374e-15,
+    "absorbed_power_at_285uW_W": 5.383264981579368e-05,
+    "no_raw_Q_modification": true
+  },
+  "thermal_contract": {
+    "domain_xy_m": [
+      -1.6e-05,
+      1.6e-05
+    ],
+    "Si_depth_m": 2e-05,
+    "far_xy_deltaT_K": 0.0,
+    "bottom_deltaT_K": 0.0,
+    "top_convection_W_m2K": 10.0,
+    "k_W_mK": {
+      "air": [
+        0.026,
+        0.026,
+        0.026
+      ],
+      "Si": [
+        145.0,
+        145.0,
+        145.0
+      ],
+      "SiO2": [
+        1.38,
+        1.38,
+        1.38
+      ],
+      "Au": [
+        317.0,
+        317.0,
+        317.0
+      ],
+      "Al2O3": [
+        30.0,
+        30.0,
+        30.0
+      ],
+      "TaIrTe4": [
+        3.8,
+        14.4,
+        1.0
+      ]
+    },
+    "G_SiO2_Si_W_m2K": 1100000000.0,
+    "G_TaIrTe4_Al2O3_W_m2K": 7370000.0,
+    "G_TaIrTe4_air_W_m2K": 1.0,
+    "G_Au_TaIrTe4_W_m2K": 17241379.310344826,
+    "G_Au_TaIrTe4_provenance": "Au/MoS2 analogue; numerical scenario, not measured TaIrTe4"
+  },
+  "thermal": {
+    "shape": [
+      234,
+      234,
+      82
+    ],
+    "Tmax_K": 0.6133073350788503,
+    "TaIrTe4_volume_average_K": 0.14745164382290382,
+    "material_temperature": {
+      "Si": {
+        "maximum_K": 0.014689120930480864,
+        "volume_average_K": 0.0064179380554062835
+      },
+      "SiO2": {
+        "maximum_K": 0.23629078617880203,
+        "volume_average_K": 0.06350228017379446
+      },
+      "Au_mirror": {
+        "maximum_K": 0.24096907327368622,
+        "volume_average_K": 0.1141310882114064
+      },
+      "Al2O3": {
+        "maximum_K": 0.24301667660541465,
+        "volume_average_K": 0.11421236536890075
+      },
+      "TaIrTe4": {
+        "maximum_K": 0.6133073350788503,
+        "volume_average_K": 0.14745164382290382
+      }
+    },
+    "linear_residual_relative": 9.661186763185077e-10,
+    "iterations": 3325,
+    "GPU_solve_seconds": 7.509678233414888,
+    "energy_balance_relative": 1.4018358230806945e-11,
+    "numerical_boundary_power_W": {
+      "x_min": 6.00760166189182e-08,
+      "x_max": 6.007601669845764e-08,
+      "y_min": 6.029915596342079e-08,
+      "y_max": 6.029915594854827e-08,
+      "z_min": 5.359130211487562e-05,
+      "surface_robin_z_max": 5.973549340706243e-10
+    }
+  },
+  "electrical_contract": {
+    "sigma_TaIrTe4_ba_S_m": [
+      110000.0,
+      491000.0
+    ],
+    "S_TaIrTe4_ba_V_K": [
+      2.7e-05,
+      -6e-06
+    ],
+    "sigma_Au_S_m": 41152263.3744856,
+    "S_Au_V_K": 0.0,
+    "G_electrical_Au_TaIrTe4_S_m2": 10000000000.0,
+    "G_provenance": "named numerical scenario, not measured TaIrTe4/Au contact",
+    "top_Au_is_floating": true,
+    "terminal_short_circuit_V": 0.0
+  },
+  "electrical": {
+    "top_bottom": {
+      "low_terminal_current_A": -1.0660903085111046e-17,
+      "high_terminal_current_A": 1.0477683406611163e-17,
+      "weighting_identity_current_A": 1.0265408181914742e-17,
+      "thermoelectric_characteristic_current_A": 1.1574486159800806e-06,
+      "terminal_balance_relative_to_terminal_current": 0.01718613114078174,
+      "weighting_identity_relative_to_terminal_current": 0.02025974792886758,
+      "terminal_balance_relative_to_thermoelectric_scale": 1.5829616621446307e-13,
+      "weighting_identity_relative_to_thermoelectric_scale": 1.8339926435237443e-13,
+      "near_null_terminal_current": true,
+      "weighting_residual": 6.025948669574734e-12,
+      "short_circuit_residual": 8.269820837057041e-12
+    },
+    "left_right": {
+      "low_terminal_current_A": -5.049915026586238e-17,
+      "high_terminal_current_A": 5.092524051196549e-17,
+      "weighting_identity_current_A": 5.0116244534601253e-17,
+      "thermoelectric_characteristic_current_A": 1.1574486159800806e-06,
+      "terminal_balance_relative_to_terminal_current": 0.008366975625829278,
+      "weighting_identity_relative_to_terminal_current": 0.015885953001521028,
+      "terminal_balance_relative_to_thermoelectric_scale": 3.681288656968266e-13,
+      "weighting_identity_relative_to_thermoelectric_scale": 6.989476389664292e-13,
+      "near_null_terminal_current": true,
+      "weighting_residual": 9.300737765508989e-12,
+      "short_circuit_residual": 7.559094404206876e-12
+    }
+  },
+  "gates": {
+    "mapping_input_SHA_match": true,
+    "thermal_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_residuals_lt_1e-8": true,
+    "electrical_terminal_balance_lt_1pct_or_near_null_scaled_lt_1e-8": true,
+    "weighting_terminal_identity_lt_1pct_or_near_null_scaled_lt_1e-8": true,
+    "finite_fields": true,
+    "GPU_linear_solves_no_CPU_fallback": true,
+    "no_Q_clipping_smoothing_gain_or_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_thermal_electrical/T_Eb_Au_off_finite_thermal_electrical.npz",
+    "bytes": 22592225,
+    "sha256": "65711c5c5c2868c94a8f2a2c773cd4f26d0c1d2ceabd651cd1942043bbb40583",
+    "committed_to_git": false
+  }
+}

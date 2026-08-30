@@ -1,0 +1,404 @@
+{
+  "status": "VALIDATED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT",
+  "scope": "FDTDX reverse-mode derivative of the native-Yee spatial-Q contraction with a frozen explicit-thermal source adjoint; no thermal/electrical direct density term, full combined AD-FD, or optimization",
+  "audit": {
+    "status": "FDTDX_LUMERICAL_BINARY_ENDPOINT_RUNSETUP_AUDIT",
+    "software": {
+      "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+      "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+      "cuda_visible_devices": "3"
+    },
+    "grid": {
+      "shape_xyz": [
+        288,
+        288,
+        119
+      ],
+      "cell_count": 9870336,
+      "bounds_m_xyz": [
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ]
+      ],
+      "min_spacing_m_xyz": [
+        9.999985195463523e-08,
+        9.999985195463523e-08,
+        1.499998347753717e-08
+      ],
+      "max_spacing_m_xyz": [
+        5.000001692678779e-07,
+        5.000001692678779e-07,
+        2.0000015865662135e-07
+      ],
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ]
+    },
+    "placement": {
+      "flake_slice": [
+        [
+          44,
+          244
+        ],
+        [
+          44,
+          244
+        ],
+        [
+          67,
+          72
+        ]
+      ],
+      "flake_extent_m": [
+        1.9999999494757503e-05,
+        1.9999999494757503e-05,
+        1.0000000116860974e-07
+      ],
+      "au_slice": [
+        [
+          94,
+          194
+        ],
+        [
+          94,
+          194
+        ],
+        [
+          72,
+          74
+        ]
+      ],
+      "au_extent_m": [
+        9.999999747378752e-06,
+        9.999999747378752e-06,
+        5.000000058430487e-08
+      ],
+      "source_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          83,
+          84
+        ]
+      ],
+      "incident_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          82,
+          83
+        ]
+      ],
+      "target_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          79,
+          80
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          46,
+          80
+        ]
+      ],
+      "silicon_slice": [
+        [
+          0,
+          288
+        ],
+        [
+          0,
+          288
+        ],
+        [
+          0,
+          48
+        ]
+      ],
+      "silicon_extent_m": [
+        4.8000001697801054e-05,
+        4.8000001697801054e-05,
+        7.61499995860504e-06
+      ],
+      "sio2_slice": [
+        [
+          0,
+          288
+        ],
+        [
+          0,
+          288
+        ],
+        [
+          48,
+          67
+        ]
+      ],
+      "sio2_extent_m": [
+        4.8000001697801054e-05,
+        4.8000001697801054e-05,
+        2.8499999871201e-07
+      ],
+      "sio2_detector_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          48,
+          67
+        ]
+      ],
+      "deep_closed_surface_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          30,
+          82
+        ]
+      ],
+      "deep_td_closed_surface_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          30,
+          82
+        ]
+      ],
+      "uniform_core_sio2_detector_slice": [
+        [
+          24,
+          264
+        ],
+        [
+          24,
+          264
+        ],
+        [
+          48,
+          67
+        ]
+      ],
+      "uniform_core_closed_surface_slice": [
+        [
+          24,
+          264
+        ],
+        [
+          24,
+          264
+        ],
+        [
+          30,
+          82
+        ]
+      ],
+      "uniform_core_td_closed_surface_slice": [
+        [
+          24,
+          264
+        ],
+        [
+          24,
+          264
+        ],
+        [
+          30,
+          82
+        ]
+      ]
+    },
+    "source": {
+      "wavelength_m": 1e-05,
+      "requested_w0_m": 8.5e-06,
+      "radius_m": 2e-05,
+      "std_relative_to_radius": 0.30052038200428266,
+      "direction": "-z",
+      "polarization": "x=b"
+    },
+    "numerics": {
+      "time_steps_total": 21808,
+      "time_step_s": 2.4472702443838783e-17,
+      "total_periods": 16,
+      "window_periods": 4,
+      "gradient_method": "checkpointed",
+      "gradient_checkpoints": 16
+    },
+    "substrate": {
+      "included": true,
+      "material_contract": {
+        "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_10um_substrate_material/10um_substrate_material_readback.json",
+        "status": "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK",
+        "source_class": "explicit offline diagnostic; Palik readback remains blocked",
+        "Palik_Si_readback_validated": false
+      },
+      "epsilon_sio2": [
+        7.3490019303043495,
+        1.9899687286880576
+      ],
+      "epsilon_si": [
+        11.706662249999999,
+        0.0
+      ],
+      "silicon_loss_model": "static real epsilon; k=0 diagnostic approximation",
+      "sio2_loss_representation": "conductivity",
+      "sio2_equivalent_conductivity_S_m": 3318.9105904803655,
+      "Palik_Si_readback_validated": false,
+      "matched_interface_grid": true,
+      "layout_indices": {
+        "silicon_cells": 48,
+        "sio2_start": 48,
+        "sio2_stop": 67,
+        "tairte4_cells": 5,
+        "near_box_start": 46,
+        "near_box_stop": 80,
+        "deep_box_start": 30,
+        "deep_box_stop": 82
+      }
+    }
+  },
+  "spatial_weight": {
+    "scenario": "thermally_grown",
+    "summary_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights_summary.json",
+    "raw_npz": "/home/seunghyun/tairte4/raw_artifacts/native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights.npz",
+    "raw_sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+    "units": "A/W on component-native Yee power cells",
+    "normalization_or_rescaling": false
+  },
+  "design": {
+    "latent_shape_xy": [
+      20,
+      20
+    ],
+    "latent_pitch_m": 5e-07,
+    "yee_shape_xy": [
+      100,
+      100
+    ],
+    "yee_pitch_m": 1e-07,
+    "au_z_cells": 2,
+    "au_thickness_m": 5e-08,
+    "relaxation": "passive Drude coupling strength s(rho)=rho^3",
+    "rho_min": 0.4436955451965332,
+    "rho_max": 0.5900406837463379
+  },
+  "baseline": {
+    "weighted_source_objective_A": 2.6849e-18,
+    "previous_weighted_source_objective_A": 2.6859317499999996e-18,
+    "weighted_objective_window_relative_change": 0.0003841311306587549,
+    "P_Q_W": 2.47796105216e-13,
+    "component_power_W": {
+      "au_xyz": [
+        5.4952071168e-14,
+        4.102116e-17,
+        1.2909241999999999e-17
+      ],
+      "tairte4_xyz": [
+        1.47802865664e-13,
+        1.024456704e-15,
+        3.871237888e-15
+      ],
+      "sio2_xyz": [
+        3.601240064e-14,
+        4.8299047999999994e-17,
+        4.0308715519999995e-15
+      ]
+    },
+    "closed_surface_inward_W": 2.474914533295153e-13,
+    "Q_flux_closure_relative": 0.0012309592205557599,
+    "late_Q_window_relative_change": 0.00019831729100690165,
+    "gradient_l2_A": 6.328594206499118e-18
+  },
+  "directions": [
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.01,
+      "AD_A_per_unit_direction": 6.328594206499118e-18,
+      "FD_A_per_unit_direction": 6.3288874999999925e-18,
+      "strong_direction": true,
+      "strong_relative_error": 4.634203102435079e-05,
+      "gradient_l2_normalized_error": 4.634417870771826e-05,
+      "objective_plus_A": 2.7482087499999997e-18,
+      "objective_minus_A": 2.621631e-18
+    }
+  ],
+  "runtime": {
+    "compile_seconds": 39.392906062304974,
+    "ad_seconds": 2920.0205346643925,
+    "central_fd_forward_count": 2,
+    "central_fd_forward_seconds": 216.3714057020843
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "no_density_clipping": true,
+    "late_window_change_lt_0p5pct": true,
+    "weighted_objective_window_change_lt_0p5pct": true,
+    "empty_subtracted_Q_flux_closure_lt_0p5pct": true,
+    "finest_strong_direction_error_lt_1pct": true,
+    "finest_gradient_l2_normalized_error_lt_1pct": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_spatially_weighted_pte_source_gradient_16period/fdtdx_spatially_weighted_pte_source_gradient_raw.npz",
+    "bytes": 4965,
+    "sha256": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "committed_to_git": false
+  },
+  "no_clipping_smoothing_gain_or_gradient_rescaling": true,
+  "next_gate": "add this optical source gradient to the validated explicit thermal/electrical direct gradient and run full combined AD-FD"
+}

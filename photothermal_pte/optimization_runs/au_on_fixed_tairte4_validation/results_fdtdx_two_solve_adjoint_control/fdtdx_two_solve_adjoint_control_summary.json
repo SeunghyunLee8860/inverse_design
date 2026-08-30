@@ -1,0 +1,106 @@
+{
+  "status": "VALIDATED_FDTDX_CHECKPOINT_FREE_TWO_SOLVE_ADJOINT_CONTROL",
+  "scope": "small uniform-grid dispersive Au-on-fixed-TaIrTe4 algorithmic control; not the 48 um production device",
+  "method": {
+    "forward_solves_for_gradient": 1,
+    "adjoint_solves_for_gradient": 1,
+    "time_history_saved": false,
+    "checkpoint_count": 0,
+    "empirical_gradient_rescaling": false,
+    "source": "complex distributed electric current on the native Yee component grid",
+    "material_contraction": "finite-dt harmonic ADE epsilon derivative and unconjugated E_fwd*E_adj pairing"
+  },
+  "geometry": {
+    "resolution_m": 1e-07,
+    "domain_cells_xyz": [
+      32,
+      32,
+      32
+    ],
+    "pml_cells_each_face": 6,
+    "au_cells_xyz": [
+      8,
+      8,
+      2
+    ],
+    "tairte4_cells_xyz": [
+      12,
+      12,
+      2
+    ],
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b"
+    }
+  },
+  "materials": {
+    "au_epsilon_10um": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "tairte4_epsilon_10um": {
+      "a": [
+        -39.87819057091918,
+        187.50005695474056
+      ],
+      "b": [
+        13.778527727027518,
+        23.688463190816908
+      ],
+      "c": [
+        13.778527727027518,
+        23.688463190816908
+      ]
+    },
+    "au_strength_law": "rho^3"
+  },
+  "numerics": {
+    "total_periods": 12,
+    "phasor_window_periods": 3,
+    "time_steps_total": 8314,
+    "period_steps": 693,
+    "courant_factor": 0.25,
+    "gradient_config": null,
+    "jax_devices": [
+      "cuda:0"
+    ],
+    "realized_grid_shape": [
+      32,
+      32,
+      32
+    ]
+  },
+  "results": {
+    "objective_scaled": 0.01713160239160061,
+    "objective_W": 1.7131602391600607e-14,
+    "previous_window_objective_scaled": 0.017131753265857697,
+    "window_relative_change": 8.806780220493508e-06,
+    "gradient_l2_scaled": 0.002402322366833687,
+    "field_gradient_l2_scaled": 0.003967539872974157,
+    "direct_gradient_l2_scaled": 0.0015808658208698034,
+    "max_finest_direction_relative_error": 0.009540002473104983,
+    "forward_compile_seconds": 1.3419075645506382,
+    "forward_execution_seconds": 4.163913168013096,
+    "adjoint_compile_seconds": 1.2567235045135021,
+    "adjoint_execution_seconds": 1.8241048157215118,
+    "two_solve_execution_seconds": 5.988017983734608,
+    "fd_execution_seconds": 15.189811792224646
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "window_change_lt_0p5pct": true,
+    "finest_direction_error_lt_1pct": true
+  },
+  "files": {
+    "directions_csv": "fdtdx_two_solve_adjoint_directions.csv",
+    "plot": "fdtdx_two_solve_adjoint_control.png"
+  },
+  "environment": {
+    "cuda_visible_devices": "2",
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "jax": "0.11.1",
+    "fdtdx": "unknown"
+  }
+}

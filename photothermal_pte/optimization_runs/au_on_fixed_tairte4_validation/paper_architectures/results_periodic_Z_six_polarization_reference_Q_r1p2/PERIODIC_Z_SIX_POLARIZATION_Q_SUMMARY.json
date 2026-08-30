@@ -1,0 +1,85 @@
+{
+  "status": "VALIDATED_PERIODIC_Z_SIX_POLARIZATION_REFERENCE_Q",
+  "scope": "periodic optical volumetric Q only; no thermal/weighting/PTE",
+  "cases": [
+    {
+      "polarization": "x_b",
+      "P_Q_W": 2.546056806511426e-14,
+      "P_flux_W": 2.550099994565871e-14,
+      "closure_relative": 0.0015855017697583673,
+      "Qx_common_W": 2.378935627405661e-14,
+      "Qy_common_W": 9.359519184426844e-16,
+      "Qz_common_W": 7.757191596349851e-16,
+      "auto_shutoff": 9.34679e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    },
+    {
+      "polarization": "y_a",
+      "P_Q_W": 7.43033006672452e-15,
+      "P_flux_W": 7.44505162375505e-15,
+      "closure_relative": 0.001977361309834052,
+      "Qx_common_W": 4.4554961106851795e-17,
+      "Qy_common_W": 7.285031700720859e-15,
+      "Qz_common_W": 1.1522115209450722e-16,
+      "auto_shutoff": 9.93219e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    },
+    {
+      "polarization": "linear_plus_45",
+      "P_Q_W": 1.6500498570219227e-14,
+      "P_flux_W": 1.6528272835297835e-14,
+      "closure_relative": 0.0016804094024448625,
+      "Qx_common_W": 1.1949568698217415e-14,
+      "Qy_common_W": 4.148365851216361e-15,
+      "Qz_common_W": 4.300323359520108e-16,
+      "auto_shutoff": 9.89539e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    },
+    {
+      "polarization": "linear_minus_45",
+      "P_Q_W": 1.6396511312394395e-14,
+      "P_flux_W": 1.642382216920713e-14,
+      "closure_relative": 0.0016628806943575444,
+      "Qx_common_W": 1.1884997035339061e-14,
+      "Qy_common_W": 4.078161921226593e-15,
+      "Qz_common_W": 4.608484677875797e-16,
+      "auto_shutoff": 9.97853e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    },
+    {
+      "polarization": "CP_plus",
+      "P_Q_W": 1.6476506228400795e-14,
+      "P_flux_W": 1.6503714370313475e-14,
+      "closure_relative": 0.0016486071742505249,
+      "Qx_common_W": 1.1890677074578175e-14,
+      "Qy_common_W": 4.159369867084418e-15,
+      "Qz_common_W": 4.53961859534286e-16,
+      "auto_shutoff": 9.70416e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    },
+    {
+      "polarization": "CP_minus",
+      "P_Q_W": 1.6423158047467336e-14,
+      "P_flux_W": 1.645038612492917e-14,
+      "closure_relative": 0.0016551634262598407,
+      "Qx_common_W": 1.1943507730695116e-14,
+      "Qy_common_W": 4.07019970436373e-15,
+      "Qz_common_W": 4.3693530220466183e-16,
+      "auto_shutoff": 9.52657e-07,
+      "solver_version": "8.35.4522",
+      "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+    }
+  ],
+  "no_clipping_smoothing_gain_rescaling": true,
+  "solver_versions": [
+    "8.35.4522"
+  ],
+  "solver_roots": [
+    "/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+  ]
+}

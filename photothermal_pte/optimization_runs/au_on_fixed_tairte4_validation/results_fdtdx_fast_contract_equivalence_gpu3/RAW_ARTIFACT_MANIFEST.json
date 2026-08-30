@@ -1,0 +1,41 @@
+{
+  "status": "VALIDATED_FDTDX_DIAGNOSTIC_16PERIOD4WINDOW_OBJECTIVE_DIRECTIONAL_GRADIENT_EQUIVALENCE",
+  "raw_field_artifact": null,
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_fast_contract_equivalence_gpu3/fdtdx_fast_contract_equivalence_summary.json",
+      "bytes": 2600,
+      "sha256": "3964db205d0f8808f6e7573424c4608c088b4d0f81fff06d0614115c1fcb90ec"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_fast_contract_equivalence_gpu3/fdtdx_fast_contract_equivalence.csv",
+      "bytes": 811,
+      "sha256": "95a472431f693da8db7c3e31f6b0d51a726e3bdcdd3c3c452edc8e0c44ae2c16"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_fast_contract_equivalence_gpu3/fdtdx_fast_contract_equivalence.png",
+      "bytes": 66095,
+      "sha256": "665573b3b365ddcfc3082939e021d06fef93bef23833ec9a18da6862378529a6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_fast_contract_equivalence_gpu3/FDTDX_FAST_CONTRACT_EQUIVALENCE_REPORT.md",
+      "bytes": 1197,
+      "sha256": "44bcb0c344b8586e7af8ec876f46e8b31bf0c467dc4cec3280654e582cd58871"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_smoke_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+      "bytes": 8719,
+      "sha256": "3d4d0a0de62fd527a997939b10a694862cac6add29f044221eb62657fcb9ce63"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_gradient_16period_4window_gpu3/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+      "bytes": 8698,
+      "sha256": "96b10af6879b697b49cbc35a41e48399ddfd21bbb425139bf9bc53001c976340"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_16period_4window_audit_gpu3/fdtdx_substrate_only_closure_diagnostic.json",
+      "bytes": 8128,
+      "sha256": "82516e6e5e73f5de77bd26753f1d751ded5b6855aa64d52eaac0848fd6a87358"
+    }
+  ]
+}

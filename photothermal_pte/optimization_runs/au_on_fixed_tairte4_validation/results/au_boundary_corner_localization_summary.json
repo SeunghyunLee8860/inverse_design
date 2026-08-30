@@ -1,0 +1,354 @@
+{
+  "status": "DIAGNOSED_AU_BOUNDARY_QUADRATURE_CORNER_DOMINANCE",
+  "passed_localization_gate": true,
+  "scope": "offline localization of the tangential-E part of the x-normal Au boundary kernel; no Maxwell solve and no gradient promotion",
+  "forward_adjoint_HDF5_base_coordinate_mismatch_m": 0.0,
+  "component_coordinate_audit": {
+    "x": {
+      "shape": [
+        283,
+        841,
+        53
+      ],
+      "offset_range_m": {
+        "x": [
+          1.2499999999990986e-08,
+          5.00000000000063e-08
+        ],
+        "y": [
+          -1.6940658945086007e-21,
+          1.6940658945086007e-21
+        ],
+        "z": [
+          -3.308722450212111e-24,
+          5.293955920339377e-23
+        ]
+      },
+      "non_component_axis_max_abs_offset_m": 1.6940658945086007e-21
+    },
+    "y": {
+      "shape": [
+        283,
+        841,
+        53
+      ],
+      "offset_range_m": {
+        "x": [
+          -1.6940658945086007e-21,
+          1.6940658945086007e-21
+        ],
+        "y": [
+          1.2499999999954564e-08,
+          1.2500000000046044e-08
+        ],
+        "z": [
+          -3.308722450212111e-24,
+          5.293955920339377e-23
+        ]
+      },
+      "non_component_axis_max_abs_offset_m": 1.6940658945086007e-21
+    },
+    "z": {
+      "shape": [
+        283,
+        841,
+        53
+      ],
+      "offset_range_m": {
+        "x": [
+          -1.6940658945086007e-21,
+          1.6940658945086007e-21
+        ],
+        "y": [
+          -1.6940658945086007e-21,
+          1.6940658945086007e-21
+        ],
+        "z": [
+          2.4999999999999496e-09,
+          9.454054723269713e-08
+        ]
+      },
+      "non_component_axis_max_abs_offset_m": 1.6940658945086007e-21
+    }
+  },
+  "sample_counts": [
+    201,
+    401,
+    801,
+    1601,
+    3201,
+    6401
+  ],
+  "face_metrics": [
+    {
+      "face": "x_min",
+      "n_points": 201,
+      "dy_m": 1.0000000000000074e-07,
+      "full_integral_raw": 0.0575040843431671,
+      "endpoint_trapezoid_raw": 0.05483843128611132,
+      "endpoint_fraction_of_full": 0.9536441091532218,
+      "interior_abs_y_le_9p5um_integral_raw": 0.002671880510414679,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 201,
+      "dy_m": 1.0000000000000074e-07,
+      "full_integral_raw": 0.05740798276399116,
+      "endpoint_trapezoid_raw": 0.05474519498538378,
+      "endpoint_fraction_of_full": 0.9536164196962935,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026690588614488526,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    },
+    {
+      "face": "x_min",
+      "n_points": 401,
+      "dy_m": 4.999999999999952e-08,
+      "full_integral_raw": 0.030084648787913146,
+      "endpoint_trapezoid_raw": 0.027419215643055196,
+      "endpoint_fraction_of_full": 0.9114022183324002,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026717236014617385,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 401,
+      "dy_m": 4.999999999999952e-08,
+      "full_integral_raw": 0.030035205609587376,
+      "endpoint_trapezoid_raw": 0.027372597492691428,
+      "endpoint_fraction_of_full": 0.9113504281773243,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026689476255899068,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    },
+    {
+      "face": "x_min",
+      "n_points": 801,
+      "dy_m": 2.5000000000000608e-08,
+      "full_integral_raw": 0.016375026176789556,
+      "endpoint_trapezoid_raw": 0.013709607821528061,
+      "endpoint_fraction_of_full": 0.8372266201907184,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026717129920937185,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 801,
+      "dy_m": 2.5000000000000608e-08,
+      "full_integral_raw": 0.01634889745899478,
+      "endpoint_trapezoid_raw": 0.013686298746346177,
+      "endpoint_fraction_of_full": 0.8371389435081628,
+      "interior_abs_y_le_9p5um_integral_raw": 0.002668941733147367,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    },
+    {
+      "face": "x_min",
+      "n_points": 1601,
+      "dy_m": 1.2500000000000304e-08,
+      "full_integral_raw": 0.009520241671095622,
+      "endpoint_trapezoid_raw": 0.006854803910764031,
+      "endpoint_fraction_of_full": 0.7200241493423303,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026717401749852716,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 1601,
+      "dy_m": 1.2500000000000304e-08,
+      "full_integral_raw": 0.009505767439692767,
+      "endpoint_trapezoid_raw": 0.0068431493731730885,
+      "endpoint_fraction_of_full": 0.7198944658164564,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026689685463595954,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    },
+    {
+      "face": "x_min",
+      "n_points": 3201,
+      "dy_m": 6.250000000000152e-09,
+      "full_integral_raw": 0.007801441588856302,
+      "endpoint_trapezoid_raw": 0.0034274019553820153,
+      "endpoint_fraction_of_full": 0.4393293106594259,
+      "interior_abs_y_le_9p5um_integral_raw": 0.002671733667386993,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 3201,
+      "dy_m": 6.250000000000152e-09,
+      "full_integral_raw": 0.007789846950146921,
+      "endpoint_trapezoid_raw": 0.0034215746865865443,
+      "endpoint_fraction_of_full": 0.4392351619337029,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026689620561907964,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    },
+    {
+      "face": "x_min",
+      "n_points": 6401,
+      "dy_m": 3.125000000000076e-09,
+      "full_integral_raw": 0.007371741568296481,
+      "endpoint_trapezoid_raw": 0.0017137009776910077,
+      "endpoint_fraction_of_full": 0.23246894398212373,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026717320404874238,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 548419.4168389033,
+      "kernel_y_min_raw": 548349.2088833151,
+      "kernel_y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "n_points": 6401,
+      "dy_m": 3.125000000000076e-09,
+      "full_integral_raw": 0.0073608668277604684,
+      "endpoint_trapezoid_raw": 0.0017107873432932721,
+      "endpoint_fraction_of_full": 0.23241655953362444,
+      "interior_abs_y_le_9p5um_integral_raw": 0.0026689604336485964,
+      "maximum_abs_kernel_y_m": 1e-05,
+      "maximum_abs_kernel_raw": 547482.2160029738,
+      "kernel_y_min_raw": 547421.6837046938,
+      "kernel_y_max_raw": 547482.2160029738
+    }
+  ],
+  "combined_endpoint_fraction_at_801_points": 0.8371828168525673,
+  "combined_interior_201_to_6401_relative_change": 4.622739752721193e-05,
+  "maximum_locations_at_801_points_m": [
+    1e-05,
+    1e-05
+  ],
+  "endpoint_values_at_801_points": [
+    {
+      "face": "x_min",
+      "y_min_raw": 548349.2088833151,
+      "y_max_raw": 548419.4168389033
+    },
+    {
+      "face": "x_max",
+      "y_min_raw": 547421.6837046938,
+      "y_max_raw": 547482.2160029738
+    }
+  ],
+  "complete_boundary_kernel_reference": [
+    {
+      "n_points_per_edge": 201,
+      "dy_m": 1.0000000000000074e-07,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -4.042124114897335e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -4.030997827365353e-24
+        }
+      },
+      "total_J_proxy_per_m": -8.073121942262687e-24,
+      "all_finite": true
+    },
+    {
+      "n_points_per_edge": 401,
+      "dy_m": 4.999999999999952e-08,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -2.2861400915631194e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -2.280944336810769e-24
+        }
+      },
+      "total_J_proxy_per_m": -4.5670844283738884e-24,
+      "all_finite": true
+    },
+    {
+      "n_points_per_edge": 801,
+      "dy_m": 2.5000000000000608e-08,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -1.407402692342055e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -1.4051375600347735e-24
+        }
+      },
+      "total_J_proxy_per_m": -2.8125402523768283e-24,
+      "all_finite": true
+    }
+  ],
+  "interpretation": {
+    "established": "the tangential-E boundary proxy is dominated by the two exact Au corners at y=+-10 um (with the absolute maximum at +10 um), while the interior |y|<=9.5 um integral is stable under quadrature refinement",
+    "not_established": "the normal-D term is not available in the engine HDF5 export; this offline diagnostic alone is not a complete AD-FD certificate",
+    "next_control": "move the fixed Au y-ends far outside the illuminated/adjoint support and repeat the width AD-FD with a corner-free active x-face"
+  },
+  "Maxwell_solves_this_analysis": 0,
+  "CPU_FDTD_fallback": false,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "production_Au_optimization_permitted": false
+}

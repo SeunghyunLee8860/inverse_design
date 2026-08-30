@@ -1,0 +1,44 @@
+{
+  "status": "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK",
+  "scope": "material/readback only; no FDTD, thermal, electrical, adjoint, or optimization",
+  "wavelength_m": 1e-05,
+  "blocker": {
+    "type": "RuntimeError",
+    "message": "Recorded v261 session startup blocker: license expires-in-4-days warning was returned as appOpen failure on 2026-08-21",
+    "Palik_value_claimed": false
+  },
+  "offline_diagnostic_contract": {
+    "SiO2": {
+      "model": "Kitamura et al. 2007 Eq.21-24/Table 2 with sqrt(pi) correction",
+      "provenance": "https://doi.org/10.1364/AO.46.008118",
+      "n": {
+        "real": 2.7352020978104523,
+        "imag": 0.36376996242453913
+      },
+      "epsilon": {
+        "real": 7.3490019303043495,
+        "imag": 1.9899687286880576
+      }
+    },
+    "Si": {
+      "model": "lossless measured-index diagnostic closure",
+      "n": {
+        "real": 3.4215,
+        "imag": 0.0
+      },
+      "epsilon": {
+        "real": 11.706662249999999,
+        "imag": 0.0
+      },
+      "provenance": "Frey et al., Opt. Lett. 45, 4935 (2020), Table 1, 10-um n=3.4215",
+      "source": "https://doi.org/10.1364/OL.398778",
+      "limitation": "k=0 is an explicit diagnostic approximation; this is not the requested installed-Lumerical Palik readback and is not a confidence interval"
+    }
+  },
+  "FDTD_solve_run": false,
+  "inputs": {
+    "paper_model_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py",
+    "paper_model_sha256": "1bd084282b4bb2f9bb0f75c0eaff43d4f1a8d1e45bc3c3ea325a0a5011da0fd7",
+    "requested_Lumerical_material_database": "Si (Silicon) - Palik"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "status": "AUDITED_V261_SHARP_INTERFACE_PATH_ADFD_PENDING",
+  "scope": "bundled v261 source-code and parameterization audit; no Maxwell solve and no AD-FD claim",
+  "solver_version_family": "v261",
+  "files": {
+    "polygon": {
+      "path": "/opt/lumerical/v261/api/python/lumopt/geometries/polygon.py",
+      "bytes": 14306,
+      "sha256": "b15bd35323f715c50c929daf6d5a7143693958e060c9d57c5512b3f53b55edef"
+    },
+    "edge": {
+      "path": "/opt/lumerical/v261/api/python/lumopt/utilities/edge.py",
+      "bytes": 3177,
+      "sha256": "345e453c897f61645e5872d9c294b19bf2066fc064c6f8fb1dc706cbc36f7f3c"
+    },
+    "gradients": {
+      "path": "/opt/lumerical/v261/api/python/lumopt/utilities/gradients.py",
+      "bytes": 10544,
+      "sha256": "ecf17faeaff719c63576c5ffa813a5311a6918ac5484c65b091d3f844aa6d73d"
+    },
+    "materials": {
+      "path": "/opt/lumerical/v261/api/python/lumopt/utilities/materials.py",
+      "bytes": 3198,
+      "sha256": "193e7d0381d4e528758fcdb46b9e4821f9fac4dde8ace902ad2f7c1f23de8a1d"
+    }
+  },
+  "checks": {
+    "FunctionDefinedPolygon_present": true,
+    "CCW_contract_present": true,
+    "edge_quadrature_present": true,
+    "three_dimensional_depth_factor_present": true,
+    "E_parallel_term_present": true,
+    "D_perpendicular_term_present": true,
+    "epsilon_jump_term_present": true,
+    "inverse_epsilon_jump_term_present": true,
+    "real_shape_gradient_returned": true,
+    "named_material_getfdtdindex_present": true
+  },
+  "approved_representation": {
+    "inside": "exact named scalar (n,k) Au material",
+    "outside": "air",
+    "geometry": "counter-clockwise polygon extruded through a fixed 50 nm depth",
+    "shape_parameter_control": "symmetric motion of the two x-normal vertical faces",
+    "gray_Au_air_permittivity": false
+  },
+  "boundary_kernel": {
+    "description": "bundled LumOpt boundary perturbation using tangential E and normal D continuity variables",
+    "terms": [
+      "2*epsilon0*(epsilon_in-epsilon_out)*(E_parallel_fwd dot E_parallel_adj)",
+      "(1/epsilon_out-1/epsilon_in)/epsilon0*(D_perp_fwd dot D_perp_adj)"
+    ],
+    "three_dimensional_rule": "integrate along each lateral edge and multiply by the fixed extrusion depth"
+  },
+  "not_yet_validated": [
+    "adjoint-source normalization for the selected optical FOM",
+    "component-specific forward/adjoint field pairing on the metal boundary",
+    "central-FD agreement and step-size plateau",
+    "thermal, electrical, PTE, or combined shape derivatives"
+  ]
+}

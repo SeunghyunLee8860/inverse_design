@@ -1,0 +1,288 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE",
+  "scope": "production-width nonuniform Au optical total-Q AD-FD smoke; no thermal/PTE/electrical/optimization",
+  "audit": {
+    "status": "FDTDX_LUMERICAL_BINARY_ENDPOINT_RUNSETUP_AUDIT",
+    "software": {
+      "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+      "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+      "cuda_visible_devices": "5"
+    },
+    "grid": {
+      "shape_xyz": [
+        288,
+        288,
+        94
+      ],
+      "cell_count": 7796736,
+      "bounds_m_xyz": [
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ]
+      ],
+      "min_spacing_m_xyz": [
+        9.999985195463523e-08,
+        9.999985195463523e-08,
+        2.499999141036824e-08
+      ],
+      "max_spacing_m_xyz": [
+        5.000001692678779e-07,
+        5.000001692678779e-07,
+        2.0000015865662135e-07
+      ],
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ]
+    },
+    "placement": {
+      "flake_slice": [
+        [
+          44,
+          244
+        ],
+        [
+          44,
+          244
+        ],
+        [
+          43,
+          47
+        ]
+      ],
+      "flake_extent_m": [
+        1.9999999494757503e-05,
+        1.9999999494757503e-05,
+        1.0000000116860974e-07
+      ],
+      "au_slice": [
+        [
+          94,
+          194
+        ],
+        [
+          94,
+          194
+        ],
+        [
+          47,
+          49
+        ]
+      ],
+      "au_extent_m": [
+        9.999999747378752e-06,
+        9.999999747378752e-06,
+        5.000000058430487e-08
+      ],
+      "source_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          58,
+          59
+        ]
+      ],
+      "incident_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          57,
+          58
+        ]
+      ],
+      "target_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          54,
+          55
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          34,
+          254
+        ],
+        [
+          34,
+          254
+        ],
+        [
+          39,
+          55
+        ]
+      ]
+    },
+    "source": {
+      "wavelength_m": 1e-05,
+      "requested_w0_m": 8.5e-06,
+      "radius_m": 2e-05,
+      "std_relative_to_radius": 0.30052038200428266,
+      "direction": "-z",
+      "polarization": "x=b"
+    },
+    "numerics": {
+      "time_steps_total": 6788,
+      "time_step_s": 3.931088714013624e-17,
+      "total_periods": 8,
+      "window_periods": 2,
+      "gradient_method": "checkpointed",
+      "gradient_checkpoints": 16
+    }
+  },
+  "design": {
+    "latent_shape_xy": [
+      20,
+      20
+    ],
+    "latent_pitch_m": 5e-07,
+    "yee_shape_xy": [
+      100,
+      100
+    ],
+    "yee_pitch_m": 1e-07,
+    "au_z_cells": 2,
+    "au_thickness_m": 5e-08,
+    "relaxation": "passive Drude coupling strength s(rho)=rho^3",
+    "rho_min": 0.4436955451965332,
+    "rho_max": 0.5900406837463379
+  },
+  "baseline": {
+    "P_Q_W": 4.78252957696e-13,
+    "component_power_W": {
+      "au_xyz": [
+        6.2494441472e-14,
+        1.7726259199999999e-16,
+        1.2368132999999999e-17
+      ],
+      "tairte4_xyz": [
+        4.0508001484799996e-13,
+        7.17249536e-15,
+        3.31638784e-15
+      ]
+    },
+    "incident_plane_W": 7.486701688284858e-13,
+    "closed_surface_inward_W": 4.774020805412005e-13,
+    "empty_subtracted_closed_surface_W": 4.782622226468025e-13,
+    "Q_flux_closure_relative": 1.9372115052883033e-05,
+    "late_window_relative_change": 0.0017105183059247901,
+    "gradient_l2_W": 2.3146202915261107e-14
+  },
+  "directions": [
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.01,
+      "ad_W_per_unit_direction": 1.4305891571694602e-15,
+      "fd_W_per_unit_direction": 1.4303232000009768e-15,
+      "strong_direction": true,
+      "strong_relative_error": 0.0001859420084098701,
+      "gradient_l2_normalized_error": 1.1490315256333425e-05,
+      "power_plus_W": 4.7826763776e-13,
+      "power_minus_W": 4.782390312959999e-13
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "h": 0.005,
+      "ad_W_per_unit_direction": 1.4305891571694602e-15,
+      "fd_W_per_unit_direction": 1.4319616000027013e-15,
+      "strong_direction": true,
+      "strong_relative_error": 0.0009584355008112657,
+      "gradient_l2_normalized_error": 5.929451315473392e-05,
+      "power_plus_W": 4.78260297728e-13,
+      "power_minus_W": 4.78245978112e-13
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.01,
+      "ad_W_per_unit_direction": 3.856281597956754e-16,
+      "fd_W_per_unit_direction": 3.8993920000148654e-16,
+      "strong_direction": false,
+      "strong_relative_error": 0.011055672796668529,
+      "gradient_l2_normalized_error": 0.0001862525884523678,
+      "power_plus_W": 4.78257184768e-13,
+      "power_minus_W": 4.782493859839999e-13
+    },
+    {
+      "direction": "fixed_seed_random",
+      "h": 0.005,
+      "ad_W_per_unit_direction": 3.856281597956754e-16,
+      "fd_W_per_unit_direction": 3.801087999961882e-16,
+      "strong_direction": false,
+      "strong_relative_error": 0.014520473610562402,
+      "gradient_l2_normalized_error": 0.00023845638179591369,
+      "power_plus_W": 4.782549565439999e-13,
+      "power_minus_W": 4.78251155456e-13
+    },
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.01,
+      "ad_W_per_unit_direction": 2.3146202915261104e-14,
+      "fd_W_per_unit_direction": 2.3147315200003772e-14,
+      "strong_direction": true,
+      "strong_relative_error": 4.8052429971143386e-05,
+      "gradient_l2_normalized_error": 4.805473911812964e-05,
+      "power_plus_W": 4.78484955136e-13,
+      "power_minus_W": 4.780220088319999e-13
+    },
+    {
+      "direction": "adjoint_aligned",
+      "h": 0.005,
+      "ad_W_per_unit_direction": 2.3146202915261104e-14,
+      "fd_W_per_unit_direction": 2.3147315199998724e-14,
+      "strong_direction": true,
+      "strong_relative_error": 4.805242975304176e-05,
+      "gradient_l2_normalized_error": 4.805473890000704e-05,
+      "power_plus_W": 4.78368858112e-13,
+      "power_minus_W": 4.7813738496e-13
+    }
+  ],
+  "direction_classification": {
+    "strong_threshold_fraction_of_gradient_l2": 0.05,
+    "near_null_metric": "abs(AD-FD)/||gradient||_2",
+    "no_empirical_gradient_rescaling": true
+  },
+  "runtime": {
+    "compile_seconds": 16.221511125564575,
+    "ad_seconds": 503.6633055768907,
+    "central_fd_forward_count": 12,
+    "central_fd_forward_seconds": 270.9257684610784
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "no_density_clipping": true,
+    "late_window_change_lt_0p5pct": true,
+    "empty_subtracted_Q_flux_closure_lt_0p5pct": true,
+    "finest_strong_direction_error_lt_1pct": true,
+    "finest_gradient_l2_normalized_error_lt_1pct": true
+  },
+  "no_clipping_smoothing_gain_or_result_rescaling": true
+}

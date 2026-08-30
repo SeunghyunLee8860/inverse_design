@@ -1,0 +1,81 @@
+{
+  "raw_artifacts_not_committed": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114750396,
+      "sha256": "52d8f05e011279fe12eb34d203faed86b81e5eee16881c4c95717e63fe37739c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 21019420,
+      "sha256": "9c6d4d59f5c546329ea430477d195c1512b7ea3e94a2910732936c89ebee8e46"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8098,
+      "sha256": "9c07ea25c54242bf1a87c4a9879d791865e252eb8af9880a6c2bfe1bc7b496bd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114751716,
+      "sha256": "020659afe2eeb94df900812fd12dacb0ac4f6d4433637ee4d35ec298aadac295"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 33391245,
+      "sha256": "6d6093990d6cc0a9c4d6c1737a147a83317212fc7eb3a9369f0e9784a27be059"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8101,
+      "sha256": "7c1c541e03da80fa8987c54e7962eca2003d02e54aa64ad8b2c39156e95be761"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_xb_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114748932,
+      "sha256": "c48beae57f5d82f80fd3b7bdc4c918248b2502b2f7f41cf86345e1ccf1fb94f3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_xb_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 178142,
+      "sha256": "9efaad8cecc7d26c346a5ca0a6f224d5d1e2774403b9aa374e57b91f3632dced"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_xb_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8074,
+      "sha256": "2fd5dd8fbbee141a4a3626ce7d511c11b4cacc748e6393a77adba348b46acb4e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_ya_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114748932,
+      "sha256": "48f5538f85a206e1aef0ed4bb26b4ef1d7053c998e749f6c66ef4a956bd80e02"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_ya_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 29413570,
+      "sha256": "58c4a36ce56cc84f0e96fa41cd412a08a9f7d3fb769d35b1826adb4a73c15409"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_bare_ya_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8115,
+      "sha256": "30bf164ffce168902fc5ca1f7193d40652d816c6512cb2a6bc9982207ac5431a"
+    }
+  ],
+  "published_artifacts": [
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_TOP_T_MATCHED_BARE_SUMMARY.json",
+      "size_bytes": 4310,
+      "sha256": "00dc7161a7d992357fd70aa86bb1df801283394ad9124c7209ea5dd09e880144"
+    },
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_TOP_T_MATCHED_BARE_REPORT.md",
+      "size_bytes": 1368,
+      "sha256": "76e22b83c41ea00e87cdbc87694484d1eff3e4cec80a354d5dfaad7a84ad07a0"
+    },
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_top_T_matched_bare_comparison.png",
+      "size_bytes": 226847,
+      "sha256": "2511aabfa864980d359e44877771901b27151fb751c83d1b895f867a922e8cb3"
+    }
+  ]
+}

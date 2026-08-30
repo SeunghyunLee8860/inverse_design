@@ -88,3 +88,19 @@ def test_scaled_objective_gradient_uses_declared_chain_rule() -> None:
         / result.current_scale_A
     )
     np.testing.assert_allclose(result.minimization_gradient_scaled, expected)
+
+
+def test_nodal_lumped_contact_uses_closed_perimeter_weights() -> None:
+    objective = _objective()
+    perimeter = objective.model.perimeter
+    assert objective.model.contact_discretization == "nodal_lumped"
+    assert perimeter.boundary_node_ids.size == np.unique(
+        perimeter.boundary_node_ids
+    ).size
+    np.testing.assert_allclose(
+        np.sum(perimeter.boundary_node_weight_m),
+        perimeter.perimeter_m,
+        rtol=2e-15,
+        atol=1e-18,
+    )
+    assert np.all(perimeter.boundary_node_weight_m > 0.0)

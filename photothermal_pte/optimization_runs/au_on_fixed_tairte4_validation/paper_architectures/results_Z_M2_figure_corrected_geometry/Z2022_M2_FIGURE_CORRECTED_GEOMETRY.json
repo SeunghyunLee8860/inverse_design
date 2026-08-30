@@ -1,0 +1,243 @@
+{
+  "status": "READY_Z2022_M2_FIGURE_AXIS_CORRECTED_DIGITIZED_CLOSURE",
+  "paper_evidence": {
+    "main_pdf": "/home/seunghyun/tairte4/papers/s41467-022-32309-w.pdf",
+    "figure": "Fig. 1b",
+    "supplement": "/home/seunghyun/tairte4/papers/41467_2022_32309_MOESM1_ESM.pdf",
+    "dimensions": "Supplementary Table 1, M2"
+  },
+  "correction": "W1/W2 -> x=b with P2; L1/L2 -> y=a with P1",
+  "v1": {
+    "key": "Z2022_M2_5300_LH_LEGACY_AXIS_SWAPPED_V1",
+    "wavelength_nm": 5300.0,
+    "period_x_nm": 5100.0,
+    "period_y_nm": 2600.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "Z2022_M2_LEGACY_AXIS_SWAPPED_V1_LH_upper",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -300.0,
+            -130.0
+          ],
+          [
+            2000.0,
+            -130.0
+          ],
+          [
+            2000.0,
+            1230.0
+          ],
+          [
+            -300.0,
+            1230.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+legacy_axis_swapped_corner_join",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2 dimensions; legacy diagnostic with L1/L2 horizontal and W1/W2 vertical; inner corners joined because junction overlap/gap CAD is not disclosed"
+      },
+      {
+        "name": "Z2022_M2_LEGACY_AXIS_SWAPPED_V1_LH_lower",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -2000.0,
+            -1230.0
+          ],
+          [
+            -300.0,
+            -1230.0
+          ],
+          [
+            -300.0,
+            -130.0
+          ],
+          [
+            -2000.0,
+            -130.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+legacy_axis_swapped_corner_join",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2 dimensions; legacy diagnostic with L1/L2 horizontal and W1/W2 vertical; inner corners joined because junction overlap/gap CAD is not disclosed"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 150.0,
+        "z_max_nm": null
+      },
+      {
+        "name": "effective_Au_Z",
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -200.0,
+        "z_max_nm": 0.0
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -400.0,
+        "z_max_nm": -200.0
+      },
+      {
+        "name": "optical_SiO2_reduced",
+        "z_min_nm": -685.0,
+        "z_max_nm": -400.0
+      },
+      {
+        "name": "Si",
+        "z_min_nm": null,
+        "z_max_nm": -685.0
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave"
+    },
+    "unresolved": [
+      "junction overlap/gap is not disclosed; corner-joined figure-digitized closure retained",
+      "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+      "Au-above-planar-TaIrTe4 is a project endpoint, not author device CAD",
+      "5-nm Cr adhesion is omitted from the first effective-Au screen"
+    ]
+  },
+  "v2": {
+    "key": "Z2022_M2_5300_LH_FIGURE_AXIS_CORRECTED_V2",
+    "wavelength_nm": 5300.0,
+    "period_x_nm": 2600.0,
+    "period_y_nm": 5100.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "Z2022_M2_FIGURE_AXIS_CORRECTED_V2_LH_upper",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -130.0,
+            -300.0
+          ],
+          [
+            1230.0,
+            -300.0
+          ],
+          [
+            1230.0,
+            2000.0
+          ],
+          [
+            -130.0,
+            2000.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+figure_axis_corrected_corner_join",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2 dimensions; W1/W2 horizontal and L1/L2 vertical per Fig. 1b; inner corners joined because junction overlap/gap CAD is not disclosed"
+      },
+      {
+        "name": "Z2022_M2_FIGURE_AXIS_CORRECTED_V2_LH_lower",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -1230.0,
+            -2000.0
+          ],
+          [
+            -130.0,
+            -2000.0
+          ],
+          [
+            -130.0,
+            -300.0
+          ],
+          [
+            -1230.0,
+            -300.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0,
+        "provenance_kind": "published_dimensions+figure_axis_corrected_corner_join",
+        "provenance": "2022 Fig. 1b and Supplementary Table 1 M2 dimensions; W1/W2 horizontal and L1/L2 vertical per Fig. 1b; inner corners joined because junction overlap/gap CAD is not disclosed"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 150.0,
+        "z_max_nm": null
+      },
+      {
+        "name": "effective_Au_Z",
+        "z_min_nm": 100.0,
+        "z_max_nm": 150.0
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -200.0,
+        "z_max_nm": 0.0
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -400.0,
+        "z_max_nm": -200.0
+      },
+      {
+        "name": "optical_SiO2_reduced",
+        "z_min_nm": -685.0,
+        "z_max_nm": -400.0
+      },
+      {
+        "name": "Si",
+        "z_min_nm": null,
+        "z_max_nm": -685.0
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave"
+    },
+    "unresolved": [
+      "junction overlap/gap is not disclosed; corner-joined figure-digitized closure retained",
+      "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+      "Au-above-planar-TaIrTe4 is a project endpoint, not author device CAD",
+      "5-nm Cr adhesion is omitted from the first effective-Au screen"
+    ]
+  },
+  "remaining_closure": "inner-corner overlap/gap is not disclosed; exact author CAD remains unavailable; this is a named figure-digitized closure"
+}

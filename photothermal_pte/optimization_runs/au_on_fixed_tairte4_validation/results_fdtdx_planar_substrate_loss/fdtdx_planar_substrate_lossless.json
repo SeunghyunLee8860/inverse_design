@@ -1,0 +1,88 @@
+{
+  "status": "DIAGNOSED_FDTDX_PLANAR_SUBSTRATE_LOSSLESS_RESIDUAL",
+  "scope": "periodic x/y planar 285-nm-SiO2/lossless-Si numerical control only",
+  "software": {
+    "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+    "cuda_visible_devices": "2"
+  },
+  "material_contract": {
+    "epsilon_sio2": [
+      7.3490019303043495,
+      1.9899687286880576
+    ],
+    "sigma_sio2_requested_S_m": 3318.910592287244,
+    "sigma_scale": 0.0,
+    "sigma_sio2_applied_S_m": 0.0,
+    "epsilon_si": [
+      11.706662249999999,
+      0.0
+    ],
+    "provenance": {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_10um_substrate_material/10um_substrate_material_readback.json",
+      "status": "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK",
+      "source_class": "explicit offline diagnostic; Palik readback remains blocked",
+      "Palik_Si_readback_validated": false
+    }
+  },
+  "placement": {
+    "grid_shape": [
+      3,
+      3,
+      109
+    ],
+    "sio2_slice": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        39,
+        58
+      ]
+    ],
+    "source_slice": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        73,
+        74
+      ]
+    ],
+    "box_slice": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        37,
+        70
+      ]
+    ]
+  },
+  "power_W": {
+    "native_E_Joule": 0.0,
+    "closed_phasor_inward": -2.151232869547796e-15,
+    "closed_time_domain_inward": -1.0777376170320596e-15
+  },
+  "relative_errors": {
+    "Joule_vs_phasor": 1.0,
+    "Joule_vs_time_domain": 1.0,
+    "phasor_vs_time_domain": 0.9960636388214731
+  },
+  "runtime_seconds_including_compile": 2.750590141862631,
+  "no_empirical_gain_clipping_smoothing_or_rescaling": true
+}

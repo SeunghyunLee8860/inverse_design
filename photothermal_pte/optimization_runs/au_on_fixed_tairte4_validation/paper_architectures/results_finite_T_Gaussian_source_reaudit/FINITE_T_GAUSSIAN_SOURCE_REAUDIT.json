@@ -1,0 +1,84 @@
+{
+  "status": "BLOCKED_FINITE_T_GAUSSIAN_SOURCE_DISTORTION",
+  "cases": [
+    {
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_w0_4um_source_only",
+      "requested_w0_um": 4.0,
+      "comparator": "downward transverse incident field from E/H decomposition",
+      "formula": {
+        "Ex_down": "(Ex-eta0*Hy)/2",
+        "Ey_down": "(Ey+eta0*Hx)/2"
+      },
+      "fit": {
+        "integrated_power_W": 2.090983877898798e-11,
+        "moment_center_x_m": 3.9101877800777395e-16,
+        "moment_center_y_m": 4.8823699536347615e-18,
+        "moment_waist_x_m": 4.753778326871446e-06,
+        "moment_waist_y_m": 4.900773788950807e-06,
+        "fitted_center_x_m": 9.976032829933413e-16,
+        "fitted_center_y_m": 5.0872846508791164e-17,
+        "fitted_waist_x_m": 4.9066338928078105e-06,
+        "fitted_waist_y_m": 5.1008825531393906e-06,
+        "fitted_waist_effective_m": 5.002815529126151e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 1.0181652794684708,
+        "Gaussian_fit_NRMSE": 0.020502984246920992,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 0.0388205528076341
+      },
+      "incident_power_W": 2.7751733827046275e-14,
+      "source_power_W": 2.6199775340937546e-14,
+      "incident_power_relative_error": 0.0592355646532499,
+      "gates": {
+        "waist_x_within_0p5pct": false,
+        "waist_y_within_0p5pct": false,
+        "Gaussian_fit_NRMSE_lt_0p5pct": false,
+        "ellipticity_lt_0p5pct": false,
+        "center_displacement_lt_50nm": true,
+        "incident_power_vs_sourcepower_lt_0p5pct": false
+      },
+      "all_gates": false
+    },
+    {
+      "raw_dir": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_w0_8p5um_source_only",
+      "requested_w0_um": 8.5,
+      "comparator": "downward transverse incident field from E/H decomposition",
+      "formula": {
+        "Ex_down": "(Ex-eta0*Hy)/2",
+        "Ey_down": "(Ey+eta0*Hx)/2"
+      },
+      "fit": {
+        "integrated_power_W": 1.0843442752998373e-10,
+        "moment_center_x_m": 2.81663605741425e-16,
+        "moment_center_y_m": 1.1609579224388703e-20,
+        "moment_waist_x_m": 8.640534089684053e-06,
+        "moment_waist_y_m": 8.682521336257407e-06,
+        "fitted_center_x_m": 1.4583074145077371e-16,
+        "fitted_center_y_m": 1.5398451531399608e-18,
+        "fitted_waist_x_m": 8.612287497768085e-06,
+        "fitted_waist_y_m": 8.684753471321163e-06,
+        "fitted_waist_effective_m": 8.648444585141148e-06,
+        "fitted_peak_amplitude_over_sampled_peak": 0.9997210776680189,
+        "Gaussian_fit_NRMSE": 0.0015689681790110573,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": true,
+        "fitted_xy_ellipticity": 0.008379002360297247
+      },
+      "incident_power_W": 1.4391518759696017e-13,
+      "source_power_W": 1.4327210721788844e-13,
+      "incident_power_relative_error": 0.004488524609285851,
+      "gates": {
+        "waist_x_within_0p5pct": false,
+        "waist_y_within_0p5pct": false,
+        "Gaussian_fit_NRMSE_lt_0p5pct": true,
+        "ellipticity_lt_0p5pct": false,
+        "center_displacement_lt_50nm": true,
+        "incident_power_vs_sourcepower_lt_0p5pct": true
+      },
+      "all_gates": false
+    }
+  ],
+  "promoted_w0_um": null,
+  "raw_FSP_NPZ_committed": false,
+  "full_finite_T_Q_executed": false
+}

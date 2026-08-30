@@ -1,0 +1,61 @@
+{
+  "status": "VALIDATED_AU_LATENT_FILTER_PROJECTION_MAPPING",
+  "scope": "solver-free 20x20 Au latent-to-finite-filter-to-tanh-projection JVP/VJP and mapping-only central FD; no final fabrication rule and no optimization",
+  "mapping": {
+    "shape": [
+      20,
+      20
+    ],
+    "spacing_nm": 500.00000000000006,
+    "radius_nm": 750.0,
+    "eta": 0.5,
+    "kernel_shape": [
+      5,
+      5
+    ],
+    "kernel_nonzero_count": 9,
+    "normalization_min": 1.2928932188134522e-06,
+    "normalization_max": 1.921572875253809e-06,
+    "constant_preservation_max_abs": 0.0,
+    "periodic_wrap": false,
+    "forward_operator": "D^-1 C with zero padding",
+    "transpose_operator": "C D^-1 with symmetric conic kernel"
+  },
+  "filter_radius_role": "750 nm is an explicit numerical mapping scenario for the current 500 nm design pixels, not a fabricated minimum-feature confidence interval",
+  "beta_values": [
+    1.0,
+    2.0,
+    4.0,
+    8.0
+  ],
+  "FD_steps": [
+    0.01,
+    0.005,
+    0.0025
+  ],
+  "direction_count": 5,
+  "worst_JVP_VJP_dot_error": 2.6419896234382954e-17,
+  "worst_mapping_FD_gradient_norm_normalized_error": 8.721352066830697e-07,
+  "opposite_edge_wrap_max_abs": 0.0,
+  "monotone_failure_count": 0,
+  "gates": {
+    "finite_nonperiodic_filter_constant_error_lt_1e-12": true,
+    "no_opposite_edge_wrap": true,
+    "JVP_VJP_dot_error_lt_1e-12": true,
+    "mapping_only_FD_normalized_error_lt_1e-6": true,
+    "FD_error_no_material_h_to_h_over_2_regression": true,
+    "all_FDs_unclipped": true
+  },
+  "input_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+    "bytes": 33527,
+    "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_raw.npz",
+    "bytes": 10713,
+    "sha256": "3bcd3e42b79668d5e7fa63b1e59b9bb62e972cdd58306345aec77357ba663fe1",
+    "committed_to_git": false
+  },
+  "next_gate": "choose and record the Au optimization fabrication/filter contract, then recompute the full physical gradient at its mapped baseline and perform end-to-end latent AD-FD before optimization"
+}

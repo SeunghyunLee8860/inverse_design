@@ -1,0 +1,207 @@
+{
+  "status": "VALIDATED_T2024_EXPLICIT_SIO2_SI_OPTICAL_EQUIVALENCE",
+  "stack": "air / Au inverse-T / 100-nm TaIrTe4 / 35-nm Al2O3 / 200-nm Au mirror / 1.5-um thermal SiO2 / intrinsic Si",
+  "records": {
+    "T_Eb": {
+      "au_truncated": {
+        "P_Q_W": 4.2364297860257765e-16,
+        "P_flux_W": 4.24260310175034e-16,
+        "TaIrTe4_Q_W": 3.7101527502496274e-16,
+        "closure_relative": 0.0014550773608817168
+      },
+      "explicit_SiO2_Si": {
+        "P_Q_W": 4.2364297691831026e-16,
+        "P_flux_W": 4.242603078517315e-16,
+        "TaIrTe4_Q_W": 3.7101527374227767e-16,
+        "SiO2_Q_W": 9.670929066168847e-27,
+        "Si_Q_W": 7.967128602933342e-32,
+        "closure_relative": 0.0014550758626163344,
+        "bottom_transmission": 4.0431876786655e-10
+      },
+      "relative_change_explicit_vs_truncated": {
+        "P_Q": -3.975676385131986e-09,
+        "P_flux": -5.476125028261687e-09,
+        "TaIrTe4_Q": -3.4572298156454475e-09
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.67837132392586,
+          "absolute_lateral_NRMSE": 2.6041911461008006e-06,
+          "unit_power_shape_NRMSE": 2.6041807260212963e-06,
+          "spatial_correlation": 0.9999999999902923
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.18481907689034544,
+          "absolute_lateral_NRMSE": 1.262820640193025e-06,
+          "unit_power_shape_NRMSE": 1.2630872380253143e-06,
+          "spatial_correlation": 0.9999999999990001
+        },
+        "z": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.13680960137848697,
+          "absolute_lateral_NRMSE": 2.794433570180206e-07,
+          "unit_power_shape_NRMSE": 2.786907332223826e-07,
+          "spatial_correlation": 0.9999999999999568
+        }
+      }
+    },
+    "T_Ea": {
+      "au_truncated": {
+        "P_Q_W": 3.752872545512335e-16,
+        "P_flux_W": 3.764306064981633e-16,
+        "TaIrTe4_Q_W": 3.389839685500576e-16,
+        "closure_relative": 0.0030373511802510352
+      },
+      "explicit_SiO2_Si": {
+        "P_Q_W": 3.752872469443291e-16,
+        "P_flux_W": 3.7643060349842903e-16,
+        "TaIrTe4_Q_W": 3.38983961728897e-16,
+        "SiO2_Q_W": 1.5632174082999723e-27,
+        "Si_Q_W": 1.287105862213668e-32,
+        "closure_relative": 0.0030373634435508293,
+        "bottom_transmission": 6.535655668671406e-11
+      },
+      "relative_change_explicit_vs_truncated": {
+        "P_Q": -2.026955156487172e-08,
+        "P_flux": -7.968890440947255e-09,
+        "TaIrTe4_Q": -2.0122369256232987e-08
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.015201578712264543,
+          "absolute_lateral_NRMSE": 3.2345606506597367e-06,
+          "unit_power_shape_NRMSE": 3.2353079228731757e-06,
+          "spatial_correlation": 0.9999999999942879
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.9276762094324121,
+          "absolute_lateral_NRMSE": 8.601392473128494e-07,
+          "unit_power_shape_NRMSE": 8.600948695733768e-07,
+          "spatial_correlation": 0.9999999999979939
+        },
+        "z": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.05712221347704758,
+          "absolute_lateral_NRMSE": 4.125977082930801e-07,
+          "unit_power_shape_NRMSE": 4.120931670387098e-07,
+          "spatial_correlation": 0.9999999999999044
+        }
+      }
+    },
+    "bare_Eb": {
+      "au_truncated": {
+        "P_Q_W": 3.8420077024464245e-16,
+        "P_flux_W": 3.8485040660589633e-16,
+        "TaIrTe4_Q_W": 3.4973324439381066e-16,
+        "closure_relative": 0.0016880230606567477
+      },
+      "explicit_SiO2_Si": {
+        "P_Q_W": 3.842008390452485e-16,
+        "P_flux_W": 3.848502894744752e-16,
+        "TaIrTe4_Q_W": 3.4973327634672334e-16,
+        "SiO2_Q_W": 1.7720525658006932e-26,
+        "Si_Q_W": 1.4704704626194576e-31,
+        "closure_relative": 0.0016875404462174852,
+        "bottom_transmission": 7.510512863019573e-10
+      },
+      "relative_change_explicit_vs_truncated": {
+        "P_Q": 1.7907461771050674e-07,
+        "P_flux": -3.0435571621727796e-07,
+        "TaIrTe4_Q": 9.136366985962039e-08
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 1.0,
+          "absolute_lateral_NRMSE": 8.337010595280227e-07,
+          "unit_power_shape_NRMSE": 8.142407655270338e-07,
+          "spatial_correlation": 0.9999999999714174
+        },
+        "y": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 0.0,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        },
+        "z": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 0.0,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        }
+      }
+    },
+    "bare_Ea": {
+      "au_truncated": {
+        "P_Q_W": 3.967731033734593e-16,
+        "P_flux_W": 3.9777504174177567e-16,
+        "TaIrTe4_Q_W": 3.69835519974233e-16,
+        "closure_relative": 0.0025188567988808073
+      },
+      "explicit_SiO2_Si": {
+        "P_Q_W": 3.9677311720432997e-16,
+        "P_flux_W": 3.977750350235191e-16,
+        "TaIrTe4_Q_W": 3.6983553499185883e-16,
+        "SiO2_Q_W": 2.1506777595966494e-27,
+        "Si_Q_W": 1.7866703849995583e-32,
+        "closure_relative": 0.0025188051812499316,
+        "bottom_transmission": 9.099047712970704e-11
+      },
+      "relative_change_explicit_vs_truncated": {
+        "P_Q": 3.485838769633196e-08,
+        "P_flux": -1.6889588048380717e-08,
+        "TaIrTe4_Q": 4.060622898896751e-08
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 3.63926805625013e-13,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.9999999999988579,
+          "absolute_lateral_NRMSE": 5.205110781013664e-07,
+          "unit_power_shape_NRMSE": 5.19346298257699e-07,
+          "spatial_correlation": 0.9999999999897407
+        },
+        "z": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 7.811879323087571e-13,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        }
+      }
+    }
+  },
+  "maxima": {
+    "absolute_total_P_Q_change": 1.7907461771050674e-07,
+    "absolute_TaIrTe4_Q_change": 9.136366985962039e-08,
+    "lateral_unit_power_shape_NRMSE": 3.2353079228731757e-06
+  },
+  "gates": {
+    "all_explicit_forward_gates_pass": true,
+    "max_total_power_change_lt_0p5pct": true,
+    "max_TaIrTe4_power_change_lt_0p5pct": true,
+    "max_lateral_shape_NRMSE_lt_0p5pct": true
+  },
+  "component_shape_gate_rule": {
+    "minimum_native_power_fraction": 1e-08,
+    "inactive_components_are_reported_but_not_normalized": true,
+    "Q_arrays_modified": false
+  },
+  "scope": "periodic optical forward equivalence only; no thermal, PTE, adjoint or optimization"
+}

@@ -1,0 +1,182 @@
+{
+  "status": "VALIDATED_REDUCED_285NM_OPTICAL_CLOSURE",
+  "records": {
+    "T_Eb": {
+      "full_1500nm": {
+        "P_Q_W": 4.2364297691831026e-16,
+        "TaIrTe4_Q_W": 3.7101527374227767e-16,
+        "runtime_s": 37.757827173918486
+      },
+      "reduced_285nm": {
+        "P_Q_W": 4.2364298815401457e-16,
+        "TaIrTe4_Q_W": 3.7101527557656825e-16,
+        "runtime_s": 32.870249189436436,
+        "bottom_transmission": 3.180111393419261e-10
+      },
+      "relative_change_reduced_vs_full": {
+        "P_Q": 2.6521634888254653e-08,
+        "TaIrTe4_Q": 4.9439758953440105e-09
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.678371336801493,
+          "absolute_lateral_NRMSE": 2.62686091270174e-06,
+          "unit_power_shape_NRMSE": 2.6267857026304017e-06,
+          "spatial_correlation": 0.999999999990125
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.1848190766771937,
+          "absolute_lateral_NRMSE": 1.088241145558066e-06,
+          "unit_power_shape_NRMSE": 1.0873845199651172e-06,
+          "spatial_correlation": 0.9999999999992569
+        },
+        "z": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.13680960137848697,
+          "absolute_lateral_NRMSE": 3.0314959012596423e-07,
+          "unit_power_shape_NRMSE": 3.022095131628734e-07,
+          "spatial_correlation": 0.9999999999999488
+        }
+      }
+    },
+    "T_Ea": {
+      "full_1500nm": {
+        "P_Q_W": 3.752872469443291e-16,
+        "TaIrTe4_Q_W": 3.38983961728897e-16,
+        "runtime_s": 26.794123973697424
+      },
+      "reduced_285nm": {
+        "P_Q_W": 3.7528724802542976e-16,
+        "TaIrTe4_Q_W": 3.3898396023858764e-16,
+        "runtime_s": 27.741263180971146,
+        "bottom_transmission": 5.1526857993544415e-11
+      },
+      "relative_change_reduced_vs_full": {
+        "P_Q": 2.8807283225518177e-09,
+        "TaIrTe4_Q": -4.396400798967193e-09
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.015201578712264543,
+          "absolute_lateral_NRMSE": 3.1281815863412305e-06,
+          "unit_power_shape_NRMSE": 3.130532524146298e-06,
+          "spatial_correlation": 0.9999999999946593
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.9276762087967549,
+          "absolute_lateral_NRMSE": 8.87182892871329e-07,
+          "unit_power_shape_NRMSE": 8.872092984931254e-07,
+          "spatial_correlation": 0.9999999999978648
+        },
+        "z": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.057122213954612776,
+          "absolute_lateral_NRMSE": 3.977506143638813e-07,
+          "unit_power_shape_NRMSE": 3.9704878053294847e-07,
+          "spatial_correlation": 0.9999999999999113
+        }
+      }
+    },
+    "bare_Eb": {
+      "full_1500nm": {
+        "P_Q_W": 3.842008390452485e-16,
+        "TaIrTe4_Q_W": 3.4973327634672334e-16,
+        "runtime_s": 33.45554480701685
+      },
+      "reduced_285nm": {
+        "P_Q_W": 3.8420081153856464e-16,
+        "TaIrTe4_Q_W": 3.4973325451704084e-16,
+        "runtime_s": 29.571875229477882,
+        "bottom_transmission": 5.751355525353393e-10
+      },
+      "relative_change_reduced_vs_full": {
+        "P_Q": -7.159454395999632e-08,
+        "TaIrTe4_Q": -6.241808825357964e-08
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 1.0,
+          "absolute_lateral_NRMSE": 8.358352988348393e-07,
+          "unit_power_shape_NRMSE": 8.32780514594552e-07,
+          "spatial_correlation": 0.9999999999702334
+        },
+        "y": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 0.0,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        },
+        "z": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 0.0,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        }
+      }
+    },
+    "bare_Ea": {
+      "full_1500nm": {
+        "P_Q_W": 3.9677311720432997e-16,
+        "TaIrTe4_Q_W": 3.6983553499185883e-16,
+        "runtime_s": 37.35853323712945
+      },
+      "reduced_285nm": {
+        "P_Q_W": 3.967731108562448e-16,
+        "TaIrTe4_Q_W": 3.698355267851737e-16,
+        "runtime_s": 29.300959076732397,
+        "bottom_transmission": 6.986004564736117e-11
+      },
+      "relative_change_reduced_vs_full": {
+        "P_Q": -1.599928245443749e-08,
+        "TaIrTe4_Q": -2.2190093540430667e-08
+      },
+      "lateral_Q_metrics": {
+        "x": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 3.662129772226663e-13,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        },
+        "y": {
+          "active_for_shape_gate": true,
+          "maximum_power_participation": 0.9999999999988579,
+          "absolute_lateral_NRMSE": 5.316820969320133e-07,
+          "unit_power_shape_NRMSE": 5.314448219056157e-07,
+          "spatial_correlation": 0.9999999999892525
+        },
+        "z": {
+          "active_for_shape_gate": false,
+          "maximum_power_participation": 7.783063093051467e-13,
+          "absolute_lateral_NRMSE": null,
+          "unit_power_shape_NRMSE": null,
+          "spatial_correlation": null,
+          "reason": "component is numerical zero; normalization would amplify roundoff"
+        }
+      }
+    }
+  },
+  "maxima": {
+    "absolute_P_Q_change": 7.159454395999632e-08,
+    "absolute_TaIrTe4_Q_change": 6.241808825357964e-08,
+    "lateral_unit_power_shape_NRMSE": 3.130532524146298e-06,
+    "bottom_transmission": 5.751355525353393e-10
+  },
+  "gates": {
+    "max_total_power_change_lt_0p5pct": true,
+    "max_TaIrTe4_power_change_lt_0p5pct": true,
+    "max_lateral_shape_NRMSE_lt_0p5pct": true,
+    "max_bottom_transmission_lt_1e_8": true
+  },
+  "interpretation": "The 285-nm layer is an optical numerical closure below an opaque 200-nm Au mirror, not a replacement for the physical thermal oxide."
+}

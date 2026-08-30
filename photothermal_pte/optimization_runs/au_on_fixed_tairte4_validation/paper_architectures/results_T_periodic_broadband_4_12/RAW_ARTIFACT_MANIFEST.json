@@ -1,0 +1,101 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "cases": {
+    "T_Ea": {
+      "metadata": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Ea/T2024_periodic_broadband_rta.json",
+        "size_bytes": 8546,
+        "sha256": "71c2e29abfe2e59a3085fd3ebdffc71b672653dbca5aff6334549279d0429993"
+      },
+      "spectrum": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Ea/T2024_periodic_broadband_rta.npz",
+        "size_bytes": 17923,
+        "sha256": "cac6462c8f7534e00e7debb05226c64ca1d17e0763484be03c0e10ac20ab5251"
+      },
+      "solver_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Ea/T2024_periodic_broadband_rta.fsp",
+          "size_bytes": 1996571,
+          "sha256": "c73249cb35b37dd237c346ba2f028ae06becd31b61da5d5bb6c0837655778e78"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Ea/T2024_periodic_broadband_rta.npz",
+          "size_bytes": 17923,
+          "sha256": "cac6462c8f7534e00e7debb05226c64ca1d17e0763484be03c0e10ac20ab5251"
+        }
+      ]
+    },
+    "T_Eb": {
+      "metadata": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Eb/T2024_periodic_broadband_rta.json",
+        "size_bytes": 8544,
+        "sha256": "8af5b9c7f0deeff0d9ae23cf6d082acbf8bc7e2b1996ae88d32888fce85c7ea6"
+      },
+      "spectrum": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Eb/T2024_periodic_broadband_rta.npz",
+        "size_bytes": 18019,
+        "sha256": "db8274cd07024e24fb663bf91793b956f775b1846f80617cf64971b2bac0f327"
+      },
+      "solver_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Eb/T2024_periodic_broadband_rta.fsp",
+          "size_bytes": 1995755,
+          "sha256": "7a0e0a1f8c1ff85edc9b01c1e314358ee444fe98426e37d90b036dac22e08517"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/T_Eb/T2024_periodic_broadband_rta.npz",
+          "size_bytes": 18019,
+          "sha256": "db8274cd07024e24fb663bf91793b956f775b1846f80617cf64971b2bac0f327"
+        }
+      ]
+    },
+    "bare_Ea": {
+      "metadata": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Ea/T2024_periodic_broadband_rta.json",
+        "size_bytes": 8556,
+        "sha256": "a2daf96fce6fbb5681af9cb5d0a89511f7b4db0e51c49abba2acc4f120ee3e25"
+      },
+      "spectrum": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Ea/T2024_periodic_broadband_rta.npz",
+        "size_bytes": 17927,
+        "sha256": "282b638371c2e6ee9d801c1a7fd129924e6657c00ce4abb568d67cceedc44d6a"
+      },
+      "solver_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Ea/T2024_periodic_broadband_rta.fsp",
+          "size_bytes": 1994027,
+          "sha256": "a9708624cb598affa9405be24fb24443f44c7cf617568dc4e35c1c83ea73eec6"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Ea/T2024_periodic_broadband_rta.npz",
+          "size_bytes": 17927,
+          "sha256": "282b638371c2e6ee9d801c1a7fd129924e6657c00ce4abb568d67cceedc44d6a"
+        }
+      ]
+    },
+    "bare_Eb": {
+      "metadata": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Eb/T2024_periodic_broadband_rta.json",
+        "size_bytes": 8550,
+        "sha256": "0dba22e431e35349073b87ff5255e170f70c66dd36fdd104f26bd55fa4f8dd0c"
+      },
+      "spectrum": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Eb/T2024_periodic_broadband_rta.npz",
+        "size_bytes": 18098,
+        "sha256": "24455b96fbb38dc710abf6c1dbad0ff515f60ec76de325f10128722058c13296"
+      },
+      "solver_artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Eb/T2024_periodic_broadband_rta.fsp",
+          "size_bytes": 1994027,
+          "sha256": "e847e7f6a9aca57c1d8a441141d78129d31931d508c0ca20a6b66c1b6b5542f9"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_broadband_4_12/bare_Eb/T2024_periodic_broadband_rta.npz",
+          "size_bytes": 18098,
+          "sha256": "24455b96fbb38dc710abf6c1dbad0ff515f60ec76de325f10128722058c13296"
+        }
+      ]
+    }
+  }
+}

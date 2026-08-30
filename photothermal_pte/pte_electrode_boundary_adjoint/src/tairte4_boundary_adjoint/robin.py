@@ -22,6 +22,7 @@ class RobinEvaluation:
     adjoint_residual_relative: float
     matrix_relative_asymmetry: float
     contact_integrals_m: tuple[float, float]
+    contact_discretization: str
 
 
 @dataclass(frozen=True)
@@ -65,6 +66,7 @@ class DifferentiableContactModel:
         contact_conductance_S_m2: float,
         transition_m: float,
         quadrature_order: int = 5,
+        contact_discretization: str = "nodal_lumped",
     ):
         if contact_conductance_S_m2 <= 0.0:
             raise ValueError("contact conductance must be positive")
@@ -72,6 +74,11 @@ class DifferentiableContactModel:
         self.temperature = np.asarray(temperature_nodes_K, float)
         self.g_S_m2 = float(contact_conductance_S_m2)
         self.transition_m = float(transition_m)
+        if contact_discretization not in {"nodal_lumped", "consistent_edge"}:
+            raise ValueError(
+                "contact_discretization must be nodal_lumped or consistent_edge"
+            )
+        self.contact_discretization = contact_discretization
         self.perimeter = PerimeterDiscretization.from_mesh(
             electrical.mesh, order=quadrature_order
         )
@@ -85,9 +92,17 @@ class DifferentiableContactModel:
         length_m: float,
         derivative: str | None = None,
     ) -> tuple[sparse.csr_matrix, np.ndarray, float]:
-        mask, dm_dc, dm_dL = self.perimeter.mask_and_derivatives(
-            center_m, length_m, self.transition_m
-        )
+        if self.contact_discretization == "nodal_lumped":
+            mask, dm_dc, dm_dL = self.perimeter.mask_values_and_derivatives(
+                self.perimeter.boundary_node_s_m,
+                center_m,
+                length_m,
+                self.transition_m,
+            )
+        else:
+            mask, dm_dc, dm_dL = self.perimeter.mask_and_derivatives(
+                center_m, length_m, self.transition_m
+            )
         if derivative is None:
             field = mask
         elif derivative == "center":
@@ -96,24 +111,38 @@ class DifferentiableContactModel:
             field = dm_dL
         else:
             raise ValueError("derivative must be None, center, or length")
-        nodes = self.perimeter.quadrature_node_ids
-        shape = self.perimeter.quadrature_shape
-        coefficient = (
-            self.electrical.thickness_m
-            * self.g_S_m2
-            * self.perimeter.quadrature_weight_m
-            * field
-        )
-        local = coefficient[:, None, None] * shape[:, :, None] * shape[:, None, :]
-        rows = np.repeat(nodes, 2, axis=1).ravel()
-        columns = np.tile(nodes, (1, 2)).ravel()
-        matrix = sparse.coo_matrix(
-            (local.ravel(), (rows, columns)),
-            shape=(self.node_count, self.node_count),
-        ).tocsr()
-        vector = np.zeros(self.node_count, dtype=float)
-        np.add.at(vector, nodes.ravel(), (coefficient[:, None] * shape).ravel())
-        integral = float(np.sum(self.perimeter.quadrature_weight_m * field))
+        if self.contact_discretization == "nodal_lumped":
+            nodes = self.perimeter.boundary_node_ids
+            measure = self.perimeter.boundary_node_weight_m
+            coefficient = (
+                self.electrical.thickness_m * self.g_S_m2 * measure * field
+            )
+            matrix = sparse.coo_matrix(
+                (coefficient, (nodes, nodes)),
+                shape=(self.node_count, self.node_count),
+            ).tocsr()
+            vector = np.zeros(self.node_count, dtype=float)
+            np.add.at(vector, nodes, coefficient)
+            integral = float(np.sum(measure * field))
+        else:
+            nodes = self.perimeter.quadrature_node_ids
+            shape = self.perimeter.quadrature_shape
+            measure = self.perimeter.quadrature_weight_m
+            coefficient = (
+                self.electrical.thickness_m * self.g_S_m2 * measure * field
+            )
+            local = (
+                coefficient[:, None, None] * shape[:, :, None] * shape[:, None, :]
+            )
+            rows = np.repeat(nodes, 2, axis=1).ravel()
+            columns = np.tile(nodes, (1, 2)).ravel()
+            matrix = sparse.coo_matrix(
+                (local.ravel(), (rows, columns)),
+                shape=(self.node_count, self.node_count),
+            ).tocsr()
+            vector = np.zeros(self.node_count, dtype=float)
+            np.add.at(vector, nodes.ravel(), (coefficient[:, None] * shape).ravel())
+            integral = float(np.sum(measure * field))
         return matrix, vector, integral
 
     @staticmethod
@@ -164,18 +193,7 @@ class DifferentiableContactModel:
                 adjoint @ (voltage * dvector - dmatrix @ psi)
             )
         squared_current_gradient = 2.0 * current * current_gradient
-        terminal_current = float(
-            self.electrical.thickness_m * self.g_S_m2 * np.sum(
-                self.perimeter.quadrature_weight_m
-                * self.perimeter.mask_and_derivatives(
-                    p.center_1_m, p.length_1_m, self.transition_m
-                )[0]
-                * (1.0 - np.sum(
-                    self.perimeter.quadrature_shape
-                    * psi[self.perimeter.quadrature_node_ids], axis=1
-                ))
-            )
-        )
+        terminal_current = float(np.sum(v1) - v1 @ psi)
         return RobinEvaluation(
             parameters=p,
             weighting_potential=psi.reshape(self.electrical.mesh.shape),
@@ -188,6 +206,7 @@ class DifferentiableContactModel:
             adjoint_residual_relative=adjoint_residual,
             matrix_relative_asymmetry=self._relative_asymmetry(matrix.tocsr()),
             contact_integrals_m=(int0, int1),
+            contact_discretization=self.contact_discretization,
         )
 
     def hard_evaluate(self, parameters: PerimeterParameters) -> HardEvaluation:

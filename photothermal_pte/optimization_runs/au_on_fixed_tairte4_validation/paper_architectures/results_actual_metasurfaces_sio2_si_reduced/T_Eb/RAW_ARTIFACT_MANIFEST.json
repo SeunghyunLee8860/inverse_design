@@ -1,0 +1,51 @@
+{
+  "generation_command": "15_publish_reduced_substrate_fields.py --raw-case /home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si_reduced/T2024_MIR_4750_T_Eb --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb --label T_Eb",
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/00_reduced_substrate_setup_xy_xz_yz.png",
+      "size_bytes": 130396,
+      "sha256": "4d6a6bc68046afecd1ecdc95ab3a9ec8d21a9aa0b67c3cb17b6e95ce3c515349"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/01_field_xy_tairte4_midplane.png",
+      "size_bytes": 180119,
+      "sha256": "25b55add2cef3197d05923606139a87c66f947a2f4e8b0920e0ffe444ab078d5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/02_field_xz_y0.png",
+      "size_bytes": 146632,
+      "sha256": "cdbfc446b0c87c7aed5af873ddb8f7ef8e4cfe5fdf53f7165d5c2c87ddda60a4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/03_field_yz_x0.png",
+      "size_bytes": 96674,
+      "sha256": "ba8a61832c792fe891ef064868dc5fd14a1848e1af814aa888cf9d5fdcb416df"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/04_Q_components_depth_integrated.png",
+      "size_bytes": 188865,
+      "sha256": "0e686f92e4491d95bb2dc1318bd04a47c7a32dea6ffe62e77acff6fa4b4ff53e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/05_Qtotal_xz_yz.png",
+      "size_bytes": 94224,
+      "sha256": "b899e5b42511514156c5e624596a7bb52b15a4062c9e57722648f9ad9f3b41c8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/REDUCED_SUBSTRATE_FIELD_REPORT.md",
+      "size_bytes": 752,
+      "sha256": "27452a5852c932bf5a028440babe614d7514c54fe6edcf13bc4aab23e742d0e5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_actual_metasurfaces_sio2_si_reduced/T_Eb/REDUCED_SUBSTRATE_FIELD_SUMMARY.json",
+      "size_bytes": 2009,
+      "sha256": "1f14aeda0d415ad387f9c7644519b3770c8cecee29fbb1e7f28d8d6afc554faf"
+    }
+  ],
+  "raw_artifacts_committed": false,
+  "raw_npz": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si_reduced/T2024_MIR_4750_T_Eb/T2024_TaIrTe4_native_q.npz",
+    "size_bytes": 21153340,
+    "sha256": "5488d9f96fea5ac972b69abe8f487ebb4491dace61ced263b2c16cdd739d6da3"
+  }
+}

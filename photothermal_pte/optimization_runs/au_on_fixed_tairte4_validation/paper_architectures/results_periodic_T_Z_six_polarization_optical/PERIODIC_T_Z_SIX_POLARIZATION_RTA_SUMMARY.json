@@ -1,0 +1,104 @@
+{
+  "status": "VALIDATED_PERIODIC_T_Z_SIX_POLARIZATION_RTA_SCREENING",
+  "scope": "periodic optical R/T/A only",
+  "thermal_executed": false,
+  "selected_volumetric_Q_status": "NOT_YET_RUN_AFTER_RTA_RESONANCE_SELECTION",
+  "cases": [
+    {
+      "architecture": "T",
+      "polarization": "x_b",
+      "peak_A": 0.3105141071653115,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.08390636105974784,
+      "solver_wall_time_s": 26.620266653597355
+    },
+    {
+      "architecture": "T",
+      "polarization": "y_a",
+      "peak_A": 0.19859786745462582,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.1078835528592805,
+      "solver_wall_time_s": 31.88890975341201
+    },
+    {
+      "architecture": "T",
+      "polarization": "linear_plus_45",
+      "peak_A": 0.2545530615713088,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.09590886859336775,
+      "solver_wall_time_s": 29.68860462680459
+    },
+    {
+      "architecture": "T",
+      "polarization": "linear_minus_45",
+      "peak_A": 0.25455285684214307,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.09590887314497416,
+      "solver_wall_time_s": 30.41023748368025
+    },
+    {
+      "architecture": "T",
+      "polarization": "CP_plus",
+      "peak_A": 0.2545821123119157,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.09592434418680842,
+      "solver_wall_time_s": 31.287868477404118
+    },
+    {
+      "architecture": "T",
+      "polarization": "CP_minus",
+      "peak_A": 0.2545821521225159,
+      "peak_wavelength_um": 3.999999999999999,
+      "min_A": 0.09592423282617715,
+      "solver_wall_time_s": 31.236685033887625
+    },
+    {
+      "architecture": "Z",
+      "polarization": "x_b",
+      "peak_A": 0.8514618846351133,
+      "peak_wavelength_um": 4.174999999999998,
+      "min_A": 0.22203749969028813,
+      "solver_wall_time_s": 360.95946180820465
+    },
+    {
+      "architecture": "Z",
+      "polarization": "y_a",
+      "peak_A": 0.28507909886396693,
+      "peak_wavelength_um": 5.124999999999999,
+      "min_A": 0.17231160382790273,
+      "solver_wall_time_s": 695.3042852170765
+    },
+    {
+      "architecture": "Z",
+      "polarization": "linear_plus_45",
+      "peak_A": 0.5289185872668652,
+      "peak_wavelength_um": 4.124999999999998,
+      "min_A": 0.17881852093884387,
+      "solver_wall_time_s": 693.3229297213256
+    },
+    {
+      "architecture": "Z",
+      "polarization": "linear_minus_45",
+      "peak_A": 0.5497191323194589,
+      "peak_wavelength_um": 4.099999999999999,
+      "min_A": 0.220769000332517,
+      "solver_wall_time_s": 691.8347563780844
+    },
+    {
+      "architecture": "Z",
+      "polarization": "CP_plus",
+      "peak_A": 0.5386246574659299,
+      "peak_wavelength_um": 4.124999999999998,
+      "min_A": 0.19812283840942546,
+      "solver_wall_time_s": 696.6756599955261
+    },
+    {
+      "architecture": "Z",
+      "polarization": "CP_minus",
+      "peak_A": 0.54005610160434,
+      "peak_wavelength_um": 4.099999999999999,
+      "min_A": 0.20137957654409527,
+      "solver_wall_time_s": 692.0663274079561
+    }
+  ]
+}

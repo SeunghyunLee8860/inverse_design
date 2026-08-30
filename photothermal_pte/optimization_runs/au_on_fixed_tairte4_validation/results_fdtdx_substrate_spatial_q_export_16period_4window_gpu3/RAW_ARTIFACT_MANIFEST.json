@@ -1,0 +1,41 @@
+{
+  "status": "VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_ARTIFACT",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_spatial_q_16period_4window/fdtdx_substrate_spatial_native_yee_q.npz",
+    "bytes": 18009578,
+    "sha256": "f513473ecd38425bbbefe01ff026ee40ba2484f8c0edd5ab687306b458ddc7ff",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_substrate_spatial_native_yee_q_export.json",
+      "bytes": 8112,
+      "sha256": "96b20dca7a737bee51bcbea2f2358f9867c1eb00073f464d41bbb7e8f2b201e0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_summary.json",
+      "bytes": 2477,
+      "sha256": "b077aea0a57421fc505891c6e1a489c1f5593b4afbc7851a1d09b1e0a3c32459"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_components.csv",
+      "bytes": 2326,
+      "sha256": "0a67565c2c5f76c6d8fc0ab06e4fd4cd6e98cd163f07c9f59daa5adcff9e3651"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_native_yee_q_components.png",
+      "bytes": 604583,
+      "sha256": "33210b1c48bc37515fd68aef360435bf2955a81f86f8b2973c12e69438559af3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/fdtdx_spatial_q_power_breakdown.png",
+      "bytes": 68850,
+      "sha256": "58cce57e2ab8def5650b9accc929f8a24404ca62dfc0eb05530da40e314814ad"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/FDTDX_SPATIAL_NATIVE_YEE_Q_REPORT.md",
+      "bytes": 1561,
+      "sha256": "f13ef5c8c33e0fd341cd1de45ca75a094a6303e598f0b7ca970bc0f3906f4a94"
+    }
+  ]
+}

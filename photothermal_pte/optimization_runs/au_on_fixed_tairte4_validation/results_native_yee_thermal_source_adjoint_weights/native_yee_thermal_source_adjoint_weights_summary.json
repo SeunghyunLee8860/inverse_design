@@ -1,0 +1,280 @@
+{
+  "status": "VALIDATED_NATIVE_YEE_THERMAL_SOURCE_ADJOINT_PULLBACK",
+  "scope": "two-stage transpose from explicit thermal cell power through the material-primal conservative remap to component-native Yee power; no Maxwell reverse solve or optimization",
+  "contract": "dI/dp_explicit -> R_explicit^T -> R_component^T -> dI/dp_native_component",
+  "inputs": {
+    "fixed_Q_ADFD_raw": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/explicit_thermal_weighting_fixed_spatial_q_adfd/explicit_thermal_weighting_fixed_spatial_q_adfd_raw.npz",
+      "sha256": "a09c1418bc9abd8c8b47b9fd8fcd6ff4971903f918d72cefa8e28d4305a2d98e"
+    },
+    "thermal_Q_remap_raw": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_material_overlap_thermal_remap_16period_4window/fdtdx_substrate_material_overlap_thermal_q.npz",
+      "sha256": "6ab62c06174cd1a0a2b2b1cd8778dcc30e09a3832c2fa09d9b56397bba278d61"
+    },
+    "spatial_Q_raw": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_substrate_spatial_q_16period_4window/fdtdx_substrate_spatial_native_yee_q.npz",
+      "sha256": "f513473ecd38425bbbefe01ff026ee40ba2484f8c0edd5ab687306b458ddc7ff"
+    }
+  },
+  "scenarios": {
+    "thermally_grown": {
+      "native_weighted_source_value_A": 2.6848754469783704e-18,
+      "explicit_thermal_grid_source_value_A": 2.6848754469783712e-18,
+      "relative_error": 2.8693024796434824e-16,
+      "components": {
+        "au": {
+          "x": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0006156329589413207,
+            "weight_max_A_W": 0.0006156329589413207,
+            "weight_l2_A_W": 0.043358376979102636,
+            "base_weighted_source_contribution_A": -2.402734831448196e-19,
+            "two_stage_transpose_dot_relative_error": 3.016963910527165e-16
+          },
+          "y": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0006156150659005607,
+            "weight_max_A_W": 0.0006156150659005607,
+            "weight_l2_A_W": 0.04336255211067867,
+            "base_weighted_source_contribution_A": 1.4109917971433397e-21,
+            "two_stage_transpose_dot_relative_error": 1.1772095992712662e-15
+          },
+          "z": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0006155745970287574,
+            "weight_max_A_W": 0.0006155745970287575,
+            "weight_l2_A_W": 0.0433558151934122,
+            "base_weighted_source_contribution_A": 1.581851471692918e-24,
+            "two_stage_transpose_dot_relative_error": 6.880776731358586e-16
+          }
+        },
+        "tairte4": {
+          "x": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.006984870822001982,
+            "weight_max_A_W": 0.007041527888002064,
+            "weight_l2_A_W": 0.7154784142996041,
+            "base_weighted_source_contribution_A": 2.8353369554915983e-18,
+            "two_stage_transpose_dot_relative_error": 3.5763062874915123e-16
+          },
+          "y": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.007041474919024864,
+            "weight_max_A_W": 0.007041474919024766,
+            "weight_l2_A_W": 0.7161074238435484,
+            "base_weighted_source_contribution_A": 9.428021410753608e-21,
+            "two_stage_transpose_dot_relative_error": 5.14612523973852e-16
+          },
+          "z": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.007023267679036968,
+            "weight_max_A_W": 0.007080648207289425,
+            "weight_l2_A_W": 0.723278107067333,
+            "base_weighted_source_contribution_A": -1.2728786239372125e-20,
+            "two_stage_transpose_dot_relative_error": 6.77307653451069e-16
+          }
+        },
+        "sio2": {
+          "x": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0026950467627192953,
+            "weight_max_A_W": 0.002695046762719302,
+            "weight_l2_A_W": 0.42697616307957065,
+            "base_weighted_source_contribution_A": 9.399524656995364e-20,
+            "two_stage_transpose_dot_relative_error": 6.633512662750639e-15
+          },
+          "y": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0027295979311865396,
+            "weight_max_A_W": 0.0027295979311866107,
+            "weight_l2_A_W": 0.4282610665462142,
+            "base_weighted_source_contribution_A": 1.8769586352805342e-22,
+            "two_stage_transpose_dot_relative_error": 8.8914685365956e-16
+          },
+          "z": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0026950419896736486,
+            "weight_max_A_W": 0.0026950419896736555,
+            "weight_l2_A_W": 0.4391049448879343,
+            "base_weighted_source_contribution_A": -2.4827766218861838e-21,
+            "two_stage_transpose_dot_relative_error": 1.1670801381173416e-15
+          }
+        }
+      }
+    },
+    "evaporated": {
+      "native_weighted_source_value_A": 3.371736984887481e-17,
+      "explicit_thermal_grid_source_value_A": 3.371736984887483e-17,
+      "relative_error": 5.483502286503065e-16,
+      "components": {
+        "au": {
+          "x": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0026961553397063212,
+            "weight_max_A_W": 0.0027058349922137468,
+            "weight_l2_A_W": 0.1785724561815612,
+            "base_weighted_source_contribution_A": 1.1704883913806608e-18,
+            "two_stage_transpose_dot_relative_error": 1.2515633627001355e-15
+          },
+          "y": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0027056702878344705,
+            "weight_max_A_W": 0.0027056702412683476,
+            "weight_l2_A_W": 0.1786073004502378,
+            "base_weighted_source_contribution_A": -2.473062022002127e-20,
+            "two_stage_transpose_dot_relative_error": 7.236581491610135e-16
+          },
+          "z": {
+            "shape": [
+              100,
+              100,
+              2
+            ],
+            "weight_min_A_W": -0.0026959373171271976,
+            "weight_max_A_W": 0.0027056702412683476,
+            "weight_l2_A_W": 0.1785710611343539,
+            "base_weighted_source_contribution_A": 1.1364409697742933e-23,
+            "two_stage_transpose_dot_relative_error": 1.2423006326856464e-15
+          }
+        },
+        "tairte4": {
+          "x": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.04402558312246103,
+            "weight_max_A_W": 0.044092765868748926,
+            "weight_l2_A_W": 7.529725504414386,
+            "base_weighted_source_contribution_A": 3.2009353285180734e-17,
+            "two_stage_transpose_dot_relative_error": 1.4912464623368568e-15
+          },
+          "y": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.04409255073286397,
+            "weight_max_A_W": 0.04409255073286386,
+            "weight_l2_A_W": 7.530638300826797,
+            "base_weighted_source_contribution_A": 3.3744626647505035e-19,
+            "two_stage_transpose_dot_relative_error": 1.0167634350700512e-15
+          },
+          "z": {
+            "shape": [
+              200,
+              200,
+              5
+            ],
+            "weight_min_A_W": -0.044032884225513574,
+            "weight_max_A_W": 0.04410032261907178,
+            "weight_l2_A_W": 7.531868926289599,
+            "base_weighted_source_contribution_A": 1.7181877953061256e-19,
+            "two_stage_transpose_dot_relative_error": 4.058137091648073e-15
+          }
+        },
+        "sio2": {
+          "x": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0008033718663641484,
+            "weight_max_A_W": 0.0008033718663640647,
+            "weight_l2_A_W": 0.1632388818809231,
+            "base_weighted_source_contribution_A": 5.0388697926005465e-20,
+            "two_stage_transpose_dot_relative_error": 9.82474212661165e-16
+          },
+          "y": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0008688833513848643,
+            "weight_max_A_W": 0.0008688833513847532,
+            "weight_l2_A_W": 0.16351555555060102,
+            "base_weighted_source_contribution_A": 1.469013215174386e-22,
+            "two_stage_transpose_dot_relative_error": 7.758868605230343e-16
+          },
+          "z": {
+            "shape": [
+              272,
+              272,
+              19
+            ],
+            "weight_min_A_W": -0.0008033668459411852,
+            "weight_max_A_W": 0.0008033668459411015,
+            "weight_l2_A_W": 0.1675445327950011,
+            "base_weighted_source_contribution_A": 2.446782870550051e-21,
+            "two_stage_transpose_dot_relative_error": 1.474669878792435e-15
+          }
+        }
+      }
+    }
+  },
+  "worst_two_stage_transpose_dot_relative_error": 6.633512662750639e-15,
+  "worst_base_weighted_value_relative_error": 5.483502286503065e-16,
+  "gates": {
+    "input_SHAs_match": true,
+    "two_stage_transpose_dot_error_lt_1e-12": true,
+    "base_weighted_value_error_lt_1e-6": true,
+    "finite_weights": true,
+    "no_array_index_pairing_without_coordinate_overlap": true,
+    "no_clipping_smoothing_gain_or_weight_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights.npz",
+    "bytes": 13863004,
+    "sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+    "committed_to_git": false
+  },
+  "next_gate": "use the native weights as the scalar FDTDX objective and run directional optical AD-FD"
+}

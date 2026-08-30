@@ -1,0 +1,41 @@
+{
+  "status": "VALIDATED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_spatially_weighted_pte_source_gradient_16period/fdtdx_spatially_weighted_pte_source_gradient_raw.npz",
+    "bytes": 4965,
+    "sha256": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "committed_to_git": false
+  },
+  "weight_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights.npz",
+    "sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient.json",
+      "bytes": 9396,
+      "sha256": "d52270a5ee52251b1329af67d3dbe0fa7af8264d44c9cbfbf7b1951eb80a9cfd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient.csv",
+      "bytes": 314,
+      "sha256": "6cb87a4af7b0bb28f77c1c8a0dfa4b248d7dce2c6eae9341c2925b99fe42809c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient_summary.json",
+      "bytes": 3782,
+      "sha256": "ab23daf23e49924af9db092967e9e9745c7c625e8d066b7dd216b880860f9840"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/FDTDX_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT_REPORT.md",
+      "bytes": 1599,
+      "sha256": "a46adc318c3554db2a2ee4ef62d1e7f4dd0ef90c09c323d4af99452427260b77"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient.png",
+      "bytes": 148261,
+      "sha256": "328d345c2956de46e0b714910a0ff409f06407e22c6c378478fb7eb19ef969d8"
+    }
+  ]
+}

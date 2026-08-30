@@ -1,0 +1,2405 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-08-15T08:02:15.292734+00:00",
+  "mesh_step_um": 0.25,
+  "contact_discretization": "nodal_lumped",
+  "contact_g_S_m2": 100000000000000.0,
+  "quadrature_orders": [
+    3,
+    5,
+    7,
+    9
+  ],
+  "transition_widths_um": [
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "tolerance": 1e-12,
+  "explanation": "The production nodal-lumped contact uses boundary-node trapezoidal weights; Gaussian edge quadrature arrays are intentionally unused. The order sweep is therefore an invariance gate, not an asymptotic consistent-edge convergence claim.",
+  "maxima": {
+    "current_relative_difference": 0.0,
+    "gradient_scaled_max_difference": 0.0,
+    "psi_relative_l2_difference": 0.0,
+    "contact_integral_relative_difference": 0.0
+  },
+  "cases": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -8.288495428582995e-10,
+          "gradient_A_per_m": [
+            -9.445187690810236e-07,
+            -4.7653666380635305e-07,
+            9.453747738482232e-07,
+            -4.7346897585563214e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -8.288495428582995e-10,
+          "gradient_A_per_m": [
+            -9.445187690810236e-07,
+            -4.7653666380635305e-07,
+            9.453747738482232e-07,
+            -4.7346897585563214e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -8.288495428582995e-10,
+          "gradient_A_per_m": [
+            -9.445187690810236e-07,
+            -4.7653666380635305e-07,
+            9.453747738482232e-07,
+            -4.7346897585563214e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -8.288495428582995e-10,
+          "gradient_A_per_m": [
+            -9.445187690810236e-07,
+            -4.7653666380635305e-07,
+            9.453747738482232e-07,
+            -4.7346897585563214e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -8.283885033981613e-10,
+          "gradient_A_per_m": [
+            -5.0697874660260795e-06,
+            -2.612987577390806e-06,
+            4.921996226304577e-06,
+            -2.505957801905685e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -8.283885033981613e-10,
+          "gradient_A_per_m": [
+            -5.0697874660260795e-06,
+            -2.612987577390806e-06,
+            4.921996226304577e-06,
+            -2.505957801905685e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -8.283885033981613e-10,
+          "gradient_A_per_m": [
+            -5.0697874660260795e-06,
+            -2.612987577390806e-06,
+            4.921996226304577e-06,
+            -2.505957801905685e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -8.283885033981613e-10,
+          "gradient_A_per_m": [
+            -5.0697874660260795e-06,
+            -2.612987577390806e-06,
+            4.921996226304577e-06,
+            -2.505957801905685e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -8.275188606324846e-10,
+          "gradient_A_per_m": [
+            -1.054122400516249e-05,
+            -5.4992875322855425e-06,
+            9.458503717115355e-06,
+            -4.883861619672315e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -8.275188606324846e-10,
+          "gradient_A_per_m": [
+            -1.054122400516249e-05,
+            -5.4992875322855425e-06,
+            9.458503717115355e-06,
+            -4.883861619672315e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -8.275188606324846e-10,
+          "gradient_A_per_m": [
+            -1.054122400516249e-05,
+            -5.4992875322855425e-06,
+            9.458503717115355e-06,
+            -4.883861619672315e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -8.275188606324846e-10,
+          "gradient_A_per_m": [
+            -1.054122400516249e-05,
+            -5.4992875322855425e-06,
+            9.458503717115355e-06,
+            -4.883861619672315e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -8.264549891418027e-10,
+          "gradient_A_per_m": [
+            -1.3819471059718955e-05,
+            -7.365807764427762e-06,
+            1.1293075854049979e-05,
+            -5.986610995049357e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -8.264549891418027e-10,
+          "gradient_A_per_m": [
+            -1.3819471059718955e-05,
+            -7.365807764427762e-06,
+            1.1293075854049979e-05,
+            -5.986610995049357e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -8.264549891418027e-10,
+          "gradient_A_per_m": [
+            -1.3819471059718955e-05,
+            -7.365807764427762e-06,
+            1.1293075854049979e-05,
+            -5.986610995049357e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -8.264549891418027e-10,
+          "gradient_A_per_m": [
+            -1.3819471059718955e-05,
+            -7.365807764427762e-06,
+            1.1293075854049979e-05,
+            -5.986610995049357e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -6.775838097570233e-10,
+          "gradient_A_per_m": [
+            -8.985208105151937e-07,
+            2.4370638657036877e-07,
+            9.366576623356514e-07,
+            2.434719813003464e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -6.775838097570233e-10,
+          "gradient_A_per_m": [
+            -8.985208105151937e-07,
+            2.4370638657036877e-07,
+            9.366576623356514e-07,
+            2.434719813003464e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -6.775838097570233e-10,
+          "gradient_A_per_m": [
+            -8.985208105151937e-07,
+            2.4370638657036877e-07,
+            9.366576623356514e-07,
+            2.434719813003464e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -6.775838097570233e-10,
+          "gradient_A_per_m": [
+            -8.985208105151937e-07,
+            2.4370638657036877e-07,
+            9.366576623356514e-07,
+            2.434719813003464e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -6.774779156680118e-10,
+          "gradient_A_per_m": [
+            -1.0701337347047478e-06,
+            -5.33520915147862e-07,
+            1.068473693021053e-06,
+            -5.341339095939494e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -6.774779156680118e-10,
+          "gradient_A_per_m": [
+            -1.0701337347047478e-06,
+            -5.33520915147862e-07,
+            1.068473693021053e-06,
+            -5.341339095939494e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -6.774779156680118e-10,
+          "gradient_A_per_m": [
+            -1.0701337347047478e-06,
+            -5.33520915147862e-07,
+            1.068473693021053e-06,
+            -5.341339095939494e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -6.774779156680118e-10,
+          "gradient_A_per_m": [
+            -1.0701337347047478e-06,
+            -5.33520915147862e-07,
+            1.068473693021053e-06,
+            -5.341339095939494e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -6.772758204376578e-10,
+          "gradient_A_per_m": [
+            -1.8824027811097706e-06,
+            -1.1712164768116068e-06,
+            1.5026998955637989e-06,
+            -1.0637699848168835e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -6.772758204376578e-10,
+          "gradient_A_per_m": [
+            -1.8824027811097706e-06,
+            -1.1712164768116068e-06,
+            1.5026998955637989e-06,
+            -1.0637699848168835e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -6.772758204376578e-10,
+          "gradient_A_per_m": [
+            -1.8824027811097706e-06,
+            -1.1712164768116068e-06,
+            1.5026998955637989e-06,
+            -1.0637699848168835e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -6.772758204376578e-10,
+          "gradient_A_per_m": [
+            -1.8824027811097706e-06,
+            -1.1712164768116068e-06,
+            1.5026998955637989e-06,
+            -1.0637699848168835e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": -6.770292721642616e-10,
+          "gradient_A_per_m": [
+            -2.1650669546620588e-06,
+            -1.5845054490869157e-06,
+            1.2458701562209565e-06,
+            -1.3192439983072476e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": -6.770292721642616e-10,
+          "gradient_A_per_m": [
+            -2.1650669546620588e-06,
+            -1.5845054490869157e-06,
+            1.2458701562209565e-06,
+            -1.3192439983072476e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": -6.770292721642616e-10,
+          "gradient_A_per_m": [
+            -2.1650669546620588e-06,
+            -1.5845054490869157e-06,
+            1.2458701562209565e-06,
+            -1.3192439983072476e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": -6.770292721642616e-10,
+          "gradient_A_per_m": [
+            -2.1650669546620588e-06,
+            -1.5845054490869157e-06,
+            1.2458701562209565e-06,
+            -1.3192439983072476e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.288495428582421e-10,
+          "gradient_A_per_m": [
+            9.453747738221909e-07,
+            4.734689758319855e-07,
+            -9.445187691972406e-07,
+            4.7653666377859943e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.288495428582421e-10,
+          "gradient_A_per_m": [
+            9.453747738221909e-07,
+            4.734689758319855e-07,
+            -9.445187691972406e-07,
+            4.7653666377859943e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.288495428582421e-10,
+          "gradient_A_per_m": [
+            9.453747738221909e-07,
+            4.734689758319855e-07,
+            -9.445187691972406e-07,
+            4.7653666377859943e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.288495428582421e-10,
+          "gradient_A_per_m": [
+            9.453747738221909e-07,
+            4.734689758319855e-07,
+            -9.445187691972406e-07,
+            4.7653666377859943e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.283885033981283e-10,
+          "gradient_A_per_m": [
+            4.921996226227993e-06,
+            2.5059578017739174e-06,
+            -5.0697874665893894e-06,
+            2.612987577257872e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.283885033981283e-10,
+          "gradient_A_per_m": [
+            4.921996226227993e-06,
+            2.5059578017739174e-06,
+            -5.0697874665893894e-06,
+            2.612987577257872e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.283885033981283e-10,
+          "gradient_A_per_m": [
+            4.921996226227993e-06,
+            2.5059578017739174e-06,
+            -5.0697874665893894e-06,
+            2.612987577257872e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.283885033981283e-10,
+          "gradient_A_per_m": [
+            4.921996226227993e-06,
+            2.5059578017739174e-06,
+            -5.0697874665893894e-06,
+            2.612987577257872e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.275188606325224e-10,
+          "gradient_A_per_m": [
+            9.45850371713178e-06,
+            4.8838616194149815e-06,
+            -1.0541224006507853e-05,
+            5.499287531874463e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.275188606325224e-10,
+          "gradient_A_per_m": [
+            9.45850371713178e-06,
+            4.8838616194149815e-06,
+            -1.0541224006507853e-05,
+            5.499287531874463e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.275188606325224e-10,
+          "gradient_A_per_m": [
+            9.45850371713178e-06,
+            4.8838616194149815e-06,
+            -1.0541224006507853e-05,
+            5.499287531874463e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.275188606325224e-10,
+          "gradient_A_per_m": [
+            9.45850371713178e-06,
+            4.8838616194149815e-06,
+            -1.0541224006507853e-05,
+            5.499287531874463e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.264549891419431e-10,
+          "gradient_A_per_m": [
+            1.129307585438509e-05,
+            5.98661099468425e-06,
+            -1.3819471061907174e-05,
+            7.365807763587946e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.264549891419431e-10,
+          "gradient_A_per_m": [
+            1.129307585438509e-05,
+            5.98661099468425e-06,
+            -1.3819471061907174e-05,
+            7.365807763587946e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.264549891419431e-10,
+          "gradient_A_per_m": [
+            1.129307585438509e-05,
+            5.98661099468425e-06,
+            -1.3819471061907174e-05,
+            7.365807763587946e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.264549891419431e-10,
+          "gradient_A_per_m": [
+            1.129307585438509e-05,
+            5.98661099468425e-06,
+            -1.3819471061907174e-05,
+            7.365807763587946e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.327053871407726e-10,
+          "gradient_A_per_m": [
+            6.182875385488836e-07,
+            2.893228338533993e-07,
+            -3.121227814753207e-07,
+            2.995687217320484e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.327053871407726e-10,
+          "gradient_A_per_m": [
+            6.182875385488836e-07,
+            2.893228338533993e-07,
+            -3.121227814753207e-07,
+            2.995687217320484e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.327053871407726e-10,
+          "gradient_A_per_m": [
+            6.182875385488836e-07,
+            2.893228338533993e-07,
+            -3.121227814753207e-07,
+            2.995687217320484e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.327053871407726e-10,
+          "gradient_A_per_m": [
+            6.182875385488836e-07,
+            2.893228338533993e-07,
+            -3.121227814753207e-07,
+            2.995687217320484e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.324489813371022e-10,
+          "gradient_A_per_m": [
+            3.3789555285461353e-06,
+            1.5623232749926589e-06,
+            -2.176549978599903e-06,
+            1.4988105535393184e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.324489813371022e-10,
+          "gradient_A_per_m": [
+            3.3789555285461353e-06,
+            1.5623232749926589e-06,
+            -2.176549978599903e-06,
+            1.4988105535393184e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.324489813371022e-10,
+          "gradient_A_per_m": [
+            3.3789555285461353e-06,
+            1.5623232749926589e-06,
+            -2.176549978599903e-06,
+            1.4988105535393184e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.324489813371022e-10,
+          "gradient_A_per_m": [
+            3.3789555285461353e-06,
+            1.5623232749926589e-06,
+            -2.176549978599903e-06,
+            1.4988105535393184e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.319698568639294e-10,
+          "gradient_A_per_m": [
+            7.094359451378578e-06,
+            3.234778648008769e-06,
+            -5.477245891046588e-06,
+            3.120317556328386e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.319698568639294e-10,
+          "gradient_A_per_m": [
+            7.094359451378578e-06,
+            3.234778648008769e-06,
+            -5.477245891046588e-06,
+            3.120317556328386e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.319698568639294e-10,
+          "gradient_A_per_m": [
+            7.094359451378578e-06,
+            3.234778648008769e-06,
+            -5.477245891046588e-06,
+            3.120317556328386e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.319698568639294e-10,
+          "gradient_A_per_m": [
+            7.094359451378578e-06,
+            3.234778648008769e-06,
+            -5.477245891046588e-06,
+            3.120317556328386e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.313828295904191e-10,
+          "gradient_A_per_m": [
+            9.28089360577807e-06,
+            4.128626942945016e-06,
+            -8.116659803123014e-06,
+            4.344523060887594e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.313828295904191e-10,
+          "gradient_A_per_m": [
+            9.28089360577807e-06,
+            4.128626942945016e-06,
+            -8.116659803123014e-06,
+            4.344523060887594e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.313828295904191e-10,
+          "gradient_A_per_m": [
+            9.28089360577807e-06,
+            4.128626942945016e-06,
+            -8.116659803123014e-06,
+            4.344523060887594e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.313828295904191e-10,
+          "gradient_A_per_m": [
+            9.28089360577807e-06,
+            4.128626942945016e-06,
+            -8.116659803123014e-06,
+            4.344523060887594e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 7.524513514133552e-10,
+          "gradient_A_per_m": [
+            4.834988943244283e-10,
+            -1.9154718673203764e-10,
+            -5.633575904264346e-12,
+            1.648208839359981e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 7.524513514133552e-10,
+          "gradient_A_per_m": [
+            4.834988943244283e-10,
+            -1.9154718673203764e-10,
+            -5.633575904264346e-12,
+            1.648208839359981e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 7.524513514133552e-10,
+          "gradient_A_per_m": [
+            4.834988943244283e-10,
+            -1.9154718673203764e-10,
+            -5.633575904264346e-12,
+            1.648208839359981e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 7.524513514133552e-10,
+          "gradient_A_per_m": [
+            4.834988943244283e-10,
+            -1.9154718673203764e-10,
+            -5.633575904264346e-12,
+            1.648208839359981e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 7.518647034721389e-10,
+          "gradient_A_per_m": [
+            9.85368396820138e-08,
+            1.2762306582587665e-08,
+            4.426286878071928e-07,
+            8.074214454149316e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 7.518647034721389e-10,
+          "gradient_A_per_m": [
+            9.85368396820138e-08,
+            1.2762306582587665e-08,
+            4.426286878071928e-07,
+            8.074214454149316e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 7.518647034721389e-10,
+          "gradient_A_per_m": [
+            9.85368396820138e-08,
+            1.2762306582587665e-08,
+            4.426286878071928e-07,
+            8.074214454149316e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 7.518647034721389e-10,
+          "gradient_A_per_m": [
+            9.85368396820138e-08,
+            1.2762306582587665e-08,
+            4.426286878071928e-07,
+            8.074214454149316e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 7.50931340191999e-10,
+          "gradient_A_per_m": [
+            2.97852333137961e-07,
+            3.755171621306368e-08,
+            1.6220376004311249e-06,
+            1.4077052324661076e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 7.50931340191999e-10,
+          "gradient_A_per_m": [
+            2.97852333137961e-07,
+            3.755171621306368e-08,
+            1.6220376004311249e-06,
+            1.4077052324661076e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 7.50931340191999e-10,
+          "gradient_A_per_m": [
+            2.97852333137961e-07,
+            3.755171621306368e-08,
+            1.6220376004311249e-06,
+            1.4077052324661076e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 7.50931340191999e-10,
+          "gradient_A_per_m": [
+            2.97852333137961e-07,
+            3.755171621306368e-08,
+            1.6220376004311249e-06,
+            1.4077052324661076e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 7.500171413174706e-10,
+          "gradient_A_per_m": [
+            6.283486748449366e-07,
+            6.991494275783196e-08,
+            2.2839741678084418e-06,
+            1.5145964749067717e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 7.500171413174706e-10,
+          "gradient_A_per_m": [
+            6.283486748449366e-07,
+            6.991494275783196e-08,
+            2.2839741678084418e-06,
+            1.5145964749067717e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 7.500171413174706e-10,
+          "gradient_A_per_m": [
+            6.283486748449366e-07,
+            6.991494275783196e-08,
+            2.2839741678084418e-06,
+            1.5145964749067717e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 7.500171413174706e-10,
+          "gradient_A_per_m": [
+            6.283486748449366e-07,
+            6.991494275783196e-08,
+            2.2839741678084418e-06,
+            1.5145964749067717e-05
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.327053870254157e-10,
+          "gradient_A_per_m": [
+            -6.182853782013576e-07,
+            2.893245301077007e-07,
+            3.121221077103613e-07,
+            2.9956861653166515e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.327053870254157e-10,
+          "gradient_A_per_m": [
+            -6.182853782013576e-07,
+            2.893245301077007e-07,
+            3.121221077103613e-07,
+            2.9956861653166515e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.327053870254157e-10,
+          "gradient_A_per_m": [
+            -6.182853782013576e-07,
+            2.893245301077007e-07,
+            3.121221077103613e-07,
+            2.9956861653166515e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.327053870254157e-10,
+          "gradient_A_per_m": [
+            -6.182853782013576e-07,
+            2.893245301077007e-07,
+            3.121221077103613e-07,
+            2.9956861653166515e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.324489806232514e-10,
+          "gradient_A_per_m": [
+            -3.3789448757466322e-06,
+            1.5623316199392391e-06,
+            2.176547399510354e-06,
+            1.4988095520461528e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.324489806232514e-10,
+          "gradient_A_per_m": [
+            -3.3789448757466322e-06,
+            1.5623316199392391e-06,
+            2.176547399510354e-06,
+            1.4988095520461528e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.324489806232514e-10,
+          "gradient_A_per_m": [
+            -3.3789448757466322e-06,
+            1.5623316199392391e-06,
+            2.176547399510354e-06,
+            1.4988095520461528e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.324489806232514e-10,
+          "gradient_A_per_m": [
+            -3.3789448757466322e-06,
+            1.5623316199392391e-06,
+            2.176547399510354e-06,
+            1.4988095520461528e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.319698551560416e-10,
+          "gradient_A_per_m": [
+            -7.094332207316519e-06,
+            3.2347972443439175e-06,
+            5.477241514399105e-06,
+            3.120315329025649e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.319698551560416e-10,
+          "gradient_A_per_m": [
+            -7.094332207316519e-06,
+            3.2347972443439175e-06,
+            5.477241514399105e-06,
+            3.120315329025649e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.319698551560416e-10,
+          "gradient_A_per_m": [
+            -7.094332207316519e-06,
+            3.2347972443439175e-06,
+            5.477241514399105e-06,
+            3.120315329025649e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.319698551560416e-10,
+          "gradient_A_per_m": [
+            -7.094332207316519e-06,
+            3.2347972443439175e-06,
+            5.477241514399105e-06,
+            3.120315329025649e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.31382826843328e-10,
+          "gradient_A_per_m": [
+            -9.28085278832407e-06,
+            4.12865168147356e-06,
+            8.116655225897676e-06,
+            4.344520646253818e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.31382826843328e-10,
+          "gradient_A_per_m": [
+            -9.28085278832407e-06,
+            4.12865168147356e-06,
+            8.116655225897676e-06,
+            4.344520646253818e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.31382826843328e-10,
+          "gradient_A_per_m": [
+            -9.28085278832407e-06,
+            4.12865168147356e-06,
+            8.116655225897676e-06,
+            4.344520646253818e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.31382826843328e-10,
+          "gradient_A_per_m": [
+            -9.28085278832407e-06,
+            4.12865168147356e-06,
+            8.116655225897676e-06,
+            4.344520646253818e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.28849542858271e-10,
+          "gradient_A_per_m": [
+            9.453747739328786e-07,
+            4.734689759291969e-07,
+            -9.445187687314545e-07,
+            4.765366638842049e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.28849542858271e-10,
+          "gradient_A_per_m": [
+            9.453747739328786e-07,
+            4.734689759291969e-07,
+            -9.445187687314545e-07,
+            4.765366638842049e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.28849542858271e-10,
+          "gradient_A_per_m": [
+            9.453747739328786e-07,
+            4.734689759291969e-07,
+            -9.445187687314545e-07,
+            4.765366638842049e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.28849542858271e-10,
+          "gradient_A_per_m": [
+            9.453747739328786e-07,
+            4.734689759291969e-07,
+            -9.445187687314545e-07,
+            4.765366638842049e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.283885033980358e-10,
+          "gradient_A_per_m": [
+            4.9219962265683686e-06,
+            2.505957802312143e-06,
+            -5.06978746433218e-06,
+            2.6129875777636446e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.283885033980358e-10,
+          "gradient_A_per_m": [
+            4.9219962265683686e-06,
+            2.505957802312143e-06,
+            -5.06978746433218e-06,
+            2.6129875777636446e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.283885033980358e-10,
+          "gradient_A_per_m": [
+            4.9219962265683686e-06,
+            2.505957802312143e-06,
+            -5.06978746433218e-06,
+            2.6129875777636446e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.283885033980358e-10,
+          "gradient_A_per_m": [
+            4.9219962265683686e-06,
+            2.505957802312143e-06,
+            -5.06978746433218e-06,
+            2.6129875777636446e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.275188606321624e-10,
+          "gradient_A_per_m": [
+            9.458503717127085e-06,
+            4.8838616204574885e-06,
+            -1.0541224001140974e-05,
+            5.499287533463709e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.275188606321624e-10,
+          "gradient_A_per_m": [
+            9.458503717127085e-06,
+            4.8838616204574885e-06,
+            -1.0541224001140974e-05,
+            5.499287533463709e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.275188606321624e-10,
+          "gradient_A_per_m": [
+            9.458503717127085e-06,
+            4.8838616204574885e-06,
+            -1.0541224001140974e-05,
+            5.499287533463709e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.275188606321624e-10,
+          "gradient_A_per_m": [
+            9.458503717127085e-06,
+            4.8838616204574885e-06,
+            -1.0541224001140974e-05,
+            5.499287533463709e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.264549891411844e-10,
+          "gradient_A_per_m": [
+            1.1293075853118762e-05,
+            5.986610996147657e-06,
+            -1.381947105322142e-05,
+            7.365807766868914e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.264549891411844e-10,
+          "gradient_A_per_m": [
+            1.1293075853118762e-05,
+            5.986610996147657e-06,
+            -1.381947105322142e-05,
+            7.365807766868914e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.264549891411844e-10,
+          "gradient_A_per_m": [
+            1.1293075853118762e-05,
+            5.986610996147657e-06,
+            -1.381947105322142e-05,
+            7.365807766868914e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.264549891411844e-10,
+          "gradient_A_per_m": [
+            1.1293075853118762e-05,
+            5.986610996147657e-06,
+            -1.381947105322142e-05,
+            7.365807766868914e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 6.775894463290189e-10,
+          "gradient_A_per_m": [
+            2.1447752066084775e-07,
+            1.0686264105212349e-07,
+            -2.1473434742764455e-07,
+            1.0752912201858028e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 6.775894463290189e-10,
+          "gradient_A_per_m": [
+            2.1447752066084775e-07,
+            1.0686264105212349e-07,
+            -2.1473434742764455e-07,
+            1.0752912201858028e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 6.775894463290189e-10,
+          "gradient_A_per_m": [
+            2.1447752066084775e-07,
+            1.0686264105212349e-07,
+            -2.1473434742764455e-07,
+            1.0752912201858028e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 6.775894463290189e-10,
+          "gradient_A_per_m": [
+            2.1447752066084775e-07,
+            1.0686264105212349e-07,
+            -2.1473434742764455e-07,
+            1.0752912201858028e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 6.774763245853105e-10,
+          "gradient_A_per_m": [
+            8.929900517498017e-07,
+            5.785150975117045e-07,
+            -1.0150601470267571e-06,
+            6.033205596217404e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 6.774763245853105e-10,
+          "gradient_A_per_m": [
+            8.929900517498017e-07,
+            5.785150975117045e-07,
+            -1.0150601470267571e-06,
+            6.033205596217404e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 6.774763245853105e-10,
+          "gradient_A_per_m": [
+            8.929900517498017e-07,
+            5.785150975117045e-07,
+            -1.0150601470267571e-06,
+            6.033205596217404e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 6.774763245853105e-10,
+          "gradient_A_per_m": [
+            8.929900517498017e-07,
+            5.785150975117045e-07,
+            -1.0150601470267571e-06,
+            6.033205596217404e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 6.77268647213822e-10,
+          "gradient_A_per_m": [
+            1.3657161395440748e-06,
+            1.0811453919669772e-06,
+            -1.8987437245845094e-06,
+            1.2270699877074031e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 6.77268647213822e-10,
+          "gradient_A_per_m": [
+            1.3657161395440748e-06,
+            1.0811453919669772e-06,
+            -1.8987437245845094e-06,
+            1.2270699877074031e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 6.77268647213822e-10,
+          "gradient_A_per_m": [
+            1.3657161395440748e-06,
+            1.0811453919669772e-06,
+            -1.8987437245845094e-06,
+            1.2270699877074031e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 6.77268647213822e-10,
+          "gradient_A_per_m": [
+            1.3657161395440748e-06,
+            1.0811453919669772e-06,
+            -1.8987437245845094e-06,
+            1.2270699877074031e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 6.770141598852144e-10,
+          "gradient_A_per_m": [
+            1.0879460498849672e-06,
+            1.3675724058006871e-06,
+            -2.165630615274315e-06,
+            1.6355795779870238e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 6.770141598852144e-10,
+          "gradient_A_per_m": [
+            1.0879460498849672e-06,
+            1.3675724058006871e-06,
+            -2.165630615274315e-06,
+            1.6355795779870238e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 6.770141598852144e-10,
+          "gradient_A_per_m": [
+            1.0879460498849672e-06,
+            1.3675724058006871e-06,
+            -2.165630615274315e-06,
+            1.6355795779870238e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 6.770141598852144e-10,
+          "gradient_A_per_m": [
+            1.0879460498849672e-06,
+            1.3675724058006871e-06,
+            -2.165630615274315e-06,
+            1.6355795779870238e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "transition_width_um": 0.25,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.288495428582544e-10,
+          "gradient_A_per_m": [
+            -9.453747739211234e-07,
+            4.7346897591885605e-07,
+            9.445187687811294e-07,
+            4.7653666387294323e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.288495428582544e-10,
+          "gradient_A_per_m": [
+            -9.453747739211234e-07,
+            4.7346897591885605e-07,
+            9.445187687811294e-07,
+            4.7653666387294323e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.288495428582544e-10,
+          "gradient_A_per_m": [
+            -9.453747739211234e-07,
+            4.7346897591885605e-07,
+            9.445187687811294e-07,
+            4.7653666387294323e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.288495428582544e-10,
+          "gradient_A_per_m": [
+            -9.453747739211234e-07,
+            4.7346897591885605e-07,
+            9.445187687811294e-07,
+            4.7653666387294323e-07
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "transition_width_um": 0.5,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.28388503398033e-10,
+          "gradient_A_per_m": [
+            -4.921996226532377e-06,
+            2.5059578022548835e-06,
+            5.06978746457342e-06,
+            2.612987577709836e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.28388503398033e-10,
+          "gradient_A_per_m": [
+            -4.921996226532377e-06,
+            2.5059578022548835e-06,
+            5.06978746457342e-06,
+            2.612987577709836e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.28388503398033e-10,
+          "gradient_A_per_m": [
+            -4.921996226532377e-06,
+            2.5059578022548835e-06,
+            5.06978746457342e-06,
+            2.612987577709836e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.28388503398033e-10,
+          "gradient_A_per_m": [
+            -4.921996226532377e-06,
+            2.5059578022548835e-06,
+            5.06978746457342e-06,
+            2.612987577709836e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "transition_width_um": 0.75,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.275188606321884e-10,
+          "gradient_A_per_m": [
+            -9.458503717128282e-06,
+            4.88386162034664e-06,
+            1.0541224001714121e-05,
+            5.499287533294353e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.275188606321884e-10,
+          "gradient_A_per_m": [
+            -9.458503717128282e-06,
+            4.88386162034664e-06,
+            1.0541224001714121e-05,
+            5.499287533294353e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.275188606321884e-10,
+          "gradient_A_per_m": [
+            -9.458503717128282e-06,
+            4.88386162034664e-06,
+            1.0541224001714121e-05,
+            5.499287533294353e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.275188606321884e-10,
+          "gradient_A_per_m": [
+            -9.458503717128282e-06,
+            4.88386162034664e-06,
+            1.0541224001714121e-05,
+            5.499287533294353e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "transition_width_um": 1.0,
+      "orders": [
+        {
+          "quadrature_order": 3,
+          "current_A": 8.264549891412527e-10,
+          "gradient_A_per_m": [
+            -1.1293075853254857e-05,
+            5.9866109959920405e-06,
+            1.3819471054148674e-05,
+            7.365807766518929e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 5,
+          "current_A": 8.264549891412527e-10,
+          "gradient_A_per_m": [
+            -1.1293075853254857e-05,
+            5.9866109959920405e-06,
+            1.3819471054148674e-05,
+            7.365807766518929e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 7,
+          "current_A": 8.264549891412527e-10,
+          "gradient_A_per_m": [
+            -1.1293075853254857e-05,
+            5.9866109959920405e-06,
+            1.3819471054148674e-05,
+            7.365807766518929e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        },
+        {
+          "quadrature_order": 9,
+          "current_A": 8.264549891412527e-10,
+          "gradient_A_per_m": [
+            -1.1293075853254857e-05,
+            5.9866109959920405e-06,
+            1.3819471054148674e-05,
+            7.365807766518929e-06
+          ],
+          "current_relative_difference_from_order_9": 0.0,
+          "gradient_scaled_max_difference_from_order_9": 0.0,
+          "psi_relative_l2_difference_from_order_9": 0.0,
+          "contact_integral_relative_difference_from_order_9": 0.0
+        }
+      ]
+    }
+  ]
+}

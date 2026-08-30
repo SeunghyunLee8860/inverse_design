@@ -1,0 +1,105 @@
+{
+  "status": "BLOCKED_AU_BOUNDARY_ADJOINT_UNRESOLVED_AFTER_SMOOTH_CONTROL",
+  "raw_files_committed": false,
+  "generation_commands": [
+    "python 16_run_au_smooth_ellipse_width_control.py --au-half-x-um <7.9|7.95|8.0|8.05|8.1> --au-half-y-um 10 --gpu-device 'GPU 0' --output-dir <raw_case>",
+    "python 17_run_au_smooth_ellipse_external_field_adjoint.py --gpu-device 'GPU 0' --output-dir <raw_adjoint_case>",
+    "python 18_summarize_au_boundary_root_cause_and_resolution.py"
+  ],
+  "total_smooth_Maxwell_forward_solves": 5,
+  "new_perturbation_forward_solves": 4,
+  "smooth_baseline_forward_solves": 1,
+  "new_Maxwell_adjoint_solves": 1,
+  "raw_files": [
+    {
+      "role": "smooth_raw_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_external_field_adjoint_gpu0/au_sharp_interface_external_field_result.json",
+      "bytes": 23546,
+      "sha256": "bdcca1bc31573e9af23e222d7b9c36f02309acc075734961503a1249ee243f8d"
+    },
+    {
+      "role": "solver_discrete_depsilon_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/corner_free_y18_solver_discrete_deps/au_solver_discrete_deps_result.json",
+      "bytes": 20724,
+      "sha256": "7ae5795b8d67ee3de42350ede6088f72578f6115d05572fae1626f3a00d35d95"
+    },
+    {
+      "role": "forward_FSP_smooth_ellipse_a7p9_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a7p9_b10_edge25_forward/complex_material_control.fsp",
+      "bytes": 1742609316,
+      "sha256": "e945238238703a64ed083dd7144f6043b4521bae4a7ac7030f281e5c70992452"
+    },
+    {
+      "role": "forward_Q_NPZ_smooth_ellipse_a7p9_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a7p9_b10_edge25_forward/complex_material_control_q.npz",
+      "bytes": 62498635,
+      "sha256": "b4577b9babbcc57453139677e37a01263a69fdad8d35ce37a389fd1fcd2f7c76"
+    },
+    {
+      "role": "forward_FSP_smooth_ellipse_a7p95_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a7p95_b10_edge25_forward/complex_material_control.fsp",
+      "bytes": 1752935492,
+      "sha256": "87d1a6869bed00ca6f74f0f222c4208550cccc7573642b2fef5a168a1ee07d0b"
+    },
+    {
+      "role": "forward_Q_NPZ_smooth_ellipse_a7p95_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a7p95_b10_edge25_forward/complex_material_control_q.npz",
+      "bytes": 62900295,
+      "sha256": "ac1559deff459289d63048821f9aa18f2be0fb82d6c292a7d77720ae09c864fe"
+    },
+    {
+      "role": "forward_FSP_smooth_ellipse_a8p0_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p0_b10_edge25_forward/complex_material_control.fsp",
+      "bytes": 1763261668,
+      "sha256": "f34fa346f7ee421dc1386ea0768dca39e8904490a5f89b24a7f431bf732bf699"
+    },
+    {
+      "role": "forward_Q_NPZ_smooth_ellipse_a8p0_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p0_b10_edge25_forward/complex_material_control_q.npz",
+      "bytes": 63352469,
+      "sha256": "8db70ecb4dc76650e8cb7bf52416842b00e78ffd1d2ae1be3b88927495305d46"
+    },
+    {
+      "role": "forward_FSP_smooth_ellipse_a8p05_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p05_b10_edge25_forward/complex_material_control.fsp",
+      "bytes": 1773587844,
+      "sha256": "e03946e7a3266f7c40315c4c94868ff30046672a27271db1b509df71be5eebe3"
+    },
+    {
+      "role": "forward_Q_NPZ_smooth_ellipse_a8p05_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p05_b10_edge25_forward/complex_material_control_q.npz",
+      "bytes": 63734670,
+      "sha256": "909b107e00e14cc55a6006277e9180cbbf1182afe1e386c7220a1638e02d9227"
+    },
+    {
+      "role": "forward_FSP_smooth_ellipse_a8p1_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p1_b10_edge25_forward/complex_material_control.fsp",
+      "bytes": 1783913996,
+      "sha256": "e233824f21c7c67b44c29fc0ac7b5fc41ac23278bdfb6af9f47b8193cd29b9d0"
+    },
+    {
+      "role": "forward_Q_NPZ_smooth_ellipse_a8p1_b10_edge25_forward",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_a8p1_b10_edge25_forward/complex_material_control_q.npz",
+      "bytes": 64156561,
+      "sha256": "7c7cccccc0203f1c8c8ad2c78a3967c56387f40caa86a858e5bc59a890ece946"
+    },
+    {
+      "role": "adjoint_template_FSP",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_external_field_adjoint_gpu0/au_external_field_adjoint_template.fsp",
+      "bytes": 2914596183,
+      "sha256": "5d5cde811d887dc588d6d7b688b586b480e955f38f4e887e1bf47cfb892d6d24"
+    },
+    {
+      "role": "adjoint_GPU_FSP",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_external_field_adjoint_gpu0/au_external_field_adjoint_gpu.fsp",
+      "bytes": 4434519804,
+      "sha256": "ac1505a3af9dbaf7403a9b92bc110e370d9623ca8aace378629709f2b1e1ca44"
+    },
+    {
+      "role": "adjoint_GPU_log",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/smooth_ellipse_external_field_adjoint_gpu0/au_external_field_adjoint_gpu_p0.log",
+      "bytes": 5496,
+      "sha256": "b2eef4e342431d176a44adc4c5cda1fcc809780a9a3e3eb03bb9bd4e013c4743"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_ARRAY_AU_EFFECT_DECOMPOSITION",
+  "case": "Z1x3_Eb_Au_on",
+  "bare_control_case": "Z_Eb_Au_off",
+  "classification": "exact forward telescoping decomposition within named contact/material scenarios; not experimental causality",
+  "thermal": {
+    "scenario_sequence": {
+      "A": "full array-Au Q, thermal Au on",
+      "B": "same non-Au Q, direct top-Au absorption removed, thermal Au on",
+      "C": "same non-Au Q, thermal and electrical top Au off",
+      "D": "independent bare-flake optical Q and Au-off thermal/electrical operator"
+    },
+    "Tmax_K": {
+      "A": 1.5239338874816895,
+      "B": 1.5190503147278365,
+      "C": 1.5472882312171543,
+      "D": 2.017317771911621
+    },
+    "TaIrTe4_volume_average_K": {
+      "A": 0.1757630510334205,
+      "B": 0.1741096723713525,
+      "C": 0.17417236629031033,
+      "D": 0.2533404994594864
+    },
+    "intermediate_solver_audits": {
+      "B": {
+        "residual": 9.521757856370968e-10,
+        "iterations": 5700,
+        "energy_balance": 9.229670950803367e-11,
+        "boundary_power_W": {
+          "x_min": 7.909657994659389e-08,
+          "x_max": 7.725045548766407e-08,
+          "y_min": 7.763306308410151e-08,
+          "y_max": 7.76949948309352e-08,
+          "z_min": 0.00015151992869680164,
+          "surface_robin_z_max": 8.7662469750599e-10
+        }
+      },
+      "C": {
+        "residual": 9.74613787661639e-10,
+        "iterations": 4025,
+        "energy_balance": 2.3528866473425834e-13,
+        "boundary_power_W": {
+          "x_min": 7.820571062602968e-08,
+          "x_max": 7.614921113106101e-08,
+          "y_min": 7.657047043874611e-08,
+          "y_max": 7.659407486606978e-08,
+          "z_min": 0.00015152458966260568,
+          "surface_robin_z_max": 3.712991587727897e-10
+        }
+      }
+    },
+    "field_telescoping_max_abs_error_K": 1.1102230246251565e-16
+  },
+  "electrical": {
+    "top_bottom": {
+      "currents": {
+        "A_full_array_Au_on_Q_K_E": 2.546964690296368e-09,
+        "A_same_T_electrical_Au_off": -2.1323915160589932e-11,
+        "B_top_Au_heat_removed_K_on_E_off": -2.5074818999337034e-11,
+        "C_top_Au_heat_and_thermal_shunt_removed_E_off": -5.395889746908887e-12,
+        "D_independent_bare_flake_Q_K_E": -1.2249668060461034e-17
+      },
+      "contributions": {
+        "floating_Au_electrical_shunt_A": 2.568288605456958e-09,
+        "direct_top_Au_absorption_heat_A": 3.750903838747103e-12,
+        "top_Au_thermal_shunt_A": -1.9678929252428147e-11,
+        "array_Au_induced_nonAu_optical_redistribution_A": -5.395877497240826e-12
+      },
+      "full_array_on_minus_bare_A": 2.546964702546036e-09,
+      "telescoping_closure_A": 0.0,
+      "intermediate_audits": {
+        "A_temperature_E_off": {
+          "low_terminal_current_A": 2.132392112217077e-11,
+          "high_terminal_current_A": -2.1323915160589932e-11,
+          "weighting_identity_current_A": -2.132387064146053e-11,
+          "thermoelectric_characteristic_current_A": 1.5439924229648264e-05,
+          "terminal_balance_relative_to_terminal_current": 2.795724483879329e-07,
+          "weighting_identity_relative_to_terminal_current": 2.0877558865729136e-06,
+          "terminal_balance_relative_to_thermoelectric_scale": 3.86114643354843e-13,
+          "weighting_identity_relative_to_thermoelectric_scale": 2.883377453097593e-12,
+          "near_null_terminal_current": false,
+          "weighting_residual": 6.025948669574734e-12,
+          "short_circuit_residual": 8.222971062644245e-12
+        },
+        "B": {
+          "low_terminal_current_A": 2.5074826462057123e-11,
+          "high_terminal_current_A": -2.5074818999337034e-11,
+          "weighting_identity_current_A": -2.5074774537891073e-11,
+          "thermoelectric_characteristic_current_A": 1.5653410169462452e-05,
+          "terminal_balance_relative_to_terminal_current": 2.9761801542951176e-07,
+          "weighting_identity_relative_to_terminal_current": 1.7731512224459998e-06,
+          "terminal_balance_relative_to_thermoelectric_scale": 4.767472396165494e-13,
+          "weighting_identity_relative_to_thermoelectric_scale": 2.8403680399319324e-12,
+          "near_null_terminal_current": false,
+          "weighting_residual": 6.025948669574734e-12,
+          "short_circuit_residual": 8.807090113737469e-12
+        },
+        "C": {
+          "low_terminal_current_A": 5.395889460005427e-12,
+          "high_terminal_current_A": -5.395889746908887e-12,
+          "weighting_identity_current_A": -5.3958400684364565e-12,
+          "thermoelectric_characteristic_current_A": 1.528738184037539e-05,
+          "terminal_balance_relative_to_terminal_current": 5.317074162334612e-08,
+          "weighting_identity_relative_to_terminal_current": 9.206724888839026e-06,
+          "terminal_balance_relative_to_thermoelectric_scale": 1.8767337831728407e-14,
+          "weighting_identity_relative_to_thermoelectric_scale": 3.2496390126850838e-12,
+          "near_null_terminal_current": true,
+          "weighting_residual": 6.025948669574734e-12,
+          "short_circuit_residual": 7.061708785581987e-12
+        }
+      }
+    },
+    "left_right": {
+      "currents": {
+        "A_full_array_Au_on_Q_K_E": 3.337851502284683e-09,
+        "A_same_T_electrical_Au_off": -1.1169517675513741e-09,
+        "B_top_Au_heat_removed_K_on_E_off": -1.1246370699718162e-09,
+        "C_top_Au_heat_and_thermal_shunt_removed_E_off": -1.208626125067635e-09,
+        "D_independent_bare_flake_Q_K_E": 2.485544357848074e-17
+      },
+      "contributions": {
+        "floating_Au_electrical_shunt_A": 4.454803269836057e-09,
+        "direct_top_Au_absorption_heat_A": 7.685302420442092e-12,
+        "top_Au_thermal_shunt_A": 8.398905509581881e-11,
+        "array_Au_induced_nonAu_optical_redistribution_A": -1.2086261499230786e-09
+      },
+      "full_array_on_minus_bare_A": 3.3378514774292393e-09,
+      "telescoping_closure_A": 0.0,
+      "intermediate_audits": {
+        "A_temperature_E_off": {
+          "low_terminal_current_A": 1.1169517679031941e-09,
+          "high_terminal_current_A": -1.1169517675513741e-09,
+          "weighting_identity_current_A": -1.1169517691717666e-09,
+          "thermoelectric_characteristic_current_A": 1.5439924229648264e-05,
+          "terminal_balance_relative_to_terminal_current": 3.1498224342230436e-10,
+          "weighting_identity_relative_to_terminal_current": 1.4507273076505771e-09,
+          "terminal_balance_relative_to_thermoelectric_scale": 2.2786379545378888e-14,
+          "weighting_identity_relative_to_thermoelectric_scale": 1.0494821145265555e-13,
+          "near_null_terminal_current": false,
+          "weighting_residual": 9.300737765508989e-12,
+          "short_circuit_residual": 9.897564695425401e-12
+        },
+        "B": {
+          "low_terminal_current_A": 1.1246370704425567e-09,
+          "high_terminal_current_A": -1.1246370699718162e-09,
+          "weighting_identity_current_A": -1.1246370715390183e-09,
+          "thermoelectric_characteristic_current_A": 1.5653410169462452e-05,
+          "terminal_balance_relative_to_terminal_current": 4.185709629931675e-10,
+          "weighting_identity_relative_to_terminal_current": 1.3935180253282116e-09,
+          "terminal_balance_relative_to_thermoelectric_scale": 3.007270725655055e-14,
+          "weighting_identity_relative_to_thermoelectric_scale": 1.0011888873897528e-13,
+          "near_null_terminal_current": false,
+          "weighting_residual": 9.300737765508989e-12,
+          "short_circuit_residual": 9.908906952525043e-12
+        },
+        "C": {
+          "low_terminal_current_A": 1.2086261301826842e-09,
+          "high_terminal_current_A": -1.208626125067635e-09,
+          "weighting_identity_current_A": -1.2086261266681369e-09,
+          "thermoelectric_characteristic_current_A": 1.528738184037539e-05,
+          "terminal_balance_relative_to_terminal_current": 4.232118629422818e-09,
+          "weighting_identity_relative_to_terminal_current": 1.324232370744511e-09,
+          "terminal_balance_relative_to_thermoelectric_scale": 3.345928828731174e-13,
+          "weighting_identity_relative_to_thermoelectric_scale": 1.046943065708236e-13,
+          "near_null_terminal_current": false,
+          "weighting_residual": 9.300737765508989e-12,
+          "short_circuit_residual": 8.531105398176629e-12
+        }
+      }
+    }
+  },
+  "gates": {
+    "intermediate_thermal_residual_lt_1e-8": true,
+    "intermediate_thermal_energy_balance_lt_1pct": true,
+    "temperature_field_telescoping_roundoff": true,
+    "current_telescoping_roundoff": true,
+    "no_Q_clipping_smoothing_gain_or_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Au_effect_decomposition/Z1x3_Eb_Au_on_Au_array_effect_decomposition.npz",
+    "bytes": 520637,
+    "sha256": "b870d8aea97727c962da0f2714e7ecfa1a7dfd8a7e87ffe5e85767af31bf02cb",
+    "committed_to_git": false
+  }
+}
