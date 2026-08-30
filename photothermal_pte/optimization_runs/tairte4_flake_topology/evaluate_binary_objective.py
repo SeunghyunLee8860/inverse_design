@@ -13,6 +13,9 @@ import traceback
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
+    thermal_interface_contract,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_objective_gradient import (
     load_rho,
 )
@@ -20,10 +23,14 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
     checked,
     compact_forward,
     open_fdtd,
+    polarization_angle,
     run_forward,
     sha256,
     solve_coupled,
 )
+
+
+MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION = 0.01
 
 
 def artifact(path: Path) -> dict[str, object]:
@@ -47,7 +54,7 @@ def main() -> int:
     rho = load_rho(rho_path)
     if not np.all((rho == 0.0) | (rho == 1.0)):
         raise RuntimeError("objective-only final evaluation requires exact 0/1 density")
-    angle = 90.0 if args.polarization == "Ea" else 0.0
+    angle = polarization_angle(args.polarization)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
@@ -83,6 +90,10 @@ def main() -> int:
             reference_change = (objective - args.reference_objective_A) / abs(
                 args.reference_objective_A
             )
+        objective_preserved = bool(
+            reference_change is None
+            or reference_change >= -MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION
+        )
         raw = output / "binary_objective_fields.npz"
         np.savez_compressed(
             raw,
@@ -97,7 +108,7 @@ def main() -> int:
                 dtype=np.float64,
             ),
         )
-        passed = bool(
+        physical_gates_passed = bool(
             forward["closure"] < 0.005
             and coupled["mapping"]["relative_mapping_error"] < 0.005
             and coupled["thermal_forward"].explicit_relative_residual < 1e-8
@@ -106,6 +117,7 @@ def main() -> int:
             and np.isfinite(objective)
             and coupled["electrical"].terminal_conductance_S > 0.0
         )
+        passed = bool(physical_gates_passed and objective_preserved)
         result = {
             "schema": "contact-anchored-exact-binary-objective-v1",
             "status": (
@@ -118,9 +130,13 @@ def main() -> int:
             "polarization": args.polarization,
             "polarization_angle_deg": angle,
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "thermal_interface_contract": thermal_interface_contract(),
             "objective_A": objective,
             "reference_continuous_objective_A": args.reference_objective_A,
             "relative_objective_change_from_continuous": reference_change,
+            "physical_gates_passed": physical_gates_passed,
+            "objective_gate_passed": objective_preserved,
+            "binary_objective_preserved_within_one_percent": objective_preserved,
             "equivalent_objective_at_285uW_A": objective * 285.0e-6 / forward["source_power_W"],
             "responsivity_A_W": objective / forward["source_power_W"],
             "terminal_conductance_S": coupled["electrical"].terminal_conductance_S,
@@ -132,6 +148,7 @@ def main() -> int:
                 "thermal_forward_residual": coupled["thermal_forward"].explicit_relative_residual,
                 "thermal_energy_balance": coupled["energy"],
                 "electrical_weighting_residual": coupled["electrical"].weighting_residual,
+                "maximum_binary_objective_loss_fraction": MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION,
             },
             "inputs": {"base_FSP": artifact(base_fsp), "binary_density": artifact(rho_path)},
             "raw_artifact": artifact(raw),

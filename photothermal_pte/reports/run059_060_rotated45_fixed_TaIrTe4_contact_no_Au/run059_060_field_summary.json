@@ -1,0 +1,93 @@
+{
+  "schema": "run059-060-rotated45-fixed-contact-no-Au-field-publication-v2",
+  "model": {
+    "geometry": "24 x 24 um device rotated +45 degrees",
+    "axis_contract": "global x=b, y=a",
+    "optical": "Run58 axis-aligned optical proxy without Au",
+    "thermal_interface": "evaporated TaIrTe4/SiO2, G=73700 W/m2/K",
+    "contact_overlap": "2 um fixed-solid TaIrTe4 strips; excluded from topology design",
+    "electrodes": "ideal equipotential masks only in electrical solves; no optical or thermal Au",
+    "target_incident_power_W": 0.000285
+  },
+  "runs": [
+    {
+      "run": 59,
+      "polarization": "Ea",
+      "status": "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION",
+      "passed": false,
+      "continuous_current_nA": 662.6300064274119,
+      "exact_current_nA": 640.9719511155907,
+      "exact_change_percent": -3.268499026868877,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 55.70389388326832,
+      "maximum_temperature_rise_K": 2.658848325498475,
+      "maximum_temperature_gradient_K_m": 5545968.979866639,
+      "maximum_total_J_A_m2": 5100955.967832098,
+      "positive_current_contribution_nA": 680.8367681398406,
+      "negative_current_contribution_nA": -39.86481702424952,
+      "b_current_contribution_nA": 532.6739472541815,
+      "a_current_contribution_nA": 108.29800386140941,
+      "current_reintegration_relative_error": 1.6518526001412134e-16,
+      "short_circuit_current_nA": 640.9719510911024,
+      "short_circuit_current_relative_error": 3.820503804762607e-11,
+      "short_circuit_continuity_residual": 9.028240786204316e-14
+    },
+    {
+      "run": 60,
+      "polarization": "Eb",
+      "status": "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION",
+      "passed": true,
+      "continuous_current_nA": 786.3600498476306,
+      "exact_current_nA": 780.7553247822385,
+      "exact_change_percent": -0.7127428544314021,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 54.74400098704941,
+      "maximum_temperature_rise_K": 3.056842573458966,
+      "maximum_temperature_gradient_K_m": 5236192.253316888,
+      "maximum_total_J_A_m2": 5107866.208809427,
+      "positive_current_contribution_nA": 803.131024348504,
+      "negative_current_contribution_nA": -22.37569956626543,
+      "b_current_contribution_nA": 651.6798033576175,
+      "a_current_contribution_nA": 129.07552142462094,
+      "current_reintegration_relative_error": 0.0,
+      "short_circuit_current_nA": 780.7553250127866,
+      "short_circuit_current_relative_error": 2.952885074795207e-10,
+      "short_circuit_continuity_residual": 1.355646347570314e-13
+    }
+  ],
+  "published_outputs": [
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run059_rotated45_no_Au_exact_fields.png",
+      "size_bytes": 1852752,
+      "sha256": "9e476f86a7dcd30568759601184e43bb861feffffd0911469d0415d09ebf7541"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run059_rotated45_no_Au_derived_fields.npz",
+      "size_bytes": 9195267,
+      "sha256": "c74ae61e8d607455b45747271622f8e76944d31c12586074eb628412404bf2b5"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run060_rotated45_no_Au_exact_fields.png",
+      "size_bytes": 1674143,
+      "sha256": "e74517462be81ae55f0addcfaaf9c34908235726de636591acba4b263c105bc7"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run060_rotated45_no_Au_derived_fields.npz",
+      "size_bytes": 9112671,
+      "sha256": "26056a4f1ca9e72aa0d57f17d39ab2df9c398596295da6d4ea54ac8c3a68710d"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run059_060_optimization_convergence.png",
+      "size_bytes": 261742,
+      "sha256": "4b9b8289d4b4965663cbb00b8eefd6f6a0393e1e4dbd632d37e4d1561a8e890c"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_fixed_TaIrTe4_contact_no_Au/run059_060_final_current_comparison.png",
+      "size_bytes": 135161,
+      "sha256": "5c8cc4a4571bbf94433e13decc86703e7c3c29c49655084dee951a4ccc958a87"
+    }
+  ],
+  "optimization_rerun": false
+}

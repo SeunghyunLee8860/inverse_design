@@ -11,7 +11,7 @@ WRAPPER = (
     REPOSITORY
     / "photothermal_pte"
     / "optimization_runs"
-    / "run_002_gaussian10_w8p5_current_max"
+    / "legacy_v261_optical_support"
     / "audit_source_only_gpu.py"
 )
 

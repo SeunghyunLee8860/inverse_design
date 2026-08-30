@@ -1,0 +1,1312 @@
+{
+  "schema": "exact-binary-fixed-flake-au-beam-response-summary-v1",
+  "generated_at_utc": "2026-08-21T23:47:34.047637+00:00",
+  "case_count": 8,
+  "response_count": 232,
+  "cases": {
+    "44": {
+      "run": 44,
+      "contact_axis": "y",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Ea",
+      "numerical": {
+        "maximum_optical_closure": 0.008702368679526104,
+        "maximum_auto_shutoff": 9.96402e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          176.0090351766761,
+          132.55926185902888,
+          92.02437418749186,
+          64.39249784938822,
+          46.74494630881739
+        ],
+        "nominal_current_nA": 92.02437418749186,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.4046722948041361,
+        "central_slope_nA_per_um": -16.039238590503686,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            0.9663394681279059,
+            7.700211519299694,
+            10.28105394288419,
+            7.778267944676663,
+            0.91897063108722
+          ],
+          [
+            -2.350993310292395,
+            34.48384396709359,
+            62.28059556698731,
+            34.63644078776642,
+            -2.456433065973569
+          ],
+          [
+            -8.214797369447563,
+            46.4648365366979,
+            92.02437418749186,
+            46.33818144049042,
+            -8.341752170350619
+          ],
+          [
+            -5.208393817604913,
+            27.650569183774586,
+            52.64916021862779,
+            27.43209431255542,
+            -5.271424781907148
+          ],
+          [
+            0.8937719667960664,
+            10.075168215895271,
+            14.762102195956905,
+            10.02961501040828,
+            0.9062748890588214
+          ]
+        ],
+        "center_current_nA": 92.02437418749186,
+        "map_min_nA": -8.341752170350619,
+        "map_max_nA": 92.02437418749186,
+        "map_span_nA": 100.36612635784248,
+        "relative_map_span": 1.0906472034610635,
+        "central_gradient_nA_per_um": {
+          "x": -0.012665509620747884,
+          "y": -0.9631435348359517
+        },
+        "central_gradient_magnitude_nA_per_um": 0.9632268080936314,
+        "x_center_line": {
+          "values_nA": [
+            -8.214797369447563,
+            46.4648365366979,
+            92.02437418749186,
+            46.33818144049042,
+            -8.341752170350619
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.012665509620747884,
+          "relative_span": 1.0906472034610635,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            10.28105394288419,
+            62.28059556698731,
+            92.02437418749186,
+            52.64916021862779,
+            14.762102195956905
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.09999999999999999,
+          "central_slope_nA_per_um": -0.9631435348359517,
+          "relative_span": 0.8882790126674764,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            10.28105394288419,
+            62.28059556698731,
+            92.02437418749186,
+            52.64916021862779,
+            14.762102195956905
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.09999999999999999,
+          "central_slope_nA_per_um": -0.9631435348359517,
+          "relative_span": 0.8882790126674764,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            -8.214797369447563,
+            46.4648365366979,
+            92.02437418749186,
+            46.33818144049042,
+            -8.341752170350619
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.012665509620747884,
+          "relative_span": 1.0906472034610635,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 16,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "45": {
+      "run": 45,
+      "contact_axis": "y",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Eb",
+      "numerical": {
+        "maximum_optical_closure": 0.007818625477931974,
+        "maximum_auto_shutoff": 9.97905e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          113.28874332989778,
+          86.58537285624939,
+          57.77098012793452,
+          37.24926594627149,
+          24.493943709643112
+        ],
+        "nominal_current_nA": 57.77098012793452,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.537013902544453,
+        "central_slope_nA_per_um": -11.608495743524212,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            -4.986759856212472,
+            3.8998549128040314,
+            14.512936668174149,
+            3.8876034981614396,
+            -5.021494188330098
+          ],
+          [
+            -17.454231048085283,
+            12.43197444355644,
+            43.621464397374844,
+            12.349004310482695,
+            -17.547278713433627
+          ],
+          [
+            -24.85007079934441,
+            17.310723407372173,
+            57.77098012793452,
+            17.308557731100827,
+            -24.90275154923356
+          ],
+          [
+            -13.655630057672408,
+            13.021514107039213,
+            35.742677237763836,
+            13.10428779775161,
+            -13.670045578989521
+          ],
+          [
+            -0.7713021325685633,
+            5.5089919869686135,
+            9.11785117577908,
+            5.559809892796525,
+            -0.7820830114538423
+          ]
+        ],
+        "center_current_nA": 57.77098012793452,
+        "map_min_nA": -24.90275154923356,
+        "map_max_nA": 57.77098012793452,
+        "map_span_nA": 82.67373167716808,
+        "relative_map_span": 1.43105987632694,
+        "central_gradient_nA_per_um": {
+          "x": -0.00021656762713462285,
+          "y": -0.7878787159611008
+        },
+        "central_gradient_magnitude_nA_per_um": 0.7878787457255401,
+        "x_center_line": {
+          "values_nA": [
+            -24.85007079934441,
+            17.310723407372173,
+            57.77098012793452,
+            17.308557731100827,
+            -24.90275154923356
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.00021656762713462285,
+          "relative_span": 1.43105987632694,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            14.512936668174149,
+            43.621464397374844,
+            57.77098012793452,
+            35.742677237763836,
+            9.11785117577908
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.7878787159611008,
+          "relative_span": 0.8421724686756658,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            14.512936668174149,
+            43.621464397374844,
+            57.77098012793452,
+            35.742677237763836,
+            9.11785117577908
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.7878787159611008,
+          "relative_span": 0.8421724686756658,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            -24.85007079934441,
+            17.310723407372173,
+            57.77098012793452,
+            17.308557731100827,
+            -24.90275154923356
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.00021656762713462285,
+          "relative_span": 1.43105987632694,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 14,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "47": {
+      "run": 47,
+      "contact_axis": "x",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Ea",
+      "numerical": {
+        "maximum_optical_closure": 0.006655359665662518,
+        "maximum_auto_shutoff": 9.98796e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          102.03038165085844,
+          71.37178167986426,
+          47.657727214349514,
+          32.948929303008455,
+          24.018244931649214
+        ],
+        "nominal_current_nA": 47.657727214349514,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.6369252433783736,
+        "central_slope_nA_per_um": -9.040671147495482,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            2.1928743384649514,
+            -0.09516703400810478,
+            0.28754329947035195,
+            4.4316830902939754,
+            3.0211268310340276
+          ],
+          [
+            4.573379851599804,
+            17.91124108753646,
+            27.35831371125752,
+            13.488317589920216,
+            0.931650111573614
+          ],
+          [
+            6.732360377103802,
+            32.68323344502234,
+            47.657727214349514,
+            16.611546400020416,
+            -2.7278483547747814
+          ],
+          [
+            4.59166208673684,
+            17.90732473218568,
+            27.26677233059877,
+            13.29919559402407,
+            0.8362758315141987
+          ],
+          [
+            2.175947788377239,
+            -0.09437554312590507,
+            0.30443036409260993,
+            4.391618450196339,
+            2.9970142616635
+          ]
+        ],
+        "center_current_nA": 47.657727214349514,
+        "map_min_nA": -2.7278483547747814,
+        "map_max_nA": 47.657727214349514,
+        "map_span_nA": 50.38557556912429,
+        "relative_map_span": 1.0572383223922066,
+        "central_gradient_nA_per_um": {
+          "x": -1.6071687045001923,
+          "y": -0.009154138065875016
+        },
+        "central_gradient_magnitude_nA_per_um": 1.6071947744341866,
+        "x_center_line": {
+          "values_nA": [
+            6.732360377103802,
+            32.68323344502234,
+            47.657727214349514,
+            16.611546400020416,
+            -2.7278483547747814
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -1.6071687045001923,
+          "relative_span": 1.0572383223922066,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            0.28754329947035195,
+            27.35831371125752,
+            47.657727214349514,
+            27.26677233059877,
+            0.30443036409260993
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.09999999999999999,
+          "central_slope_nA_per_um": -0.009154138065875016,
+          "relative_span": 0.9939664915580831,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            6.732360377103802,
+            32.68323344502234,
+            47.657727214349514,
+            16.611546400020416,
+            -2.7278483547747814
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -1.6071687045001923,
+          "relative_span": 1.0572383223922066,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            0.28754329947035195,
+            27.35831371125752,
+            47.657727214349514,
+            27.26677233059877,
+            0.30443036409260993
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.09999999999999999,
+          "central_slope_nA_per_um": -0.009154138065875016,
+          "relative_span": 0.9939664915580831,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 18,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "48": {
+      "run": 48,
+      "contact_axis": "x",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Eb",
+      "numerical": {
+        "maximum_optical_closure": 0.012462917036924656,
+        "maximum_auto_shutoff": 9.97565e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          56.3929780995713,
+          38.36583640644692,
+          23.3403050344935,
+          14.206042021414376,
+          9.089331083416836
+        ],
+        "nominal_current_nA": 23.3403050344935,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 2.026693607741917,
+        "central_slope_nA_per_um": -5.684657502360598,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            7.359074555647324,
+            1.1068866618971838,
+            -6.733757920361648,
+            -4.194198717084019,
+            -1.9255474019486583
+          ],
+          [
+            5.568308639093112,
+            6.85730503156728,
+            9.674742114548005,
+            2.3893583855095115,
+            -6.835051040979049
+          ],
+          [
+            3.4244890593972905,
+            11.594089767156808,
+            23.3403050344935,
+            7.505898392440276,
+            -11.298727924844997
+          ],
+          [
+            5.504147868126155,
+            6.668706568663731,
+            9.497284393271427,
+            2.4008526156151375,
+            -6.773260771933418
+          ],
+          [
+            7.297235220328226,
+            0.8869265125396388,
+            -6.9165388471578675,
+            -4.196289803150853,
+            -1.8932626295850723
+          ]
+        ],
+        "center_current_nA": 23.3403050344935,
+        "map_min_nA": -11.298727924844997,
+        "map_max_nA": 23.3403050344935,
+        "map_span_nA": 34.63903295933849,
+        "relative_map_span": 1.4840865579154665,
+        "central_gradient_nA_per_um": {
+          "x": -0.40881913747165316,
+          "y": -0.017745772127657843
+        },
+        "central_gradient_magnitude_nA_per_um": 0.4092041050520793,
+        "x_center_line": {
+          "values_nA": [
+            3.4244890593972905,
+            11.594089767156808,
+            23.3403050344935,
+            7.505898392440276,
+            -11.298727924844997
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.40881913747165316,
+          "relative_span": 1.4840865579154665,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            -6.733757920361648,
+            9.674742114548005,
+            23.3403050344935,
+            9.497284393271427,
+            -6.9165388471578675
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.017745772127657843,
+          "relative_span": 1.2963345524806231,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            3.4244890593972905,
+            11.594089767156808,
+            23.3403050344935,
+            7.505898392440276,
+            -11.298727924844997
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.40881913747165316,
+          "relative_span": 1.4840865579154665,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            -6.733757920361648,
+            9.674742114548005,
+            23.3403050344935,
+            9.497284393271427,
+            -6.9165388471578675
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.017745772127657843,
+          "relative_span": 1.2963345524806231,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 16,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "55": {
+      "run": 55,
+      "contact_axis": "y",
+      "interface_scenario": "evaporated",
+      "polarization": "Ea",
+      "numerical": {
+        "maximum_optical_closure": 0.013488012079811746,
+        "maximum_auto_shutoff": 9.95317e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          1582.962289890025,
+          1166.4467855018695,
+          794.3357148973025,
+          533.5665412517807,
+          366.67673761836176
+        ],
+        "nominal_current_nA": 794.3357148973025,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.5311983704886207,
+        "central_slope_nA_per_um": -148.91299864707972,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            -12.40201091184733,
+            147.67159440757496,
+            306.237133504598,
+            147.15245157044706,
+            -12.56967699673287
+          ],
+          [
+            -116.2176684969795,
+            323.8077297038587,
+            738.0219230197823,
+            319.73873175645446,
+            -118.46985353981627
+          ],
+          [
+            -270.54429559734115,
+            299.3147597279056,
+            794.3357148973025,
+            292.49268338607413,
+            -274.7373417834768
+          ],
+          [
+            -217.2325817642125,
+            110.51291430667196,
+            364.28524808369474,
+            106.1744445569626,
+            -220.47450601921645
+          ],
+          [
+            -50.76496962449625,
+            28.506471031204466,
+            77.39698111800274,
+            27.450550367671685,
+            -51.91169690934191
+          ]
+        ],
+        "center_current_nA": 794.3357148973025,
+        "map_min_nA": -274.7373417834768,
+        "map_max_nA": 794.3357148973025,
+        "map_span_nA": 1069.0730566807792,
+        "relative_map_span": 1.345870564083848,
+        "central_gradient_nA_per_um": {
+          "x": -0.6822076341831462,
+          "y": -37.37366749360876
+        },
+        "central_gradient_magnitude_nA_per_um": 37.37989338105401,
+        "x_center_line": {
+          "values_nA": [
+            -270.54429559734115,
+            299.3147597279056,
+            794.3357148973025,
+            292.49268338607413,
+            -274.7373417834768
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.6822076341831462,
+          "relative_span": 1.345870564083848,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            306.237133504598,
+            738.0219230197823,
+            794.3357148973025,
+            364.28524808369474,
+            77.39698111800274
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -37.37366749360876,
+          "relative_span": 0.902563891228271,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            306.237133504598,
+            738.0219230197823,
+            794.3357148973025,
+            364.28524808369474,
+            77.39698111800274
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -37.37366749360876,
+          "relative_span": 0.902563891228271,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            -270.54429559734115,
+            299.3147597279056,
+            794.3357148973025,
+            292.49268338607413,
+            -274.7373417834768
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.6822076341831462,
+          "relative_span": 1.345870564083848,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 11,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "56": {
+      "run": 56,
+      "contact_axis": "y",
+      "interface_scenario": "evaporated",
+      "polarization": "Eb",
+      "numerical": {
+        "maximum_optical_closure": 0.008195081796871857,
+        "maximum_auto_shutoff": 9.99762e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          1777.271147499195,
+          1329.9805135521742,
+          913.4366393096582,
+          624.9544689973915,
+          441.24528161694866
+        ],
+        "nominal_current_nA": 913.4366393096582,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.4626366059631302,
+        "central_slope_nA_per_um": -165.88848107171358,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            9.58677137763395,
+            186.78087068345843,
+            358.9396366000769,
+            187.1456683635418,
+            10.111120194172754
+          ],
+          [
+            -66.59674953191131,
+            389.7186549072967,
+            827.0991585196485,
+            392.34325999199905,
+            -63.61840153413576
+          ],
+          [
+            -226.6982810124201,
+            368.6927045453959,
+            913.4366393096582,
+            373.01577883127965,
+            -221.96965648058753
+          ],
+          [
+            -209.04987324392303,
+            150.4876192253557,
+            452.39440339631017,
+            153.1619781997193,
+            -206.34908518393664
+          ],
+          [
+            -59.83626714711983,
+            28.72435873349054,
+            89.61422050023202,
+            29.53243090087004,
+            -59.04872469255229
+          ]
+        ],
+        "center_current_nA": 913.4366393096582,
+        "map_min_nA": -226.6982810124201,
+        "map_max_nA": 913.4366393096582,
+        "map_span_nA": 1140.1349203220782,
+        "relative_map_span": 1.2481817252083847,
+        "central_gradient_nA_per_um": {
+          "x": 0.4323074285883763,
+          "y": -37.470475512333834
+        },
+        "central_gradient_magnitude_nA_per_um": 37.472969255627746,
+        "x_center_line": {
+          "values_nA": [
+            -226.6982810124201,
+            368.6927045453959,
+            913.4366393096582,
+            373.01577883127965,
+            -221.96965648058753
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.3,
+          "central_slope_nA_per_um": 0.4323074285883763,
+          "relative_span": 1.2481817252083847,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            358.9396366000769,
+            827.0991585196485,
+            913.4366393096582,
+            452.39440339631017,
+            89.61422050023202
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -37.470475512333834,
+          "relative_span": 0.9018933370485782,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            358.9396366000769,
+            827.0991585196485,
+            913.4366393096582,
+            452.39440339631017,
+            89.61422050023202
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -37.470475512333834,
+          "relative_span": 0.9018933370485782,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            -226.6982810124201,
+            368.6927045453959,
+            913.4366393096582,
+            373.01577883127965,
+            -221.96965648058753
+          ],
+          "monotonic": false,
+          "spearman_rho": 0.3,
+          "central_slope_nA_per_um": 0.4323074285883763,
+          "relative_span": 1.2481817252083847,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 15,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "57": {
+      "run": 57,
+      "contact_axis": "x",
+      "interface_scenario": "evaporated",
+      "polarization": "Ea",
+      "numerical": {
+        "maximum_optical_closure": 0.007779341969312787,
+        "maximum_auto_shutoff": 9.97377e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          642.8372386817913,
+          466.16734918686103,
+          317.3755505075491,
+          222.81319915093863,
+          165.82912442318724
+        ],
+        "nominal_current_nA": 317.3755505075491,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.502976878640366,
+        "central_slope_nA_per_um": -57.25980000845233,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            134.34355274075386,
+            115.26945941640895,
+            7.168718617261821,
+            -35.871461381283595,
+            -44.37163055843431
+          ],
+          [
+            137.5617321853618,
+            173.80653304470277,
+            185.0114340522622,
+            67.7116235431993,
+            -70.39190218546018
+          ],
+          [
+            115.17525452965948,
+            198.61783118384227,
+            317.3755505075491,
+            152.52961931238852,
+            -83.07998450108788
+          ],
+          [
+            137.32645115781452,
+            172.68355502692023,
+            183.85470683424828,
+            67.59826637253278,
+            -70.22435542897783
+          ],
+          [
+            134.15921980371184,
+            113.33436914882815,
+            4.989593044732259,
+            -36.1482199234965,
+            -44.185171848394305
+          ]
+        ],
+        "center_current_nA": 317.3755505075491,
+        "map_min_nA": -83.07998450108788,
+        "map_max_nA": 317.3755505075491,
+        "map_span_nA": 400.455535008637,
+        "relative_map_span": 1.261771848424448,
+        "central_gradient_nA_per_um": {
+          "x": -4.6088211871453755,
+          "y": -0.11567272180139128
+        },
+        "central_gradient_magnitude_nA_per_um": 4.610272542230996,
+        "x_center_line": {
+          "values_nA": [
+            115.17525452965948,
+            198.61783118384227,
+            317.3755505075491,
+            152.52961931238852,
+            -83.07998450108788
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -4.6088211871453755,
+          "relative_span": 1.261771848424448,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            7.168718617261821,
+            185.0114340522622,
+            317.3755505075491,
+            183.85470683424828,
+            4.989593044732259
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.11567272180139128,
+          "relative_span": 0.9842785840410426,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            115.17525452965948,
+            198.61783118384227,
+            317.3755505075491,
+            152.52961931238852,
+            -83.07998450108788
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -4.6088211871453755,
+          "relative_span": 1.261771848424448,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            7.168718617261821,
+            185.0114340522622,
+            317.3755505075491,
+            183.85470683424828,
+            4.989593044732259
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.11567272180139128,
+          "relative_span": 0.9842785840410426,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 16,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    },
+    "58": {
+      "run": 58,
+      "contact_axis": "x",
+      "interface_scenario": "evaporated",
+      "polarization": "Eb",
+      "numerical": {
+        "maximum_optical_closure": 0.009929867232351825,
+        "maximum_auto_shutoff": 9.98465e-08,
+        "all_gates_passed": true
+      },
+      "waist": {
+        "waist_um": [
+          4.25,
+          6.375,
+          8.5,
+          10.625,
+          12.75
+        ],
+        "current_nA": [
+          661.0586670449424,
+          479.77874884232483,
+          331.9558197147892,
+          239.2215528627156,
+          182.74505674869272
+        ],
+        "nominal_current_nA": 331.9558197147892,
+        "monotonic": true,
+        "spearman_rho": -0.9999999999999999,
+        "relative_span": 1.4408953899564363,
+        "central_slope_nA_per_um": -56.60169317167276,
+        "assessment": "promising"
+      },
+      "position": {
+        "coordinates_um": [
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0
+        ],
+        "current_map_nA_y_by_x": [
+          [
+            178.2227543923431,
+            150.52348448599415,
+            36.08731020026349,
+            -26.63622871279628,
+            -65.87257181132513
+          ],
+          [
+            202.74957468810987,
+            214.0804426993252,
+            210.304630867534,
+            58.37959120753392,
+            -125.76885538483002
+          ],
+          [
+            184.96482380562236,
+            232.76019379045462,
+            331.9558197147892,
+            126.84370941195357,
+            -158.83568447813104
+          ],
+          [
+            201.72460211068204,
+            209.79447821155856,
+            203.425843937224,
+            55.1819316918095,
+            -125.78091983115873
+          ],
+          [
+            176.81882317537656,
+            144.13879592673226,
+            25.55547473041401,
+            -31.884460790912684,
+            -66.48536880946449
+          ]
+        ],
+        "center_current_nA": 331.9558197147892,
+        "map_min_nA": -158.83568447813104,
+        "map_max_nA": 331.9558197147892,
+        "map_span_nA": 490.79150419292023,
+        "relative_map_span": 1.4784844098067025,
+        "central_gradient_nA_per_um": {
+          "x": -10.591648437850106,
+          "y": -0.6878786930310014
+        },
+        "central_gradient_magnitude_nA_per_um": 10.61396220679811,
+        "x_center_line": {
+          "values_nA": [
+            184.96482380562236,
+            232.76019379045462,
+            331.9558197147892,
+            126.84370941195357,
+            -158.83568447813104
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.6,
+          "central_slope_nA_per_um": -10.591648437850106,
+          "relative_span": 1.4784844098067025,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "y_center_line": {
+          "values_nA": [
+            36.08731020026349,
+            210.304630867534,
+            331.9558197147892,
+            203.425843937224,
+            25.55547473041401
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.6878786930310014,
+          "relative_span": 0.9230154339442795,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "terminal_axis_line": {
+          "values_nA": [
+            184.96482380562236,
+            232.76019379045462,
+            331.9558197147892,
+            126.84370941195357,
+            -158.83568447813104
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.6,
+          "central_slope_nA_per_um": -10.591648437850106,
+          "relative_span": 1.4784844098067025,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "cross_terminal_axis_line": {
+          "values_nA": [
+            36.08731020026349,
+            210.304630867534,
+            331.9558197147892,
+            203.425843937224,
+            25.55547473041401
+          ],
+          "monotonic": false,
+          "spearman_rho": -0.3,
+          "central_slope_nA_per_um": -0.6878786930310014,
+          "relative_span": 0.9230154339442795,
+          "negative_half_monotonic": true,
+          "positive_half_monotonic": true,
+          "center_is_extremum": true,
+          "unsigned_centering_assessment": "promising_unsigned_displacement",
+          "assessment": "limited_or_nonmonotonic_1D"
+        },
+        "ambiguous_pairs_within_1pct_map_span": 10,
+        "standalone_2D_assessment": "underdetermined_from_one_scalar_current"
+      }
+    }
+  }
+}

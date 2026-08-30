@@ -1,0 +1,186 @@
+{
+  "status": "VALIDATED_SELECTED_MULTIDIRECTION_COMBINED_PHYSICAL_RHO_ADFD",
+  "passed": true,
+  "generated_at_utc": "2026-08-06T21:04:12.375168+00:00",
+  "scope": "five selected 373x373 combined physical-density directions at h=0.005",
+  "optimizer_started": false,
+  "Maxwell_forward_solves_new": 8,
+  "Maxwell_adjoint_solves_new": 0,
+  "CPU_FDTD_fallback": false,
+  "CPU_thermal_solve_fallback": false,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "gates": {
+    "worst_directional_relative_error": 0.0020451520653031138,
+    "worst_multi_direction_normalized_error": 2.8197855434889026e-05,
+    "directional_limit": 0.01,
+    "worst_optical_closure": 5.629929509906046e-06,
+    "optical_closure_limit": 0.005,
+    "worst_Q_mapping_error": 1.7828779476696421e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_thermal_residual": 9.587958091737177e-11,
+    "thermal_residual_limit": 1e-08,
+    "worst_thermal_energy_balance": 1.679748233342191e-13,
+    "thermal_energy_limit": 0.01,
+    "worst_auto_shutoff": 9.99849e-08,
+    "auto_shutoff_limit": 1e-05
+  },
+  "cases": [
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.005,
+      "AD_A": 8.545357319272768e-20,
+      "FD_A": 8.545598286817864e-20,
+      "relative_error": 2.8197855434889026e-05,
+      "normalized_error": 2.8197855434889026e-05,
+      "direction_is_strong": true,
+      "optical_closure": 5.629929509906046e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.587958091737177e-11,
+      "thermal_energy_balance": 1.4309176564970022e-13,
+      "auto_shutoff": 9.99849e-08,
+      "passed": true,
+      "raw_NPZ": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/production_combined_adfd_smoke.npz",
+      "raw_NPZ_sha256": "89ae6e07b2914e7a9cd1b5125c58aa381511bb48844bc47c805802031db70a47"
+    },
+    {
+      "direction": "smooth_asymmetric",
+      "step": 0.005,
+      "AD_A": 5.1323545551958296e-20,
+      "FD_A": 5.132269505152997e-20,
+      "relative_error": 1.6571349839159094e-05,
+      "normalized_error": 6.677311177333497e-06,
+      "direction_is_strong": true,
+      "optical_closure": 5.588586146803653e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.56790614786566e-11,
+      "thermal_energy_balance": 1.679748233342191e-13,
+      "auto_shutoff": 8.91323e-08,
+      "passed": true,
+      "raw_NPZ": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_smooth_asymmetric_h005_20260806/selected_combined_direction_adfd.npz",
+      "raw_NPZ_sha256": "fede90900a32be7588e0c1d6090db764ef92c94730f6dffe5c3b48a6c9dcdbce"
+    },
+    {
+      "direction": "central_localized",
+      "step": 0.005,
+      "AD_A": -9.726082353760405e-22,
+      "FD_A": -9.728464395187504e-22,
+      "relative_error": 0.0002448527671312413,
+      "normalized_error": 8.81902817368619e-06,
+      "direction_is_strong": true,
+      "optical_closure": 5.601670222137071e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.452925894401558e-11,
+      "thermal_energy_balance": 1.5674485800834367e-13,
+      "auto_shutoff": 8.90661e-08,
+      "passed": true,
+      "raw_NPZ": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_central_localized_h005_20260806/selected_combined_direction_adfd.npz",
+      "raw_NPZ_sha256": "dbe3d3dc60b8626a59bc0478d16999df1abf4c0244dbe48da1be37e0f8364c08"
+    },
+    {
+      "direction": "design_edge_localized",
+      "step": 0.005,
+      "AD_A": -2.788986539415556e-21,
+      "FD_A": -2.7893634809984455e-21,
+      "relative_error": 0.00013513534017962455,
+      "normalized_error": 2.1480184695400054e-05,
+      "direction_is_strong": true,
+      "optical_closure": 5.596512814783458e-06,
+      "Q_mapping_error": 1.7828779476696421e-16,
+      "thermal_residual": 9.420162220250868e-11,
+      "thermal_energy_balance": 8.914716429587041e-14,
+      "auto_shutoff": 8.91473e-08,
+      "passed": true,
+      "raw_NPZ": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_design_edge_localized_h005_20260806/selected_combined_direction_adfd.npz",
+      "raw_NPZ_sha256": "b2fc2e9885c62881113731e6b3ac4a3f8424acec30141a05535b78f62bf2f77e"
+    },
+    {
+      "direction": "fixed_seed_random",
+      "step": 0.005,
+      "AD_A": 3.5545238737005124e-22,
+      "FD_A": 3.5618083133287304e-22,
+      "relative_error": 0.0020451520653031138,
+      "normalized_error": 1.5821683497818212e-05,
+      "direction_is_strong": true,
+      "optical_closure": 5.5826412132204895e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.435485812775571e-11,
+      "thermal_energy_balance": 7.898252506706028e-14,
+      "auto_shutoff": 8.92255e-08,
+      "passed": true,
+      "raw_NPZ": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_fixed_seed_random_h005_20260806/selected_combined_direction_adfd.npz",
+      "raw_NPZ_sha256": "7726e07465c9b0aa82d3ebd27eab402248b239e2001099f3aa314bda51ed04df"
+    }
+  ],
+  "raw_artifacts": {
+    "adjoint_aligned": {
+      "summary": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/results/selected_optical_gradient_adfd_summary.json",
+        "size_bytes": 4406,
+        "sha256": "f79fc692095b7fbfa351081c2301df7387e0b6d34d41fca70129aa00186ad314"
+      },
+      "preserved_diagnostic_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/production_combined_adfd_smoke_result.json",
+        "size_bytes": 25903,
+        "sha256": "bc870c2162302bbf0bf0d908cd7bdd375e3268f3c9ba14fc287d47a7fa8f2840"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/production_combined_adfd_smoke.npz",
+        "size_bytes": 246511270,
+        "sha256": "89ae6e07b2914e7a9cd1b5125c58aa381511bb48844bc47c805802031db70a47"
+      }
+    },
+    "smooth_asymmetric": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_smooth_asymmetric_h005_20260806/selected_combined_direction_adfd_result.json",
+        "size_bytes": 15680,
+        "sha256": "63bcaabe1c5c8cf34893e21021252bffe926e85ec190d750beaa23e810a5b366"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_smooth_asymmetric_h005_20260806/selected_combined_direction_adfd.npz",
+        "size_bytes": 5226836,
+        "sha256": "fede90900a32be7588e0c1d6090db764ef92c94730f6dffe5c3b48a6c9dcdbce"
+      }
+    },
+    "central_localized": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_central_localized_h005_20260806/selected_combined_direction_adfd_result.json",
+        "size_bytes": 15695,
+        "sha256": "1ac33bd34f3a690246f3dea64022b5fb29d92a477fcf38f4fb550bc7d288f06d"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_central_localized_h005_20260806/selected_combined_direction_adfd.npz",
+        "size_bytes": 4877122,
+        "sha256": "dbe3d3dc60b8626a59bc0478d16999df1abf4c0244dbe48da1be37e0f8364c08"
+      }
+    },
+    "design_edge_localized": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_design_edge_localized_h005_20260806/selected_combined_direction_adfd_result.json",
+        "size_bytes": 15828,
+        "sha256": "edf5a4877ba5f73a4b378b0ac2014042dac8eca60104f634699b3aa749bc44bb"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_design_edge_localized_h005_20260806/selected_combined_direction_adfd.npz",
+        "size_bytes": 5271483,
+        "sha256": "b2fc2e9885c62881113731e6b3ac4a3f8424acec30141a05535b78f62bf2f77e"
+      }
+    },
+    "fixed_seed_random": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_fixed_seed_random_h005_20260806/selected_combined_direction_adfd_result.json",
+        "size_bytes": 15689,
+        "sha256": "eb60818edeb25db845acb3cbcf695ff1e05efa6a090e3f346e3f34a03ce3b586"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_fixed_seed_random_h005_20260806/selected_combined_direction_adfd.npz",
+        "size_bytes": 5245445,
+        "sha256": "7726e07465c9b0aa82d3ebd27eab402248b239e2001099f3aa314bda51ed04df"
+      }
+    }
+  },
+  "remaining_before_optimization": [
+    "full latent/filter/projection combined AD-FD",
+    "exact-binary DRC fixtures before final fabrication promotion"
+  ]
+}

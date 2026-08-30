@@ -1,0 +1,29 @@
+{
+  "schema": "pure-current-ld-mma-optimizer-code-manifest-v1",
+  "passed": true,
+  "scope": "optimizer-driver provenance only; physical solver validation remains in TRUE_MMA_PREFLIGHT.json",
+  "source_sha256": {
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "357e96cc26c27dfd925dd6cd1216d512a473481e68d58294f8755844b8ead688",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "3189ce1a6e9d8cac459171c26bcd064b1432a838ad1980411bd8dd40a4981154",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_binary_objective.py": "a5a24ff98a5f0d1751863bc4f6c0e0d5603b34eb41b91ab16048edfed7587c30",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/validate_combined_adfd.py": "ba82a68f6ffdc75940dfcada316102e5006b0db737b66d550d27a2f51ff4717d",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "082275917168fdf8b1d5ba8ae21f3c35e776da66798e798ae8107febff8a846b",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "03757536cfc8cbaac875c31c215faf6157a543ca84758cbb105f129122969986",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/optimization_support.py": "223b2b18e19d7f20a68436d1afeddc1b21c3805a490f4201c1f68e08a365340d",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_ansys_dfm_ld_mma_optimization.py": "55ae1eb9871e14d3bff3a2841b8af2f774e558720cf9516be5dfbc01a1311148",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/build_exact_feasible_latent_seed.py": "9581dda8bc29b6b8114b4fa54ef60594557cb2bb68929ac1e923b9d5e88ae571",
+    "photothermal_pte/optimization_runs/run_050_top_bottom_evaporated_sio2_Eb_fresh_restart/run_hard_constraint_recovery.py": "8aee9b52cc312ff770f1445dd8a3f83495c69c402322b215a4896df6d7846e89",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/contract.py": "fa93cec9cd25a772030b4115c97d4e786a6afe3985a0f9fa485e3bab971233db",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/electrical.py": "9d5942fac8f04cc0e4de478a5927545c94f03e38a47f0dab66114896bcb1ab91",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/optical.py": "1cd07f5f20e235018b58a08839a1db3e9d9d79f3cdff97d13e3499098c302356",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/thermal.py": "bb72004bd9add8fe730333d5cf4193a7c9391951f83ad49aa34f5af9d616e8ad",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/repair_exact_binary_candidates.py": "c87d376e7d473cf23ff6f5c72c31d9fd3a7863b7cb8af0b6b3e9aee801482944",
+    "photothermal_pte/optimization_runs/run_046_left_right_electrodes_Ea_current_max/run_pipeline.py": "788b90a63fac7fdd91878be7363d3e738102fc3a939d0422275db83763219859",
+    "photothermal_pte/optimization_runs/run_ansys_dfm_parallel_optimizations.py": "8dd7f0519339b12bb5dd16f131e1fb89b8c8c21ad0c87eeb3869289d97f4a9d6",
+    "photothermal_pte/optimization_runs/run_051_052_constraint_aware_evaporated_Ea_Eb/run_parallel.py": "47d09147aeb1b51c7c12d645b69f5746b30ab0989ce428866a4cb08e45fd864f",
+    "photothermal_pte/optimization_runs/run_051_052_constraint_aware_evaporated_Ea_Eb/run_one.py": "72a83d7ac307bd5665502c3aa6a9618fa2181799edf5afc8bc55ab20ed6723ab",
+    "photothermal_pte/optimization_runs/launch_run044_run045_recovery2.sh": "dac3777c6de398c498ffca441790921305df96f2c0a18a73b96e10f67173eaa9",
+    "photothermal_pte/optimization_runs/launch_run044_run045_adaptive_recovery3.sh": "6a03da8c1f7262c5666690df531635fe189c5fa2fff4cca490946eda7ba771d5",
+    "photothermal_pte/optimization_runs/launch_run044_run045_factor2_dfm_recovery4.sh": "2d4bafec6007f680504cb559f385f432d8c96a5864049b54c0106bc4487140ba"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "pure-terminal-current-nlopt-ld-mma-dual-supervisor-v1",
+  "generated_at_utc": "2026-08-11T11:20:49.543219+00:00",
+  "status": "BLOCKED_RUN043_EB_STOPPED_WITHOUT_FINAL_RESULT",
+  "gpu": 0,
+  "algorithm": "NLopt LD_MMA",
+  "objective": "signed full-flake terminal PTE current",
+  "top_bottom_weighting_boundaries": {
+    "top": 1.0,
+    "bottom": 0.0
+  },
+  "terminal_conductance_constraint": false,
+  "terminal_conductance_role": "diagnostic_only",
+  "manual_move_limit": null,
+  "run": "Run043",
+  "polarization": "Eb",
+  "attached_pid": 515278
+}

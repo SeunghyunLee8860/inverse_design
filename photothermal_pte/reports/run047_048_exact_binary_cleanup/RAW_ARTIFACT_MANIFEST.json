@@ -1,0 +1,142 @@
+{
+  "schema": "run047-048-exact-binary-cleanup-manifest-v1",
+  "status": "COMPLETED_RUN047_048_EXACT_BINARY_ZERO_500NM_VIOLATION_PHYSICS",
+  "generated_at_utc": "2026-08-18T00:31:50.437058+00:00",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/summarize_run047_048_exact_cleanup.py",
+  "raw_artifacts_not_committed": [
+    {
+      "role": "Run 047 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_objective/binary_objective_result.json",
+      "size_bytes": 5331,
+      "sha256": "0a7c9fd5c6813b29a2911b5785813699e924bab3a369f1a1d389b89f06617bc7"
+    },
+    {
+      "role": "Run 047 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_objective/binary_objective_fields.npz",
+      "size_bytes": 9308566,
+      "sha256": "44deb9398818900065cf0d63e64b14ad79eac8bcb24ca92dad98c6723b4deaa7"
+    },
+    {
+      "role": "Run 047 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_exact_binary_candidate.npz",
+      "size_bytes": 5598,
+      "sha256": "b202117579b22d3113b5a649e4f56a0f4479016c70587b8ebf61109f1b0a6ef7"
+    },
+    {
+      "role": "Run 047 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_objective/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180905061,
+      "sha256": "6c3d57eec596467fe89ce7a4053edce36872d3765545c7f69676e1e0a501bbc8"
+    },
+    {
+      "role": "Run 047 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_objective/exact_binary_forward_Ea_p0.log",
+      "size_bytes": 6562,
+      "sha256": "97c9633f10c6163078aacf7046eb51b8c949a57d632a6bad15be11fbc3c36694"
+    },
+    {
+      "role": "Run 047 cleanup provenance",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/exact_binary_repair_result.json",
+      "size_bytes": 5373,
+      "sha256": "0d22b285c5b9c47f25261b5a57c33e69ec636fa3afa29d04db1d838b15a8ff7f"
+    },
+    {
+      "role": "Run 048 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_result.json",
+      "size_bytes": 4867,
+      "sha256": "03cc16f77b36cd224482243c7efba283e4d9e09bb2e2de91a770ff6ad1248806"
+    },
+    {
+      "role": "Run 048 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_fields.npz",
+      "size_bytes": 9138329,
+      "sha256": "b9cb1d151de5c7e11ffb99bc27ebea8a1abd6f57f0a741c30cad5259198dca44"
+    },
+    {
+      "role": "Run 048 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_density.npz",
+      "size_bytes": 2088,
+      "sha256": "b07dafd6516dc858ed99489eefe053fc42441beb67eb32f506d79067ab6ad85c"
+    },
+    {
+      "role": "Run 048 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180904149,
+      "sha256": "24e46d63637202d8079af4854c449356c099f3d7ce636ee42b1c1c6858760fb4"
+    },
+    {
+      "role": "Run 048 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Eb_p0.log",
+      "size_bytes": 6298,
+      "sha256": "f5a2fe06c753c3466589fa6c9ed215fd88fccc82a9b9a8b7c28e025dba4d9bdc"
+    },
+    {
+      "role": "Run 048 cleanup provenance",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_048_left_right_electrodes_Eb_fresh_restart/results/FORCED_EXACT_CLEANUP.json",
+      "size_bytes": 14854,
+      "sha256": "20d4ea70130d60560ba0285d42e9fd8582af66be51a42d7a24769b42f5db9f90"
+    }
+  ],
+  "published_outputs": [
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/RUN047_048_EXACT_BINARY_CLEANUP_REPORT.md",
+      "size_bytes": 1625,
+      "sha256": "24db083cc70289b52dac9e45afba20d83ddfd73e6921a1feb6ca203612dc0873"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_048_exact_cleanup_summary.json",
+      "size_bytes": 5938,
+      "sha256": "44f2951dd048c6a2e544a244a167e3e2951226e87f16cd1a2a2d20683ad0d61e"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_048_exact_cleanup_metrics.csv",
+      "size_bytes": 3130,
+      "sha256": "9c18b38024a79e60a323286db4b110392fc8c04f4eb75c2f99933241d17d374f"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_thermally_grown_left-right_Ea_fields.png",
+      "size_bytes": 507381,
+      "sha256": "b1ee50d2b986bab02264fee99e3d2d13df673fb59589346822226c0dde540df8"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_thermally_grown_left-right_Ea_profiles.png",
+      "size_bytes": 231818,
+      "sha256": "0fd33fa9a461fb1bccae467e55c5d3d4db1748efbf52758ebbbdbd4f7e6ee11f"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_thermally_grown_left-right_Ea_decomposition.png",
+      "size_bytes": 90916,
+      "sha256": "c715ffc8943acda2832f9b3fa4ecbdd854e6ea6470dea6bb1319e8dbd97ff9ad"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run048_thermally_grown_left-right_Eb_fields.png",
+      "size_bytes": 579243,
+      "sha256": "712b5587e513c278ba5f5db651c88657d221a41cb5af3d9d179631e5fc0062f7"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run048_thermally_grown_left-right_Eb_profiles.png",
+      "size_bytes": 221764,
+      "sha256": "70d118746f325f39d17d75d9e3f3d57766c87ce496f4d79c03b92bf9f5cc037b"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run048_thermally_grown_left-right_Eb_decomposition.png",
+      "size_bytes": 91958,
+      "sha256": "85b4809e9d83892cb909ba96e62cdb10c41049aad9fa3b79a5cc110da8631f66"
+    },
+    {
+      "role": "published exact-cleanup artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run047_048_exact_binary_cleanup/run047_048_exact_cleanup_comparison.png",
+      "size_bytes": 95720,
+      "sha256": "e0128470d89be14768e9d992b7aba9a9268fb78c6a5ecc39ec0da9812b2e917b"
+    }
+  ]
+}

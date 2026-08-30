@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-from photothermal_pte.optimization_runs.run_002_gaussian10_w8p5_current_max import (
+from photothermal_pte.optimization_runs.legacy_v261_optical_support import (
     build_nonuniform_complex_yee_jacobian as builder,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined_adfd import (

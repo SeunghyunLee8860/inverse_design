@@ -5,7 +5,7 @@ import numpy as np
 from photothermal_pte.finite_inverse_design.finite_mapping import (
     _finite_conic_filter,
 )
-from photothermal_pte.optimization_runs.run_002_gaussian10_w8p5_current_max.production_density_mapping import (
+from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
 

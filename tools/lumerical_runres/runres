@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""run(1) with a FlexNet licence reservation held for the whole job.
+
+Same command line as `run`, plus reservation flags:
+
+    runres opt_v4.py -th 8 -GPU 0                 # reserve 9, fail fast if short
+    runres --reserve-wait 600 opt_v4.py -th 8 -GPU 0   # wait up to 10 min first
+    runres --reserve-count 18 sweep.py -th 8 -GPU 2    # two concurrent solves
+    runres --no-reserve opt_v4.py -th 8 -GPU 0         # plain `run`, no reservation
+
+Everything that is not a --reserve-* flag is passed to `run` untouched.
+
+This launcher, not the job, owns the reservation: it stays alive for the whole
+run, exports LM_PROJECT for the job to inherit, forwards Ctrl-C / SIGTERM to
+the job, and releases the licences once the job is gone -- including when the
+job crashes.  Only a SIGKILL of the launcher itself leaves a block behind, and
+the next reserved job sweeps that away.
+"""
+
+import os
+import shutil
+import signal
+import subprocess
+import sys
+
+MODULE_DIR = os.environ.get(
+    "LUM_RESERVE_MODULE_DIR", os.path.dirname(os.path.abspath(__file__))
+)
+RUN_CMD = os.environ.get("MSOPT_RUN_CMD", "")
+
+USAGE = __doc__
+
+
+def die(msg, code=2):
+    sys.stderr.write("runres: %s\n" % msg)
+    sys.exit(code)
+
+
+def split_args(argv):
+    """Peel off --reserve-* flags; everything else belongs to `run`."""
+    opts = {"wait": 0.0, "count": None, "tag": "", "reserve": True}
+    rest = []
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a in ("-h", "--help"):
+            sys.stdout.write(USAGE)
+            sys.exit(0)
+        if a == "--no-reserve":
+            opts["reserve"] = False
+        elif a in ("--reserve-wait", "--reserve-count", "--reserve-tag"):
+            if i + 1 >= len(argv):
+                die("%s needs a value" % a)
+            key = a.split("-")[-1]
+            opts[key] = argv[i + 1]
+            i += 1
+        elif a.startswith("--reserve-") and "=" in a:
+            key, _, val = a[len("--reserve-"):].partition("=")
+            if key not in ("wait", "count", "tag"):
+                die("unknown option %s" % a)
+            opts[key] = val
+        else:
+            rest.append(a)
+        i += 1
+    return opts, rest
+
+
+def main(argv):
+    opts, rest = split_args(argv[1:])
+    if not rest:
+        sys.stdout.write(USAGE)
+        return 2
+
+    run_bin = RUN_CMD or shutil.which("run")
+    if not run_bin:
+        die("cannot find the `run` command on PATH (set MSOPT_RUN_CMD)")
+    cmd = [run_bin] + rest
+
+    project = None
+    if opts["reserve"]:
+        if MODULE_DIR not in sys.path:
+            sys.path.insert(0, MODULE_DIR)
+        try:
+            import lum_reserve
+        except ImportError as exc:
+            die("cannot import lum_reserve from %s (%s)" % (MODULE_DIR, exc))
+
+        count = int(opts["count"]) if opts["count"] else lum_reserve.LICENCES_PER_SOLVE
+        try:
+            wait = float(opts["wait"])
+        except ValueError:
+            die("--reserve-wait needs a number of seconds")
+        tag = opts["tag"] or os.path.splitext(os.path.basename(rest[0]))[0]
+
+        try:
+            project = lum_reserve.acquire(count=count, tag=tag, wait_s=wait)
+        except RuntimeError as exc:
+            sys.stderr.write("\nrunres: could not reserve licences -- the job was "
+                             "NOT started.\n%s\n" % exc)
+            if wait <= 0:
+                sys.stderr.write(
+                    "\nRetry later, or wait for licences with:\n"
+                    "    runres --reserve-wait 600 %s\n" % " ".join(rest))
+            return 3
+
+    # From here the reservation is live: always take it down again.
+    child = subprocess.Popen(cmd)
+
+    def forward(signum, frame):
+        try:
+            child.send_signal(signum)      # let the job shut down on its own
+        except ProcessLookupError:
+            pass
+
+    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+        try:
+            signal.signal(sig, forward)    # replaces lum_reserve's own handler
+        except (ValueError, OSError):
+            pass
+
+    try:
+        while True:
+            try:
+                rc = child.wait()
+                break
+            except KeyboardInterrupt:
+                continue                   # forwarded already; keep waiting
+    finally:
+        if project:
+            try:
+                import lum_reserve
+                lum_reserve.release(project)
+            except Exception as exc:       # noqa: BLE001
+                sys.stderr.write(
+                    "runres: WARNING -- could not release %s (%s).\n"
+                    "Run `python %s/lum_reserve.py sweep` once this process is gone.\n"
+                    % (project, exc, MODULE_DIR))
+    return rc
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

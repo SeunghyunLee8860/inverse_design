@@ -1,0 +1,125 @@
+{
+  "schema": "run016-017-code-dependency-sha256-v1",
+  "files": {
+    "photothermal_pte/optimization_runs/run_contract.py": {
+      "size_bytes": 15320,
+      "sha256": "9fb68643e3421ea0a9bdfbe0a7c917955a4880ef8ac43fd79667d0910c45ebcb"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/contract.py": {
+      "size_bytes": 9724,
+      "sha256": "c17890c07371019b5635ed2e3efb6caaf510f19f772aa6456846d7419dad2654"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/optical.py": {
+      "size_bytes": 9847,
+      "sha256": "9092ec445d28a98cd89ba4d8499c27ac2a54985d6322e32a215a6cb2f5beab40"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/thermal.py": {
+      "size_bytes": 19158,
+      "sha256": "ec30d21c6c32c6d7fb28155567d6c062e812f622e17e0e36484ec370f70748de"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/electrical.py": {
+      "size_bytes": 10481,
+      "sha256": "3352feddf9707817596dac7a625095463099a31e88e19618210e406f2c1777df"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/optimization_support.py": {
+      "size_bytes": 7970,
+      "sha256": "6042e2f5d502f75746ed890118a33d88ef03527ead5c4adba2973621a5debf97"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/mma.py": {
+      "size_bytes": 6914,
+      "sha256": "0097f6d1f7ebe8e81c6eb76267853b9a9ee4a497e92a6d0e70ba3c4cb8cfa603"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/audit_optical_runsetup.py": {
+      "size_bytes": 11273,
+      "sha256": "e1b3a28d88df924fb6b93489f69cdf55008ce5f5badf8315e9acd23535dc2e81"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_forward_gpu.py": {
+      "size_bytes": 10008,
+      "sha256": "0534f0747199d593033f42bac4db950060a4b79b08b4edb944b7ba7def6584bc"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/compare_forward_meshes.py": {
+      "size_bytes": 6986,
+      "sha256": "455db529f5c42e19535226d6d9c647a39bdd4404bc16d6e643cca10b5c45c544"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": {
+      "size_bytes": 8914,
+      "sha256": "a89c013210856ff51691ae32ab9abab430507cbbefc33be13beb714f71cff354"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_binary_objective.py": {
+      "size_bytes": 6862,
+      "sha256": "d1619dba12d9648bd94e7cf5483a0c4825e73367d8bc2aab9b4276be7f52f8bb"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/validate_combined_adfd.py": {
+      "size_bytes": 25679,
+      "sha256": "9c78a8732cb002dac991366f75749df195d966cef0ec29246a3b83eb034458a3"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": {
+      "size_bytes": 41273,
+      "sha256": "8987668eb1af224b923fa8a1d963fbb862a1cd4a3e0ca3895a9c5aa51a8c9f26"
+    },
+    "photothermal_pte/optimization_runs/run_true_mma_dual_supervisor.py": {
+      "size_bytes": 10002,
+      "sha256": "db507a03229bc07441e2c7af7b99af001ded11b08075ff0be4ce5fcb954d0589"
+    },
+    "photothermal_pte/optimization_runs/publish_true_mma_accepted_updates.py": {
+      "size_bytes": 3367,
+      "sha256": "7f47fb38415fb47fec3b1d650297f3c9107c3cc0b5124fab1edb728abf96cee2"
+    },
+    "photothermal_pte/optimization_runs/cuda_thermal_adjoint.py": {
+      "size_bytes": 9311,
+      "sha256": "6432debbd42009949401da2ed26e38e6fcc1c4bcc282206f3b81a004760cdc2a"
+    },
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/production_density_mapping.py": {
+      "size_bytes": 4791,
+      "sha256": "93bd8c2bfdf5ac8c7704105e55bbbe062d827f02bf806288d67dee8932a42f15"
+    },
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/build_nonuniform_complex_yee_jacobian.py": {
+      "size_bytes": 38065,
+      "sha256": "8d79fb485731e9e2013b5c97710ecdc65a9091d393e7f270163b06791cf85865"
+    },
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/run_complex_material_control.py": {
+      "size_bytes": 15106,
+      "sha256": "c6e1b04b27ed6fd46f127cc1fb5e099f8fcdefc5588cf977e0e79d4394bee937"
+    },
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/run_production_combined_adfd_smoke.py": {
+      "size_bytes": 49824,
+      "sha256": "bb3854ea679fa38fb4a9e897efe1a6b6cda002160608f5d8db9d76b9113ba92e"
+    },
+    "photothermal_pte/finite_inverse_design/finite_q_mapping.py": {
+      "size_bytes": 29597,
+      "sha256": "c0d52138c5e63f05b07afff3175d1716b4d2cfdf6ac39079dd480ebfd8b0c8e0"
+    },
+    "photothermal_pte/finite_inverse_design/native_yee_q.py": {
+      "size_bytes": 6794,
+      "sha256": "93502fe85d3ee9de6177c8d347e8e3f1087b3a80834396a2fe93c2bdd2efc511"
+    },
+    "photothermal_pte/finite_inverse_design/yee_material_jacobian.py": {
+      "size_bytes": 2304,
+      "sha256": "e951e71a09c9983492d5d76aa5a0b7e492eb572c23fb56851d4d332142ca4b94"
+    },
+    "photothermal_pte/finite_inverse_design/probe_v261_cpu_tfsf_device.py": {
+      "size_bytes": 19859,
+      "sha256": "dd877ea8857830d179f7ea2bafef73f57dbabf814246833cc0b2c0d1e09174de"
+    },
+    "photothermal_pte/finite_inverse_design/run_v261_large_background_mixed_optical_adfd.py": {
+      "size_bytes": 49139,
+      "sha256": "3d02158c92f64910c38dcfd4d80ead27df4566419cd76805315940e4aed686b1"
+    },
+    "photothermal_pte/validation/photothermal_stage1/anisotropic_heat_fvm.py": {
+      "size_bytes": 31342,
+      "sha256": "b85f993f8e60ad93e9fc569adb89596d50a464896b2a291f469dbc0d0223ff57"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_mma.py": {
+      "size_bytes": 1469,
+      "sha256": "3e77ba98061238e6de22971b7230bedb57af81eac475031ed1edebc9f56274cc"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_true_mma_driver.py": {
+      "size_bytes": 4615,
+      "sha256": "4ed2b7e61e39208f9d4c5328c2cb8268970e5298ce074ee28cbb1fe5cd056355"
+    },
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_thermal.py": {
+      "size_bytes": 1839,
+      "sha256": "aa53599bc6e1c6b1daf7ed5f433bc9d58bebf73479399f9e17fae4939aa8e47a"
+    }
+  }
+}

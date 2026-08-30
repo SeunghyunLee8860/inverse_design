@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import time
 import traceback
@@ -20,6 +21,8 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
     compact_forward,
     load_operator,
     open_fdtd,
+    lumerical_gpu_engine_lock,
+    polarization_angle,
     pullback_q,
     run_forward,
     sha256,
@@ -29,6 +32,32 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
 import build_nonuniform_complex_yee_jacobian as jacobian_builder
 import run_production_combined_adfd_smoke as legacy_combined
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.ansys_minimum_feature import (
+    evaluate_on_cad as evaluate_ansys_minimum_feature,
+)
+from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
+    thermal_interface_contract,
+)
+
+
+RHO_ROUNDOFF_TOLERANCE = 1.0e-12
+
+
+def discard_regenerable_projects(paths: tuple[Path, ...]) -> list[dict[str, object]]:
+    """Delete successful per-evaluation FSPs after recording provenance."""
+    discarded: list[dict[str, object]] = []
+    for project_path in paths:
+        if not project_path.is_file():
+            continue
+        discarded.append(
+            {
+                "path": str(project_path),
+                "size_bytes": project_path.stat().st_size,
+                "sha256": sha256(project_path),
+            }
+        )
+        project_path.unlink()
+    return discarded
 
 
 def load_rho(path: Path) -> np.ndarray:
@@ -39,9 +68,17 @@ def load_rho(path: Path) -> np.ndarray:
         rho = np.asarray(data["rho"], dtype=np.float64)
     if rho.shape != CONTRACT.design_node_shape:
         raise RuntimeError(f"rho shape {rho.shape} != {CONTRACT.design_node_shape}")
-    if not np.all(np.isfinite(rho)) or np.any((rho < 0.0) | (rho > 1.0)):
+    if not np.all(np.isfinite(rho)):
         raise RuntimeError("rho must be finite in [0,1]")
-    return rho
+    if np.any(rho < -RHO_ROUNDOFF_TOLERANCE) or np.any(
+        rho > 1.0 + RHO_ROUNDOFF_TOLERANCE
+    ):
+        raise RuntimeError("rho must be finite in [0,1]")
+    # The analytical tanh projection can differ from its mathematical [0,1]
+    # range by one floating-point ulp at high beta (observed: -5.55e-17 at
+    # beta=16). Canonicalize only this bounded roundoff; material densities
+    # outside the explicit tolerance still fail closed above.
+    return np.clip(rho, 0.0, 1.0)
 
 
 def main() -> int:
@@ -50,15 +87,34 @@ def main() -> int:
     parser.add_argument("--base-sha256", required=True)
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--rho-npz", required=True, type=Path)
+    parser.add_argument("--latent-npz", type=Path)
+    parser.add_argument("--dfm-beta", type=float)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--gpu-device", default="GPU 5")
     parser.add_argument("--cuda-device", type=int, default=0)
+    parser.add_argument(
+        "--discard-fsp-after-success",
+        action="store_true",
+        help=(
+            "Remove per-evaluation forward/adjoint/template FSP projects only "
+            "after the validated NPZ and their path/size/SHA provenance have "
+            "been recorded. Intended for long optimization runs."
+        ),
+    )
     args = parser.parse_args()
     base_fsp = checked(args.base_fsp, args.base_sha256)
     _, _, operator_meta = load_operator(args.jacobian_dir)
-    rho = load_rho(args.rho_npz)
-    angle = 90.0 if args.polarization == "Ea" else 0.0
+    rho = CONTRACT.apply_fixed_contact_density(load_rho(args.rho_npz))
+    latent = None
+    if (args.latent_npz is None) != (args.dfm_beta is None):
+        raise RuntimeError("--latent-npz and --dfm-beta must be supplied together")
+    if args.latent_npz is not None:
+        with np.load(args.latent_npz.expanduser().resolve()) as data:
+            latent = np.asarray(data["latent"], dtype=np.float64)
+        if latent.shape != CONTRACT.design_node_shape:
+            raise RuntimeError("latent DFM shape does not match the design contract")
+    angle = polarization_angle(args.polarization)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
@@ -73,6 +129,17 @@ def main() -> int:
     started = time.monotonic()
     try:
         fdtd, audit, runtime = open_fdtd(args.gpu_device)
+        ansys_dfm_indicators = np.zeros(2, dtype=np.float64)
+        ansys_dfm_gradient = np.zeros_like(rho)
+        ansys_dfm = None
+        if latent is not None:
+            latent = CONTRACT.apply_fixed_contact_density(latent)
+            ansys_dfm_indicators, ansys_dfm_gradient, ansys_dfm = (
+                evaluate_ansys_minimum_feature(fdtd, latent, float(args.dfm_beta))
+            )
+            ansys_dfm_gradient = CONTRACT.zero_fixed_contact_gradient(
+                ansys_dfm_gradient
+            )
         forward = run_forward(
             fdtd,
             audit,
@@ -108,13 +175,15 @@ def main() -> int:
             native_source=native_source,
             template=template,
         )
-        adjoint = legacy_combined.run_adjoint(
-            fdtd,
-            audit,
-            runtime,
-            template=template,
-            project=output / "adjoint_gpu.fsp",
-        )
+        with lumerical_gpu_engine_lock() as adjoint_lock_metadata:
+            adjoint = legacy_combined.run_adjoint(
+                fdtd,
+                audit,
+                runtime,
+                template=template,
+                project=output / "adjoint_gpu.fsp",
+            )
+        adjoint["global_gpu_engine_lock"] = adjoint_lock_metadata
         gradient_optical, optical_meta = legacy_combined.optical_gradient(
             local_operator,
             forward=forward,
@@ -123,8 +192,16 @@ def main() -> int:
             profile_scale=profile_scale,
             base_amplitude=base_amplitude,
         )
-        gradient_thermal = coupled["gradient_thermal"]
-        gradient_electrical = coupled["gradient_electrical"]
+        gradient_optical = CONTRACT.zero_fixed_contact_gradient(gradient_optical)
+        gradient_thermal = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_thermal"]
+        )
+        gradient_electrical = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_electrical"]
+        )
+        gradient_terminal_conductance = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_terminal_conductance"]
+        )
         gradient_total = gradient_optical + gradient_thermal + gradient_electrical
         if not np.all(np.isfinite(gradient_total)) or np.max(np.abs(gradient_total)) == 0.0:
             raise RuntimeError("objective gradient is zero or nonfinite")
@@ -138,8 +215,10 @@ def main() -> int:
             gradient_thermal_A=gradient_thermal,
             gradient_electrical_A=gradient_electrical,
             terminal_conductance_S=np.asarray(coupled["electrical"].terminal_conductance_S),
-            gradient_terminal_conductance_S=coupled["gradient_terminal_conductance"],
+            gradient_terminal_conductance_S=gradient_terminal_conductance,
             temperature_K=coupled["temperature"],
+            ansys_dfm_indicators=ansys_dfm_indicators,
+            ansys_dfm_gradient_latent=ansys_dfm_gradient,
         )
         passed = bool(
             forward["closure"] < 0.005
@@ -157,6 +236,7 @@ def main() -> int:
             "polarization": args.polarization,
             "polarization_angle_deg": angle,
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "thermal_interface_contract": thermal_interface_contract(),
             "objective": "signed full-flake terminal PTE current",
             "objective_A": coupled["electrical"].current_A,
             "rho_range": [float(np.min(rho)), float(np.max(rho))],
@@ -180,6 +260,7 @@ def main() -> int:
             "adjoint_source": source_meta,
             "adjoint": {key: value for key, value in adjoint.items() if key not in {"electric", "grid"}},
             "optical_gradient": optical_meta,
+            "ansys_minimum_feature": ansys_dfm,
             "raw_artifact": {
                 "path": str(raw),
                 "size_bytes": raw.stat().st_size,
@@ -194,6 +275,21 @@ def main() -> int:
             "CPU_thermal_linear_solve_fallback": False,
             "wall_s": time.monotonic() - started,
         }
+        if args.discard_fsp_after_success:
+            discarded_projects = discard_regenerable_projects(
+                (
+                    Path(forward["project"]["path"]),
+                    template,
+                    Path(adjoint["project"]["path"]),
+                )
+            )
+            result["large_project_retention"] = {
+                "policy": "discard_regenerable_per_evaluation_fsp_after_success",
+                "retained": False,
+                "discarded_projects": discarded_projects,
+                "objective_gradient_npz_retained": True,
+                "density_and_optimizer_checkpoints_retained": True,
+            }
     except Exception as exc:
         result.update(
             error=f"{type(exc).__name__}: {exc}",
@@ -207,7 +303,25 @@ def main() -> int:
             except Exception:
                 pass
         result_path.write_text(json.dumps(result, indent=2, default=str) + "\n")
-    print(json.dumps(result, indent=2, default=str))
+    if os.environ.get("TAIRTE4_VERBOSE_RESULT", "0") == "1":
+        print(json.dumps(result, indent=2, default=str))
+    else:
+        print(
+            json.dumps(
+                {
+                    "status": result.get("status"),
+                    "passed": result.get("passed"),
+                    "polarization": result.get("polarization"),
+                    "objective_A": result.get("objective_A"),
+                    "Q_mapping_relative_error": result.get("Q_mapping", {}).get(
+                        "relative_mapping_error"
+                    ),
+                    "wall_s": result.get("wall_s"),
+                    "result_path": str(result_path),
+                },
+                default=str,
+            )
+        )
     return 0 if result.get("passed") else 1
 
 

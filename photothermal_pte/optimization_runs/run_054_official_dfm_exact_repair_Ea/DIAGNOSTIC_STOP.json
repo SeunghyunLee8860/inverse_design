@@ -1,0 +1,16 @@
+{
+  "status": "STOPPED_LOW_BETA_ENDPOINT_COLLAPSE",
+  "completed_optimization": false,
+  "last_completed_evaluation": 6,
+  "beta": 1.0,
+  "rho_range": [0.0, 1.0],
+  "frozen_lower_endpoint_node_count": 13289,
+  "frozen_upper_endpoint_node_count": 18531,
+  "objective_at_285uW_A": 4.5870880862089556e-7,
+  "cause": "unbounded NLopt LD_MMA asymptote expansion within the first beta stage",
+  "physical_solver_gates_passed": true,
+  "official_dfm_active": false,
+  "official_dfm_note": "beta=1 is below the official activation threshold beta>12",
+  "next_action": "restart from uniform rho=0.5 with beta-stage trust-region bounds",
+  "result_promoted": false
+}

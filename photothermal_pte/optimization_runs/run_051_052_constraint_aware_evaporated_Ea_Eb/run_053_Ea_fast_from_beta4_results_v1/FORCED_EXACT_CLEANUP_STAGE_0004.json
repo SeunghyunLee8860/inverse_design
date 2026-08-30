@@ -1,0 +1,100 @@
+{
+  "trigger": "constraint_target_streak_passed_before_beta_promotion",
+  "selection_rule": "no eligible exact-binary candidate",
+  "selected": null,
+  "candidates": {
+    "solid_first": {
+      "audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+        "solid_bad_cell_count": 1,
+        "void_bad_cell_count": 0,
+        "total_bad_cell_count": 1,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.82409529117896,
+        "passed": false
+      },
+      "repair_stop_reason": "cycle_detected",
+      "repair_history": [
+        {
+          "iteration": 0,
+          "solid_bad": 10,
+          "void_bad": 57,
+          "total_bad": 67,
+          "solid_fraction": 0.8231456823764992
+        },
+        {
+          "iteration": 1,
+          "solid_bad": 1,
+          "void_bad": 0,
+          "total_bad": 1,
+          "solid_fraction": 0.82409529117896
+        },
+        {
+          "iteration": 2,
+          "solid_bad": 1,
+          "void_bad": 0,
+          "total_bad": 1,
+          "solid_fraction": 0.82409529117896
+        }
+      ],
+      "changed_node_count": 66,
+      "density": null,
+      "result": null,
+      "numerical_physics_gates_passed": false,
+      "eligible_for_selection": false
+    },
+    "void_first": {
+      "audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+        "solid_bad_cell_count": 0,
+        "void_bad_cell_count": 1,
+        "total_bad_cell_count": 1,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.8241572221878161,
+        "passed": false
+      },
+      "repair_stop_reason": "cycle_detected",
+      "repair_history": [
+        {
+          "iteration": 0,
+          "solid_bad": 10,
+          "void_bad": 57,
+          "total_bad": 67,
+          "solid_fraction": 0.8231456823764992
+        },
+        {
+          "iteration": 1,
+          "solid_bad": 0,
+          "void_bad": 1,
+          "total_bad": 1,
+          "solid_fraction": 0.8241572221878161
+        },
+        {
+          "iteration": 2,
+          "solid_bad": 0,
+          "void_bad": 1,
+          "total_bad": 1,
+          "solid_fraction": 0.8241572221878161
+        }
+      ],
+      "changed_node_count": 63,
+      "density": null,
+      "result": null,
+      "numerical_physics_gates_passed": false,
+      "eligible_for_selection": false
+    }
+  },
+  "objective_acceptance": "selected exact-binary objective must be greater than or equal to the continuous reference objective"
+}

@@ -1,0 +1,22 @@
+{
+  "stage": "complete",
+  "updated_at_utc": "2026-08-12T21:13:38.554212+00:00",
+  "pid": 3100506,
+  "gpu": 5,
+  "polarization": "Ea",
+  "polarization_angle_deg": 90,
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "electrical_terminals": {
+    "bottom": 0.0,
+    "top": 1.0
+  },
+  "geometry_mode": "contact_anchored",
+  "thermal_interface_scenario": "evaporated",
+  "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+  "fresh_restart": true,
+  "initial_density": 0.5,
+  "warm_restart": false,
+  "mma_internal_state_reused": false,
+  "status": "complete",
+  "final_result": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_049_top_bottom_evaporated_sio2_Ea_fresh_restart/results/FINAL_RESULT.json"
+}

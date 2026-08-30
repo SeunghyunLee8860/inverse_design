@@ -41,8 +41,8 @@
   sensitivity, exact-binary DRC, and full latent/filter/projection AD–FD
   remain required before optimization.
 - Report, JSON, CSV, plot, and raw-artifact provenance:
-  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/` and
-  `optimization_runs/run_002_gaussian10_w8p5_current_max/manifests/RAW_ARTIFACT_MANIFEST.json`.
+  `optimization_runs/legacy_v261_optical_support/results/` and
+  `optimization_runs/legacy_v261_optical_support/manifests/RAW_ARTIFACT_MANIFEST.json`.
 
 ## Fixed Device-A Lumerical coordinate convention
 
@@ -2026,7 +2026,7 @@ adjoint, gradient, and optimization were not run.
   FDTD fallback, empirical normalization, Q rescaling, or optimization was
   used. Optimization iterations remain zero.
 - Report:
-  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_COMBINED_ADFD_SMOKE_REPORT.md`.
+  `optimization_runs/legacy_v261_optical_support/results/PRODUCTION_COMBINED_ADFD_SMOKE_REPORT.md`.
 
 # Run 002 production design-window selection — 2026-08-06
 
@@ -2041,7 +2041,7 @@ adjoint, gradient, and optimization were not run.
 - This was SHA-pinned offline analysis: zero Maxwell solves, zero thermal
   solves, and zero optimization iterations.
 - Report:
-  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_DESIGN_WINDOW_SELECTION_REPORT.md`.
+  `optimization_runs/legacy_v261_optical_support/results/PRODUCTION_DESIGN_WINDOW_SELECTION_REPORT.md`.
 
 # Run 002 finite production filter/projection — 2026-08-06
 
@@ -2057,4 +2057,4 @@ adjoint, gradient, and optimization were not run.
   FD result was rescaled. No Maxwell, thermal, or optimization solve ran.
 - This is not an exact-binary DRC or full latent AD-FD certificate.
 - Report:
-  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_FINITE_FILTER_PROJECTION_REPORT.md`.
+  `optimization_runs/legacy_v261_optical_support/results/PRODUCTION_FINITE_FILTER_PROJECTION_REPORT.md`.

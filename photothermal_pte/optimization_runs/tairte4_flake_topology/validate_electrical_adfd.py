@@ -87,6 +87,7 @@ def evaluate(mesh, rho, temperature, leakage: float, device: int) -> tuple[Elect
         sigma_penalty=CONTRACT.sigma_penalty,
         alpha_penalty=CONTRACT.alpha_penalty,
         linear_solve=solver,
+        terminal_axis=CONTRACT.contact_axis,
     )
     return result, solver.records
 

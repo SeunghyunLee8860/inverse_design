@@ -1,0 +1,313 @@
+{
+  "schema": "exact-binary-beam-position-spatial-summary-v1",
+  "generated_at_utc": "2026-08-22T10:11:24.032404+00:00",
+  "input_root": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_position_fields_with_au/production",
+  "runs": [
+    44,
+    45,
+    47,
+    48,
+    55,
+    56,
+    57,
+    58
+  ],
+  "positions_per_run": 25,
+  "total_positions": 200,
+  "all_passed": true,
+  "optimization_rerun": false,
+  "flake_expanded_for_scan": false,
+  "target_incident_power_W": 0.000285,
+  "plot_limits": {
+    "44": {
+      "thermal": {
+        "top_min": 0.00028619343510666155,
+        "top_max": 0.5233913280815392,
+        "bottom_min": 0.15634347031925105,
+        "bottom_max": 1768215.15385491
+      },
+      "current": {
+        "top_min": 5.260465291778867e-08,
+        "top_max": 886930.1141646148,
+        "bottom_min": -7562.64185291141,
+        "bottom_max": 17616.561100064155
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 2571778.198851356,
+        "bottom_min": -4.0799041448261946e-06,
+        "bottom_max": 3.69983243515436e-06
+      }
+    },
+    "45": {
+      "thermal": {
+        "top_min": 0.00021153781169640874,
+        "top_max": 0.201352112736526,
+        "bottom_min": 0.0802851532786778,
+        "bottom_max": 602807.7772970424
+      },
+      "current": {
+        "top_min": 5.489303661198094e-07,
+        "top_max": 400631.9234754986,
+        "bottom_min": -2971.579256671079,
+        "bottom_max": 3080.363735637821
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 887014.3034016169,
+        "bottom_min": -1.6941850161950993e-06,
+        "bottom_max": 2.539530021428116e-06
+      }
+    },
+    "47": {
+      "thermal": {
+        "top_min": 0.0002655746513605987,
+        "top_max": 0.4817765239079428,
+        "bottom_min": 1.6163271102774321,
+        "bottom_max": 1640229.130067178
+      },
+      "current": {
+        "top_min": 1.1223803549821166e-08,
+        "top_max": 979208.0219551582,
+        "bottom_min": -6475.156888196113,
+        "bottom_max": 13761.419088261968
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 3280094.6110357516,
+        "bottom_min": -1.0122114313011431e-05,
+        "bottom_max": 1.6181260246081717e-06
+      }
+    },
+    "48": {
+      "thermal": {
+        "top_min": 0.00024989358397698634,
+        "top_max": 0.22903250947313175,
+        "bottom_min": 0.13478811664721732,
+        "bottom_max": 1091826.0309461814
+      },
+      "current": {
+        "top_min": 5.3369076691861915e-08,
+        "top_max": 416517.88050134334,
+        "bottom_min": -3559.5844000468796,
+        "bottom_max": 2863.9352830389626
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 2985362.63649897,
+        "bottom_min": -3.3963560724324363e-06,
+        "bottom_max": 1.678524116221769e-06
+      }
+    },
+    "55": {
+      "thermal": {
+        "top_min": 0.00038403654784250816,
+        "top_max": 3.2002995581572953,
+        "bottom_min": 0.7650831640379558,
+        "bottom_max": 9538758.26657744
+      },
+      "current": {
+        "top_min": 4.632446336525315e-06,
+        "top_max": 5449392.845833713,
+        "bottom_min": -76683.34048385838,
+        "bottom_max": 58116.65486558173
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 2492887.198991501,
+        "bottom_min": -2.0606851956431972e-05,
+        "bottom_max": 4.1510748663590636e-05
+      }
+    },
+    "56": {
+      "thermal": {
+        "top_min": 0.00036233584488807035,
+        "top_max": 3.220610007298507,
+        "bottom_min": 1.6074473279285157,
+        "bottom_max": 9953131.570900248
+      },
+      "current": {
+        "top_min": 1.6298550366556988e-06,
+        "top_max": 4765605.911403394,
+        "bottom_min": -77776.96325609331,
+        "bottom_max": 66281.42287822707
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 845263.1877513806,
+        "bottom_min": -2.2957563036380554e-05,
+        "bottom_max": 3.476719158655281e-05
+      }
+    },
+    "57": {
+      "thermal": {
+        "top_min": 0.0003171476361037716,
+        "top_max": 3.5363896171143283,
+        "bottom_min": 1.4024120950368482,
+        "bottom_max": 8698499.383403245
+      },
+      "current": {
+        "top_min": 2.878296131496661e-06,
+        "top_max": 5129365.833989804,
+        "bottom_min": -47693.41371506943,
+        "bottom_max": 29626.903474155242
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 3404686.1760411127,
+        "bottom_min": -5.390210661925333e-05,
+        "bottom_max": 2.24927362935558e-05
+      }
+    },
+    "58": {
+      "thermal": {
+        "top_min": 0.0003844328964007734,
+        "top_max": 3.4740570437746916,
+        "bottom_min": 0.5887102418264227,
+        "bottom_max": 8585680.688843213
+      },
+      "current": {
+        "top_min": 2.0446106569287959e-07,
+        "top_max": 6039309.741546856,
+        "bottom_min": -43256.439514687416,
+        "bottom_max": 24564.58057897765
+      },
+      "optical_electrical": {
+        "top_min": 0.0,
+        "top_max": 2981257.248021137,
+        "bottom_min": -4.095720711088732e-05,
+        "bottom_max": 2.8134542511661983e-05
+      }
+    }
+  },
+  "run_summaries": {
+    "44": {
+      "contact_axis": "y",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Ea",
+      "current_range_nA": [
+        -8.341752170350619,
+        92.02437418743347
+      ],
+      "maximum_temperature_K": 0.5233913280815392,
+      "maximum_temperature_gradient_K_m": 1768215.15385491,
+      "maximum_local_J_A_m2": 886930.1141646148,
+      "maximum_pte_reintegration_relative_error": 2.9733645670881246e-16,
+      "maximum_total_J_reintegration_relative_error": 9.032276822509275e-09,
+      "maximum_short_circuit_continuity_residual": 9.653421639742608e-11,
+      "maximum_reference_current_relative_error": 1.5889128482020665e-10
+    },
+    "45": {
+      "contact_axis": "y",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Eb",
+      "current_range_nA": [
+        -24.902751549153244,
+        57.77098012803088
+      ],
+      "maximum_temperature_K": 0.201352112736526,
+      "maximum_temperature_gradient_K_m": 602807.7772970424,
+      "maximum_local_J_A_m2": 400631.9234754986,
+      "maximum_pte_reintegration_relative_error": 3.223157328166848e-16,
+      "maximum_total_J_reintegration_relative_error": 3.1769748770589422e-09,
+      "maximum_short_circuit_continuity_residual": 9.740670707299276e-11,
+      "maximum_reference_current_relative_error": 6.620000476549234e-11
+    },
+    "47": {
+      "contact_axis": "x",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Ea",
+      "current_range_nA": [
+        -2.7278483547768,
+        47.657727214380586
+      ],
+      "maximum_temperature_K": 0.4817765239079428,
+      "maximum_temperature_gradient_K_m": 1640229.130067178,
+      "maximum_local_J_A_m2": 979208.0219551582,
+      "maximum_pte_reintegration_relative_error": 3.3475419508364272e-16,
+      "maximum_total_J_reintegration_relative_error": 1.2379044492299745e-09,
+      "maximum_short_circuit_continuity_residual": 9.879122366469988e-11,
+      "maximum_reference_current_relative_error": 3.115895701991588e-09
+    },
+    "48": {
+      "contact_axis": "x",
+      "interface_scenario": "thermally_grown",
+      "polarization": "Eb",
+      "current_range_nA": [
+        -11.298727924844997,
+        23.340305034498154
+      ],
+      "maximum_temperature_K": 0.22903250947313175,
+      "maximum_temperature_gradient_K_m": 1091826.0309461814,
+      "maximum_local_J_A_m2": 416517.88050134334,
+      "maximum_pte_reintegration_relative_error": 5.645019353941166e-16,
+      "maximum_total_J_reintegration_relative_error": 8.832481568502182e-10,
+      "maximum_short_circuit_continuity_residual": 9.937973857916565e-11,
+      "maximum_reference_current_relative_error": 7.391016580863396e-11
+    },
+    "55": {
+      "contact_axis": "y",
+      "interface_scenario": "evaporated",
+      "polarization": "Ea",
+      "current_range_nA": [
+        -274.7373417834768,
+        794.3357148981133
+      ],
+      "maximum_temperature_K": 3.2002995581572953,
+      "maximum_temperature_gradient_K_m": 9538758.26657744,
+      "maximum_local_J_A_m2": 5449392.845833713,
+      "maximum_pte_reintegration_relative_error": 4.1787768130488704e-16,
+      "maximum_total_J_reintegration_relative_error": 2.902777643946716e-10,
+      "maximum_short_circuit_continuity_residual": 9.731917653749935e-11,
+      "maximum_reference_current_relative_error": 1.42651332089066e-11
+    },
+    "56": {
+      "contact_axis": "y",
+      "interface_scenario": "evaporated",
+      "polarization": "Eb",
+      "current_range_nA": [
+        -226.69828101184135,
+        913.4366393093463
+      ],
+      "maximum_temperature_K": 3.220610007298507,
+      "maximum_temperature_gradient_K_m": 9953131.570900248,
+      "maximum_local_J_A_m2": 4765605.911403394,
+      "maximum_pte_reintegration_relative_error": 4.778428110868687e-16,
+      "maximum_total_J_reintegration_relative_error": 2.0137654919440628e-09,
+      "maximum_short_circuit_continuity_residual": 9.955486706881352e-11,
+      "maximum_reference_current_relative_error": 1.0531769413399869e-11
+    },
+    "57": {
+      "contact_axis": "x",
+      "interface_scenario": "evaporated",
+      "polarization": "Ea",
+      "current_range_nA": [
+        -83.07998450108788,
+        317.37555050761966
+      ],
+      "maximum_temperature_K": 3.5363896171143283,
+      "maximum_temperature_gradient_K_m": 8698499.383403245,
+      "maximum_local_J_A_m2": 5129365.833989804,
+      "maximum_pte_reintegration_relative_error": 2.9060128164059545e-16,
+      "maximum_total_J_reintegration_relative_error": 2.4042619373072414e-09,
+      "maximum_short_circuit_continuity_residual": 9.673203628260581e-11,
+      "maximum_reference_current_relative_error": 2.3935267159558175e-12
+    },
+    "58": {
+      "contact_axis": "x",
+      "interface_scenario": "evaporated",
+      "polarization": "Eb",
+      "current_range_nA": [
+        -158.83568447813104,
+        331.95581971496716
+      ],
+      "maximum_temperature_K": 3.4740570437746916,
+      "maximum_temperature_gradient_K_m": 8585680.688843213,
+      "maximum_local_J_A_m2": 6039309.741546856,
+      "maximum_pte_reintegration_relative_error": 4.047051581293459e-16,
+      "maximum_total_J_reintegration_relative_error": 3.9709546557669116e-10,
+      "maximum_short_circuit_continuity_residual": 9.783634241743613e-11,
+      "maximum_reference_current_relative_error": 2.119094257322492e-12
+    }
+  }
+}

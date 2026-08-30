@@ -1,0 +1,28 @@
+{
+  "schema": "parallel-ansys-dfm-ld-mma-supervisor-v1",
+  "generated_at_utc": "2026-08-13T05:36:33.947826+00:00",
+  "runs": {
+    "Ea": {
+      "gpu": 0,
+      "pid": 1338474,
+      "returncode": null,
+      "running": true,
+      "final_result_passed": false,
+      "raw": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated",
+      "published": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_051_052_constraint_aware_evaporated_Ea_Eb/run_051_Ea_results",
+      "log": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated.log"
+    },
+    "Eb": {
+      "gpu": 4,
+      "pid": 1338475,
+      "returncode": null,
+      "running": true,
+      "final_result_passed": false,
+      "raw": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run052_constraint_aware_Eb_evaporated",
+      "published": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_051_052_constraint_aware_evaporated_Ea_Eb/run_052_Eb_results",
+      "log": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run052_constraint_aware_Eb_evaporated.log"
+    }
+  },
+  "all_finished": false,
+  "all_passed": false
+}

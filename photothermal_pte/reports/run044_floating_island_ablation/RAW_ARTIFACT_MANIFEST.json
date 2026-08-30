@@ -1,0 +1,56 @@
+{
+  "schema": "run044-floating-island-ablation-artifact-manifest-v1",
+  "generated_at_utc": "2026-08-17T22:46:34.699917+00:00",
+  "raw_artifacts_committed_to_git": false,
+  "generation_command": "TAIRTE4_TOPOLOGY_GEOMETRY=contact_anchored PYTHONPATH=. /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/summarize_run044_floating_island_ablation.py",
+  "artifacts": [
+    {
+      "role": "original Run 044 result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_result.json",
+      "size_bytes": 4777,
+      "sha256": "6564c6dda47cdcf92c170e7ef7780638011e8a36d4af5a4b989ef9114f4f4e5f"
+    },
+    {
+      "role": "original Run 044 fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_fields.npz",
+      "size_bytes": 9390039,
+      "sha256": "9174cab0e4441807d32d578a4d88995bb346a5a82b94f02b58b85ab04d84fc25"
+    },
+    {
+      "role": "original Run 044 exact density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+      "size_bytes": 5457,
+      "sha256": "9e309d47d52ea1d5784bcae9623343b877840cd74684efd27f46490aaa75091f"
+    },
+    {
+      "role": "islands-removed result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_remove_floating_islands_20260817/islands_removed_Ea_gpu_objective_retry2/binary_objective_result.json",
+      "size_bytes": 5185,
+      "sha256": "3a97797ad9177540fe1603f1462c62b548a7b5b5864c1f229195d856576fd4c6"
+    },
+    {
+      "role": "islands-removed fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_remove_floating_islands_20260817/islands_removed_Ea_gpu_objective_retry2/binary_objective_fields.npz",
+      "size_bytes": 9167928,
+      "sha256": "f06904ac13d98ade3d74160b99aafff5c8ed72a179b04a2190c1de9401dd1dc1"
+    },
+    {
+      "role": "islands-removed raw FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_remove_floating_islands_20260817/islands_removed_Ea_gpu_objective_retry2/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180904917,
+      "sha256": "99dacba1b5083ff63676a95e0e925a27e931ebb208a94fb5d5e5a366c35114f1"
+    },
+    {
+      "role": "islands-removed exact density",
+      "path": "/home/seunghyun/tairte4/artifacts/run044_remove_floating_islands_20260817/run044_islands_removed_exact_binary.npz",
+      "size_bytes": 4808,
+      "sha256": "2e6088b72641a8258c70d3b22e1a67592c99e381244467df6e6e8fd71d3856dc"
+    },
+    {
+      "role": "connectivity transform audit",
+      "path": "/home/seunghyun/tairte4/artifacts/run044_remove_floating_islands_20260817/connectivity_transform_audit.json",
+      "size_bytes": 6203,
+      "sha256": "1ccc12dc823db217b018a2fae05740fc6d654f64cc68dfffa28182625a0d0107"
+    }
+  ]
+}

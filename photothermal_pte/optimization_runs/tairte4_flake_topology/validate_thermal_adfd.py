@@ -149,6 +149,7 @@ def main() -> int:
         sigma_penalty=CONTRACT.sigma_penalty,
         alpha_penalty=CONTRACT.alpha_penalty,
         linear_solve=electrical_solver,
+        terminal_axis=CONTRACT.contact_axis,
     )
     thermal_objective = float(np.sum(electrical.gradient_temperature_K_inv * flake_temperature))
     current_identity_error = relative(thermal_objective, electrical.current_A)

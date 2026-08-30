@@ -6,7 +6,7 @@ import numpy as np
 from scipy import ndimage
 import torch
 
-from photothermal_pte.optimization_runs.run_002_gaussian10_w8p5_current_max.production_density_mapping import (
+from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
@@ -16,14 +16,15 @@ SHAPE = CONTRACT.design_node_shape
 SPACING_M = CONTRACT.design_step_m
 MINIMUM_FEATURE_M = CONTRACT.minimum_feature_m
 OPENING_RADIUS_M = 0.5 * MINIMUM_FEATURE_M
+FILTER_RADIUS_M = 0.60 * MINIMUM_FEATURE_M
 MAPPING = ProductionDensityMapping(
     shape=SHAPE,
     spacing_m=SPACING_M,
-    # The projection filter is a regularizer, not the minimum-feature
-    # certificate.  A 500 nm filter radius over-smoothed the old Run012/013
-    # topology before the morphology audit became active.  Use the physical
-    # feature radius here and certify both phases separately below.
-    radius_m=OPENING_RADIUS_M,
+    # Match the documented Ansys topology condition
+    # filter_R < min_feature_size < 2*filter_R.  R=300 nm keeps the filter
+    # milder than the requested 500 nm feature while avoiding the singular
+    # min_feature_size=2*filter_R endpoint used by the previous 250 nm filter.
+    radius_m=FILTER_RADIUS_M,
     eta=0.5,
 )
 
@@ -39,27 +40,73 @@ def disk() -> np.ndarray:
     return xx * xx + yy * yy <= radius * radius
 
 
-def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np.ndarray]]:
-    """Audit both phases with the actual material adjoining each design edge."""
+def exact_binary_audit(
+    rho: np.ndarray,
+    *,
+    geometry_mode: str | None = None,
+    contact_axis: str | None = None,
+) -> tuple[dict[str, object], dict[str, np.ndarray]]:
+    """Audit both phases with an explicit design-boundary contract.
+
+    Production callers should pass ``geometry_mode`` and ``contact_axis``
+    explicitly.  The defaults retain compatibility with existing reports,
+    while preventing new solver-free cleanup tools from silently auditing a
+    contact-anchored checkpoint as the module's default fixed-frame geometry.
+    """
 
     binary = np.asarray(rho, dtype=float) >= 0.5
     structure = disk()
     radius = (structure.shape[0] - 1) // 2
-    if CONTRACT.geometry_mode == "contact_anchored":
+    selected_geometry = CONTRACT.geometry_mode if geometry_mode is None else str(geometry_mode)
+    selected_axis = CONTRACT.contact_axis if contact_axis is None else str(contact_axis)
+    if selected_geometry not in {
+        "fixed_frame",
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
+        raise ValueError(f"unsupported exact-audit geometry mode: {selected_geometry}")
+    if selected_axis not in {"x", "y", "diagonal_45"}:
+        raise ValueError(f"unsupported exact-audit contact axis: {selected_axis}")
+    if selected_geometry in {
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
         solid_padded = np.zeros((binary.shape[0] + 2 * radius, binary.shape[1] + 2 * radius), dtype=bool)
         solid_padded[radius:-radius, radius:-radius] = binary
-        solid_padded[:, :radius] = True
-        solid_padded[:, -radius:] = True
+        if selected_axis == "y":
+            solid_padded[:, :radius] = True
+            solid_padded[:, -radius:] = True
+            outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
+        else:
+            solid_padded[:radius, :] = True
+            solid_padded[-radius:, :] = True
+            outside_phase = (
+                "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides"
+                if selected_axis == "diagonal_45"
+                else "fixed_solid_at_left_right_and_void_at_top_bottom"
+            )
         solid_open = ndimage.binary_opening(solid_padded, structure=structure)[radius:-radius, radius:-radius]
         void_padded = ~solid_padded
         void_open = ndimage.binary_opening(void_padded, structure=structure)[radius:-radius, radius:-radius]
-        outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
     else:
         solid_open = ndimage.binary_opening(binary, structure=structure, border_value=1)
         void_open = ndimage.binary_opening(~binary, structure=structure, border_value=0)
         outside_phase = "fixed_solid_TaIrTe4_frame"
     bad_solid = binary & ~solid_open
     bad_void = (~binary) & ~void_open
+    contact_violation = np.zeros_like(binary)
+    outside_flake_violation = np.zeros_like(binary)
+    if selected_geometry == "diagonal_45_contact_anchored":
+        if CONTRACT.geometry_mode != selected_geometry or binary.shape != CONTRACT.design_node_shape:
+            raise ValueError(
+                "diagonal exact audit requires the matching process geometry contract"
+            )
+        contact_violation = CONTRACT.fixed_design_solid_mask & ~binary
+        outside_flake_violation = CONTRACT.fixed_design_void_mask & binary
+        bad_void |= contact_violation
+        bad_solid |= outside_flake_violation
     return {
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
@@ -70,14 +117,31 @@ def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np
             "requested 500 nm pixel-support diameter is represented by five "
             "100 nm samples (two centre offsets plus two half-cell extents)"
         ),
+        "geometry_mode": selected_geometry,
+        "contact_axis": selected_axis,
         "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
+        "fixed_contact_violation_count": int(np.count_nonzero(contact_violation)),
+        "outside_flake_solid_violation_count": int(
+            np.count_nonzero(outside_flake_violation)
+        ),
         "total_bad_cell_count": int(np.count_nonzero(bad_solid) + np.count_nonzero(bad_void)),
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
         "solid_fraction": float(np.mean(binary)),
-        "passed": bool(not np.any(bad_solid) and not np.any(bad_void)),
-    }, {"binary": binary, "bad_solid": bad_solid, "bad_void": bad_void}
+        "passed": bool(
+            not np.any(bad_solid)
+            and not np.any(bad_void)
+            and not np.any(contact_violation)
+            and not np.any(outside_flake_violation)
+        ),
+    }, {
+        "binary": binary,
+        "bad_solid": bad_solid,
+        "bad_void": bad_void,
+        "fixed_contact_violation": contact_violation,
+        "outside_flake_solid_violation": outside_flake_violation,
+    }
 
 
 def _projection(filtered: torch.Tensor, beta: float) -> torch.Tensor:
@@ -97,9 +161,13 @@ def _offsets() -> tuple[tuple[int, int], ...]:
 def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
     offsets = _offsets()
     radius = max(max(abs(i), abs(j)) for i, j in offsets)
-    if CONTRACT.geometry_mode == "contact_anchored":
-        # Array axis 0 is Lumerical x and axis 1 is y.  The design meets fixed
-        # TaIrTe4 contacts across the y-min/y-max edges and void across x edges.
+    if CONTRACT.geometry_mode in {
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
+        # Array axis 0 is Lumerical x and axis 1 is y.  The contact-axis edges
+        # touch fixed TaIrTe4; the orthogonal edges touch void.
         solid_phase = border == 1.0
         padded = torch.full(
             (value.shape[0] + 2 * radius, value.shape[1] + 2 * radius),
@@ -108,8 +176,12 @@ def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
             device=value.device,
         )
         padded[radius:-radius, radius:-radius] = value
-        padded[:, :radius] = 1.0 if solid_phase else 0.0
-        padded[:, -radius:] = 1.0 if solid_phase else 0.0
+        if CONTRACT.contact_axis == "y":
+            padded[:, :radius] = 1.0 if solid_phase else 0.0
+            padded[:, -radius:] = 1.0 if solid_phase else 0.0
+        else:
+            padded[:radius, :] = 1.0 if solid_phase else 0.0
+            padded[-radius:, :] = 1.0 if solid_phase else 0.0
     else:
         padded = torch.nn.functional.pad(value, (radius, radius, radius, radius), value=border)
     nx, ny = value.shape
@@ -129,34 +201,56 @@ def morphology_values_gradients(
     beta: float,
     *,
     device: str = "cuda:0",
+    aggregation: str = "mean",
 ) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
     """Differentiable solid/void opening residuals with the exact border phase."""
 
     latent = np.asarray(latent, dtype=np.float64)
-    rho_np = MAPPING.physical(latent, beta)
+    rho_np = CONTRACT.apply_fixed_contact_density(MAPPING.physical(latent, beta))
     rho = torch.tensor(rho_np, dtype=torch.float64, device=device, requires_grad=True)
-    sharpened = torch.sigmoid(64.0 * (rho - 0.5))
     values = []
     gradients = []
     fields = {}
     for index, (name, phase, border) in enumerate(
-        (("solid", sharpened, 1.0), ("void", 1.0 - sharpened, 0.0))
+        (("solid", rho, 1.0), ("void", 1.0 - rho, 0.0))
     ):
         residual = torch.relu(phase - _soft_open(phase, border))
-        aggregate = torch.mean(residual)
+        if aggregation == "mean":
+            aggregate = torch.mean(residual)
+        elif aggregation == "ks_max":
+            # A log-mean-exp KS aggregate prevents a few local feature defects
+            # from being hidden by improvements over the rest of the design.
+            # The subtraction by log(N) keeps the value independent of the
+            # number of design nodes while retaining a smooth max gradient.
+            ks_alpha = 64.0
+            aggregate = (
+                torch.logsumexp(ks_alpha * residual.reshape(-1), dim=0)
+                - np.log(residual.numel())
+            ) / ks_alpha
+        else:
+            raise ValueError(f"unsupported morphology aggregation: {aggregation}")
         gradient_rho = torch.autograd.grad(aggregate, rho, retain_graph=index == 0)[0]
+        gradient_rho_np = CONTRACT.zero_fixed_contact_gradient(
+            gradient_rho.detach().cpu().numpy()
+        )
         values.append(float(aggregate.detach().cpu()))
-        gradients.append(MAPPING.vjp(latent, gradient_rho.detach().cpu().numpy(), beta))
+        gradients.append(MAPPING.vjp(latent, gradient_rho_np, beta))
         fields[f"{name}_residual"] = residual.detach().cpu().numpy()
     return np.asarray(values), np.stack(gradients), fields
 
 
-def metrics(latent: np.ndarray, beta: float, *, device: str = "cuda:0") -> tuple[dict, dict]:
+def metrics(
+    latent: np.ndarray,
+    beta: float,
+    *,
+    device: str = "cuda:0",
+    morphology_aggregation: str = "mean",
+) -> tuple[dict, dict]:
     latent = np.asarray(latent, dtype=np.float64)
     filtered = MAPPING.filtered(latent)
-    rho = MAPPING.physical(latent, beta)
+    rho = CONTRACT.apply_fixed_contact_density(MAPPING.physical(latent, beta))
     constraint_values, constraint_gradients, fields = morphology_values_gradients(
-        latent, beta, device=device
+        latent, beta, device=device, aggregation=morphology_aggregation
     )
     exact, exact_arrays = exact_binary_audit(rho)
     summary = {
@@ -169,6 +263,7 @@ def metrics(latent: np.ndarray, beta: float, *, device: str = "cuda:0") -> tuple
         "binarization_mean_4rho1mrho": float(np.mean(4.0 * rho * (1.0 - rho))),
         "smooth_solid_constraint": float(constraint_values[0]),
         "smooth_void_constraint": float(constraint_values[1]),
+        "morphology_aggregation": morphology_aggregation,
         "exact": exact,
     }
     arrays = {

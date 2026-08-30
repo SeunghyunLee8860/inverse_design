@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from datetime import datetime, timezone
+import fcntl
 import hashlib
 import json
 import os
@@ -30,7 +32,12 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology import optical
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.electrical import (
     build_rectangular_mesh,
+    build_rotated_device_mesh,
     solve_weighting_and_adjoint,
+)
+from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device import (
+    crystal_to_device_field,
+    crystal_to_device_transpose,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     boundary_energy_error,
@@ -39,13 +46,16 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     flake_cell_temperature,
     flake_temperature_transpose,
     map_native_q,
+    map_rotated_native_q,
+    map_rotated_tensor_q,
+    thermal_interface_contract,
     thermal_density_gradient,
 )
 
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "run_002_gaussian10_w8p5_current_max"
+RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "legacy_v261_optical_support"
 STAGE1 = REPOSITORY / "photothermal_pte" / "validation" / "photothermal_stage1"
 for helper in (str(RUN002), str(STAGE1), str(REPOSITORY / "photothermal_pte")):
     if helper not in sys.path:
@@ -61,6 +71,31 @@ FREQUENCY_HZ = C0 / CONTRACT.wavelength_m
 FIELD_REGION = "run010_component_yee_adjoint_region"
 SIGMA_XY_S_M = (1.10e5, 4.91e5)
 SEEBECK_XY_V_K = (27.0e-6, -6.0e-6)
+GPU_ENGINE_LOCK = Path(
+    os.environ.get(
+        "LUMERICAL_GPU_ENGINE_LOCK",
+        "/tmp/seunghyun_lumerical_fdtd_gpu_engine.lock",
+    )
+)
+
+
+@contextmanager
+def lumerical_gpu_engine_lock():
+    """Serialize licensed FDTD engine runs while leaving other work parallel."""
+
+    GPU_ENGINE_LOCK.parent.mkdir(parents=True, exist_ok=True)
+    started = time.monotonic()
+    with GPU_ENGINE_LOCK.open("a+") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+        metadata = {
+            "path": str(GPU_ENGINE_LOCK),
+            "wait_s": time.monotonic() - started,
+            "pid": os.getpid(),
+        }
+        try:
+            yield metadata
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
 def sha256(path: Path) -> str:
@@ -124,7 +159,7 @@ def load_operator(directory: Path) -> tuple[SparseYeeMaterialJacobian, np.ndarra
     }
 
 
-def open_fdtd(gpu_device: str):
+def open_fdtd(gpu_device: str, *, fdtd_threads: int = 8):
     wrapper = material_control.load_source_wrapper()
     audit = wrapper.source_audit
     optical.configure_source(audit)
@@ -133,7 +168,7 @@ def open_fdtd(gpu_device: str):
     os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
     os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = gpu_device
     os.environ["CL_GPU_DEVICE"] = gpu_device
-    os.environ["FDTD_THREADS"] = "8"
+    os.environ["FDTD_THREADS"] = str(fdtd_threads)
     os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH','')}"
     helper = audit.load_module(audit.API_HELPER, "run010_combined_api")
     installation = type(
@@ -159,6 +194,10 @@ def set_density(fdtd, rho: np.ndarray) -> None:
         imported_object=optical.DESIGN_OBJECT,
         nodes=optical.design_nodes(),
     )
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        rotation = float(fdtd.getnamed(optical.DESIGN_OBJECT, "rotation 1"))
+        if not np.isclose(rotation, 0.0, rtol=0.0, atol=1.0e-12):
+            raise RuntimeError("global crystal-grid import object became rotated")
 
 
 def native_arrays(q: dict) -> dict[str, np.ndarray]:
@@ -206,7 +245,9 @@ def run_forward(
         resources = runtime.configure_session_resources(fdtd)
         fdtd.save(str(project))
         started = time.monotonic()
-        resource_used = audit.strict_gpu_run(fdtd, f"run010_combined_{role}")
+        with lumerical_gpu_engine_lock() as lock_metadata:
+            resource_used = audit.strict_gpu_run(fdtd, f"run010_combined_{role}")
+        resources["global_gpu_engine_lock"] = lock_metadata
         wall = time.monotonic() - started
         fdtd.save(str(project))
     actual_polarization = float(fdtd.getnamed(optical.SOURCE_NAME, "polarization angle"))
@@ -292,22 +333,61 @@ class CachedElectricalCuda:
 
 
 def full_flake_density(rho: np.ndarray) -> np.ndarray:
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        return CONTRACT.apply_fixed_contact_density(rho)
     full = np.ones(CONTRACT.flake_node_shape, dtype=np.float64)
-    full[CONTRACT.design_node_slices] = rho
+    full[CONTRACT.design_node_slices] = CONTRACT.apply_fixed_contact_density(rho)
     return full
 
 
-def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjoint: bool):
-    state = build_state(rho)
-    mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
+def solve_coupled(
+    forward: dict,
+    rho: np.ndarray,
+    cuda_device: int,
+    *,
+    need_adjoint: bool,
+    thermal_state_kwargs: dict | None = None,
+    thermal_relative_tolerance: float = 1e-10,
+    thermal_max_iterations: int = 30000,
+):
+    state_options = dict(thermal_state_kwargs or {})
+    state = build_state(rho, **state_options)
+    rotated_mapping = None
+    rotated_native_mappings = None
+    if "rotated_tensor_q" in forward:
+        mapped_q, mapping, rotated_mapping = map_rotated_tensor_q(
+            forward["rotated_tensor_q"], state
+        )
+    elif (
+        CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        and CONTRACT.rotated_optical_mode == "run58_proxy"
+    ):
+        mapped_q, mapping, rotated_native_mappings = map_rotated_native_q(
+            native_arrays(forward["q"]), state
+        )
+    else:
+        mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
     source_active = state.system.active_source(mapped_q)
     source_power = np.asarray(state.system.source_volume_operator_m3 @ source_active)
     thermal_operator = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=cuda_device)
     thermal_forward = thermal_operator.solve(
-        source_power, relative_tolerance=1e-10, max_iterations=30000
+        source_power,
+        relative_tolerance=thermal_relative_tolerance,
+        max_iterations=thermal_max_iterations,
     )
-    nodal_temperature = cell_to_node(flake_cell_temperature(state, thermal_forward.solution))
-    mesh = build_rectangular_mesh(CONTRACT.flake_span_m, CONTRACT.flake_span_m, CONTRACT.design_step_m)
+    crystal_temperature = cell_to_node(
+        flake_cell_temperature(state, thermal_forward.solution)
+    )
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        nodal_temperature = crystal_to_device_field(crystal_temperature)
+        mesh = build_rotated_device_mesh(
+            CONTRACT.flake_span_m, CONTRACT.design_step_m
+        )
+    else:
+        nodal_temperature = crystal_temperature
+        mesh = build_rectangular_mesh(
+            CONTRACT.flake_span_m, CONTRACT.flake_span_m, CONTRACT.design_step_m
+        )
     electrical = solve_weighting_and_adjoint(
         mesh,
         full_flake_density(rho),
@@ -319,12 +399,15 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
         sigma_penalty=CONTRACT.sigma_penalty,
         alpha_penalty=CONTRACT.alpha_penalty,
         linear_solve=CachedElectricalCuda(cuda_device),
+        terminal_axis=CONTRACT.contact_axis,
     )
     energy, boundary = boundary_energy_error(state, thermal_forward.solution, source_power)
     result = {
         "state": state,
         "mapped_q": mapped_q,
         "mapping": mapping,
+        "rotated_q_mapping_operator": rotated_mapping,
+        "rotated_native_q_mapping_operators": rotated_native_mappings,
         "source_power": source_power,
         "thermal_forward": thermal_forward,
         "temperature": nodal_temperature,
@@ -333,17 +416,40 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
         "boundary": boundary,
     }
     if need_adjoint:
-        thermal_rhs = flake_temperature_transpose(state, electrical.gradient_temperature_K_inv)
+        thermal_temperature_sensitivity = electrical.gradient_temperature_K_inv
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+            thermal_temperature_sensitivity = crystal_to_device_transpose(
+                thermal_temperature_sensitivity
+            )
+        thermal_rhs = flake_temperature_transpose(
+            state, thermal_temperature_sensitivity
+        )
         thermal_adjoint = thermal_operator.solve(
-            thermal_rhs, relative_tolerance=1e-10, max_iterations=30000
+            thermal_rhs,
+            relative_tolerance=thermal_relative_tolerance,
+            max_iterations=thermal_max_iterations,
         )
         gradient_thermal = thermal_density_gradient(
             state, thermal_forward.solution, thermal_adjoint.solution
         )
-        gradient_electrical = electrical.gradient_rho_A[CONTRACT.design_node_slices]
-        gradient_terminal_conductance = electrical.gradient_terminal_conductance_S[
-            CONTRACT.design_node_slices
-        ]
+        electrical_slice = (
+            electrical.gradient_rho_A
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else electrical.gradient_rho_A[CONTRACT.design_node_slices]
+        )
+        conductance_slice = (
+            electrical.gradient_terminal_conductance_S
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else electrical.gradient_terminal_conductance_S[
+                CONTRACT.design_node_slices
+            ]
+        )
+        gradient_electrical = CONTRACT.zero_fixed_contact_gradient(
+            electrical_slice
+        )
+        gradient_terminal_conductance = CONTRACT.zero_fixed_contact_gradient(
+            conductance_slice
+        )
         target_active = np.asarray(
             state.system.source_volume_operator_m3.T @ thermal_adjoint.solution
         ).reshape(-1)
@@ -360,6 +466,44 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
 
 
 def pullback_q(forward: dict, coupled: dict) -> tuple[dict[str, np.ndarray], dict[str, object]]:
+    if coupled.get("rotated_q_mapping_operator") is not None:
+        operator = coupled["rotated_q_mapping_operator"]
+        value = operator.transpose(coupled["target_sensitivity"])
+        rng = np.random.default_rng(910)
+        source_probe = rng.normal(size=operator.source_shape)
+        target_probe = rng.normal(size=operator.target_shape)
+        dot_error = relative(
+            float(np.vdot(operator.apply(source_probe), target_probe)),
+            float(np.vdot(source_probe, operator.transpose(target_probe))),
+        )
+        return {axis: value.copy() for axis in "bac"}, {
+            "method": "exact transpose of local-to-global sparse Q rotation",
+            "shape": list(value.shape),
+            "finite": bool(np.all(np.isfinite(value))),
+            "fresh_transpose_relative_error": dot_error,
+        }
+    if coupled.get("rotated_native_q_mapping_operators") is not None:
+        operators = coupled["rotated_native_q_mapping_operators"]
+        pulled: dict[str, np.ndarray] = {}
+        records: dict[str, object] = {}
+        rng = np.random.default_rng(911)
+        for component in "xyz":
+            operator = operators[component]
+            value = operator.transpose(coupled["target_sensitivity"])
+            source_probe = rng.normal(size=operator.source_shape)
+            target_probe = rng.normal(size=operator.target_shape)
+            dot_error = relative(
+                float(np.vdot(operator.apply(source_probe), target_probe)),
+                float(np.vdot(source_probe, operator.transpose(target_probe))),
+            )
+            pulled[component] = value
+            records[component] = {
+                "method": "exact transpose of +45-degree GPU-native Q rotation",
+                "shape": list(value.shape),
+                "finite": bool(np.all(np.isfinite(value))),
+                "fresh_transpose_relative_error": dot_error,
+            }
+        return pulled, records
     pulled = {}
     records = {}
     rng = np.random.default_rng(910)
@@ -391,6 +535,15 @@ def compact_forward(value: dict) -> dict:
     return {key: item for key, item in value.items() if key not in {"q", "electric", "epsilon", "index", "grid"}}
 
 
+def polarization_angle(label: str) -> float:
+    """Map the crystal-axis certificate label to Lumerical's source angle."""
+    if label == "Ea":
+        return optical.polarization_angle_deg("a")
+    if label == "Eb":
+        return optical.polarization_angle_deg("b")
+    raise ValueError(f"unsupported polarization: {label}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-fsp", required=True, type=Path)
@@ -398,8 +551,10 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--gpu-device", default="GPU 5")
+    parser.add_argument("--fdtd-threads", type=int, default=3)
     parser.add_argument("--cuda-device", type=int, default=0)
     parser.add_argument("--step", type=float, default=0.005)
+    parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
     args = parser.parse_args()
     base_fsp = checked(args.base_fsp, args.base_sha256)
     operator, rho, operator_meta = load_operator(args.jacobian_dir)
@@ -414,8 +569,22 @@ def main() -> int:
     fdtd = None
     started = time.monotonic()
     try:
-        fdtd, audit, runtime = open_fdtd(args.gpu_device)
-        base = run_forward(fdtd, audit, runtime, template=base_fsp, rho=rho, role="base", output=output, reuse=True)
+        fdtd, audit, runtime = open_fdtd(
+            args.gpu_device,
+            fdtd_threads=args.fdtd_threads,
+        )
+        angle = polarization_angle(args.polarization)
+        base = run_forward(
+            fdtd,
+            audit,
+            runtime,
+            template=base_fsp,
+            rho=rho,
+            role=f"base_{args.polarization}",
+            output=output,
+            reuse=args.polarization == "Ea",
+            polarization_angle_deg=angle,
+        )
         coupled = solve_coupled(base, rho, args.cuda_device, need_adjoint=True)
         pulled, pullback_meta = pullback_q(base, coupled)
         native_source = np.zeros_like(base["electric"], dtype=np.complex128)
@@ -460,6 +629,7 @@ def main() -> int:
             local_forward = run_forward(
                 fdtd, audit, runtime, template=base_fsp, rho=local_rho,
                 role=f"adjoint_aligned_{label}", output=output,
+                polarization_angle_deg=angle,
             )
             local = solve_coupled(local_forward, local_rho, args.cuda_device, need_adjoint=False)
             objectives[label] = local["electrical"].current_A
@@ -512,7 +682,14 @@ def main() -> int:
             "status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD" if passed else "FAILED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "scope": "uniform rho=0.5 E||a combined optical-Q, explicit thermal material/interface, and density-dependent electrical weighting gradient",
+            "thermal_interface_contract": thermal_interface_contract(),
+            "scope": (
+                f"uniform rho=0.5 {args.polarization} combined optical-Q, "
+                "explicit thermal material/interface, and density-dependent "
+                "electrical weighting gradient"
+            ),
+            "polarization": args.polarization,
+            "polarization_angle_deg": angle,
             "step": args.step,
             "base_objective_A": coupled["electrical"].current_A,
             "AD_directional_A": ad,
@@ -547,7 +724,11 @@ def main() -> int:
                 "worst_auto_shutoff": worst_shutoff,
             },
             "raw_artifact": {"path": str(raw), "size_bytes": raw.stat().st_size, "sha256": sha256(raw)},
-            "Maxwell_solves": {"forward_reused": 1, "forward_new": 2, "adjoint": 1},
+            "Maxwell_solves": {
+                "forward_reused": int(args.polarization == "Ea"),
+                "forward_new": 2 + int(args.polarization == "Eb"),
+                "adjoint": 1,
+            },
             "thermal_solves": {"forward": 3, "adjoint": 1},
             "optimization_iterations": 0,
             "empirical_normalization": False,

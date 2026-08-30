@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 import traceback
@@ -22,7 +23,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology import optical
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "run_002_gaussian10_w8p5_current_max"
+RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "legacy_v261_optical_support"
 STAGE1 = REPOSITORY / "photothermal_pte" / "validation" / "photothermal_stage1"
 FIELD_REGION = "run010_component_yee_adjoint_region"
 C0 = 299792458.0
@@ -59,9 +60,29 @@ def main() -> int:
     parser.add_argument("--input-sha256", required=True)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--gpu-device", default="GPU 5")
+    parser.add_argument("--fdtd-threads", type=int, default=3)
+    parser.add_argument("--solver", choices=("gpu", "cpu"), default="gpu")
     parser.add_argument("--polarization", choices=("a", "b"), required=True)
     parser.add_argument("--without-fieldregion", action="store_true")
+    parser.add_argument(
+        "--simulation-time-fs",
+        type=float,
+        help="Optional short-run stability probe duration in femtoseconds.",
+    )
+    parser.add_argument(
+        "--dt-stability-factor",
+        type=float,
+        help="Optional FDTD Courant stability-factor override.",
+    )
     args = parser.parse_args()
+    if args.fdtd_threads <= 0:
+        parser.error("--fdtd-threads must be positive")
+    if args.simulation_time_fs is not None and args.simulation_time_fs <= 0.0:
+        parser.error("--simulation-time-fs must be positive")
+    if args.dt_stability_factor is not None and not (
+        0.0 < args.dt_stability_factor <= 1.0
+    ):
+        parser.error("--dt-stability-factor must be in (0, 1]")
     CONTRACT.validate()
     source_project = args.input_project.expanduser().resolve()
     output = args.output_dir.expanduser().resolve()
@@ -100,7 +121,7 @@ def main() -> int:
         os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         os.environ["CL_GPU_DEVICE"] = args.gpu_device
-        os.environ["FDTD_THREADS"] = "8"
+        os.environ["FDTD_THREADS"] = str(args.fdtd_threads)
         os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH','')}"
         helper = audit.load_module(audit.API_HELPER, "run010_forward_api")
         installation = type(
@@ -122,17 +143,63 @@ def main() -> int:
 
         fdtd.load(str(source_project))
         fdtd.switchtolayout()
+        if args.simulation_time_fs is not None:
+            fdtd.setnamed(
+                "FDTD", "simulation time", args.simulation_time_fs * 1.0e-15
+            )
+        if args.dt_stability_factor is not None:
+            fdtd.setnamed(
+                "FDTD", "dt stability factor", args.dt_stability_factor
+            )
         if not args.without_fieldregion:
             add_fieldregion(fdtd)
-        polarization_angle = 90.0 if args.polarization == "a" else 0.0
+        polarization_angle = optical.polarization_angle_deg(args.polarization)
         fdtd.setnamed(optical.SOURCE_NAME, "enabled", True)
         fdtd.setnamed(optical.SOURCE_NAME, "polarization angle", polarization_angle)
-        resources = runtime.configure_session_resources(fdtd)
+        if args.solver == "gpu":
+            resources = runtime.configure_session_resources(fdtd)
+        else:
+            fdtd.setresource("FDTD", 1, "active", 1)
+            fdtd.setresource("FDTD", 1, "processes", "1")
+            fdtd.setresource("FDTD", 1, "threads", str(args.fdtd_threads))
+            fdtd.setresource("FDTD", 2, "active", 0)
+            resources = {
+                "solver": "CPU",
+                "processes": 1,
+                "threads": args.fdtd_threads,
+            }
         fdtd.save(str(project))
         started = time.monotonic()
-        resource_used = audit.strict_gpu_run(
-            fdtd, f"run010_uniform_rho0p5_E{args.polarization}"
-        )
+        if args.solver == "gpu":
+            resource_used = audit.strict_gpu_run(
+                fdtd, f"run010_uniform_rho0p5_E{args.polarization}"
+            )
+        else:
+            engine_log = output / f"tairte4_flake_forward_E{args.polarization}_p0.log"
+            engine_command = [
+                str(audit.APPROVED_ROOT / "bin" / "fdtd-engine"),
+                "-t",
+                str(args.fdtd_threads),
+                "-remote",
+                str(project),
+            ]
+            print(f"[cpu-only] {' '.join(engine_command)}", flush=True)
+            with engine_log.open("w") as stream:
+                completed = subprocess.run(
+                    engine_command,
+                    cwd=output,
+                    env=os.environ,
+                    stdout=stream,
+                    stderr=subprocess.STDOUT,
+                )
+            engine_text = engine_log.read_text(errors="replace")
+            if completed.returncode != 0 or "electromagnetic fields are diverging" in engine_text:
+                raise RuntimeError(
+                    "direct CPU FDTD failed; "
+                    f"returncode={completed.returncode}, log={engine_log}"
+                )
+            fdtd.load(str(project))
+            resource_used = "direct fdtd-engine CPU"
         wall_time = time.monotonic() - started
         fdtd.save(str(project))
         frequency = C0 / CONTRACT.wavelength_m
@@ -188,8 +255,15 @@ def main() -> int:
         result = {
             "status": "VALIDATED_TAIRTE4_FLAKE_FORWARD" if passed else "FAILED_TAIRTE4_FLAKE_FORWARD",
             "passed": passed,
-            "scope": "uniform rho=0.5 GPU Maxwell forward only",
+            "scope": f"uniform rho=0.5 {args.solver.upper()} Maxwell forward only",
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "device_geometry": CONTRACT.optical_geometry_contract,
+            "Au_electrodes": None,
+            "electrical_terminals": (
+                "ideal equipotential boundary masks only"
+                if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+                else CONTRACT.contact_axis
+            ),
             "polarization": f"E_parallel_{args.polarization}",
             "polarization_angle_deg": polarization_angle,
             "input_project": {
@@ -205,7 +279,11 @@ def main() -> int:
                 "sha256": sha256(npz_path),
             },
             "GPU_device_requested": args.gpu_device,
-            "GPU_resource_used": resource_used,
+            "Maxwell_solver_requested": args.solver.upper(),
+            "FDTD_host_threads_requested": args.fdtd_threads,
+            "simulation_time_fs_override": args.simulation_time_fs,
+            "dt_stability_factor_override": args.dt_stability_factor,
+            "Maxwell_resource_used": resource_used,
             "resources": resources,
             "solver_wall_time_s": wall_time,
             "source_power_W": source_power,

@@ -1,0 +1,92 @@
+{
+  "schema": "run059-060-rotated45-no-Au-field-publication-v1",
+  "model": {
+    "geometry": "24 x 24 um device rotated +45 degrees",
+    "axis_contract": "global x=b, y=a",
+    "optical": "Run58 axis-aligned optical proxy without Au",
+    "thermal_interface": "evaporated TaIrTe4/SiO2, G=73700 W/m2/K",
+    "electrodes": "ideal equipotential masks only in electrical solves",
+    "target_incident_power_W": 0.000285
+  },
+  "runs": [
+    {
+      "run": 59,
+      "polarization": "Ea",
+      "status": "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION",
+      "passed": false,
+      "continuous_current_nA": 670.2040884247419,
+      "exact_current_nA": 655.2620433493231,
+      "exact_change_percent": -2.2294768613750002,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 55.861020946945445,
+      "maximum_temperature_rise_K": 2.6463518034056914,
+      "maximum_temperature_gradient_K_m": 5547434.060909822,
+      "maximum_total_J_A_m2": 5247000.99223727,
+      "positive_current_contribution_nA": 690.1385468569242,
+      "negative_current_contribution_nA": -34.87650350760111,
+      "b_current_contribution_nA": 543.1495648129671,
+      "a_current_contribution_nA": 112.11247853635594,
+      "current_reintegration_relative_error": 1.6158286517801995e-16,
+      "short_circuit_current_nA": 655.2620433614013,
+      "short_circuit_current_relative_error": 1.8432565345182627e-11,
+      "short_circuit_continuity_residual": 9.392804532691961e-14
+    },
+    {
+      "run": 60,
+      "polarization": "Eb",
+      "status": "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION",
+      "passed": true,
+      "continuous_current_nA": 801.6900447627949,
+      "exact_current_nA": 793.731039611327,
+      "exact_change_percent": -0.9927783441320824,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 55.13311589245737,
+      "maximum_temperature_rise_K": 3.0716154780406795,
+      "maximum_temperature_gradient_K_m": 4926564.522905549,
+      "maximum_total_J_A_m2": 5250647.925275498,
+      "positive_current_contribution_nA": 813.2074424422698,
+      "negative_current_contribution_nA": -19.476402830942824,
+      "b_current_contribution_nA": 660.8901269370854,
+      "a_current_contribution_nA": 132.8409126742417,
+      "current_reintegration_relative_error": 1.333942017167859e-16,
+      "short_circuit_current_nA": 793.7310395310642,
+      "short_circuit_current_relative_error": 1.0112094194762844e-10,
+      "short_circuit_continuity_residual": 1.3195149469541697e-13
+    }
+  ],
+  "published_outputs": [
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run059_rotated45_no_Au_exact_fields.png",
+      "size_bytes": 1700326,
+      "sha256": "289062ea9f2f30b8cf5b3b6006c91f3bf75ce90686d8054fef8d6c0562cd76fb"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run059_rotated45_no_Au_derived_fields.npz",
+      "size_bytes": 9055247,
+      "sha256": "769d06d0b5c9a722960158bfe44075056b29831dbf60a974dfaea15a29ceeee1"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run060_rotated45_no_Au_exact_fields.png",
+      "size_bytes": 1620838,
+      "sha256": "c29091b5c82da325ad568619dc1c3ec088c2a2a85a5c518cbde8970756a89cd1"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run060_rotated45_no_Au_derived_fields.npz",
+      "size_bytes": 8970593,
+      "sha256": "3c0bd648dc960c3c54836f6a8f4cf48e67f5b3e3b6419c7308498e2e272003d7"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run059_060_optimization_convergence.png",
+      "size_bytes": 235433,
+      "sha256": "43e732f729a833f23cbdfc39f83427f39f1505503bc9798c8ab869abe5d5aa68"
+    },
+    {
+      "path": "photothermal_pte/reports/run059_060_rotated45_ideal_terminal_no_Au/run059_060_final_current_comparison.png",
+      "size_bytes": 119631,
+      "sha256": "87d82612ca207b00520e22a86d10ccaa4b4b1e23c512d233e83dcd879e6fb866"
+    }
+  ],
+  "optimization_rerun": false
+}

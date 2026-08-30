@@ -1,0 +1,853 @@
+{
+  "passed": false,
+  "status": "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION",
+  "polarization": "Ea",
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "algorithm": "NLopt LD_MMA",
+  "initial_density": "uniform latent rho=0.5",
+  "beta_schedule_visited": [
+    1.0,
+    2.0,
+    4.0,
+    8.0,
+    16.0,
+    32.0,
+    64.0,
+    128.0
+  ],
+  "final_beta": 128.0,
+  "full_physics_evaluations_before_exact_candidates": 83,
+  "exact_candidate_physics_evaluations": 4,
+  "continuous_reference_current_A": 6.70204088424742e-07,
+  "exact_reference_current_A": 6.552620433493231e-07,
+  "exact_cleanup_relative_current_change": -0.022294768613750002,
+  "exact_binary_audit": {
+    "minimum_feature_nm": 500.0,
+    "opening_radius_nm": 250.0,
+    "opening_radius_pixels": 2,
+    "realized_discrete_opening_max_center_offset_nm": 200.0,
+    "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+    "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+    "geometry_mode": "diagonal_45_contact_anchored",
+    "contact_axis": "diagonal_45",
+    "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+    "solid_bad_cell_count": 0,
+    "void_bad_cell_count": 0,
+    "fixed_contact_violation_count": 0,
+    "outside_flake_solid_violation_count": 0,
+    "total_bad_cell_count": 0,
+    "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+    "solid_fraction": 0.6605946867306004,
+    "passed": true
+  },
+  "objective_preservation_gate_passed": false,
+  "chosen_candidate": {
+    "rank": 3,
+    "density": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03.npz",
+      "size_bytes": 3465,
+      "sha256": "221f93e05be384e096635ff775b237789aa5c332345dc0ea6d5def26132bc64f"
+    },
+    "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_result.json",
+    "objective_A": 3.179798853176739e-16,
+    "physical_gates_passed": true,
+    "objective_gate_passed": false,
+    "result": {
+      "schema": "contact-anchored-exact-binary-objective-v1",
+      "status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+      "passed": false,
+      "generated_at_utc": "2026-08-23T08:19:13.133476+00:00",
+      "polarization": "Ea",
+      "polarization_angle_deg": 90.0,
+      "axis_contract": "Lumerical x=b, y=a, z=c",
+      "thermal_interface_contract": {
+        "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+        "TaIrTe4_SiO2_scenario": "evaporated",
+        "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+        "G_SiO2_Si_W_m2K": 1100000000.0,
+        "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged",
+        "rotated_device_Au": {
+          "enabled": false,
+          "model": "absent; ideal terminals exist only in electrical weighting solve"
+        }
+      },
+      "objective_A": 3.179798853176739e-16,
+      "reference_continuous_objective_A": 3.2523083145092993e-16,
+      "relative_objective_change_from_continuous": -0.022294768613750057,
+      "physical_gates_passed": true,
+      "objective_gate_passed": false,
+      "binary_objective_preserved_within_one_percent": false,
+      "equivalent_objective_at_285uW_A": 6.552620433493231e-07,
+      "responsivity_A_W": 0.0022991650643835898,
+      "terminal_conductance_S": 0.013956945209333443,
+      "rho_values": [
+        0.0,
+        1.0
+      ],
+      "forward": {
+        "P_Q_W": 2.7997470946413305e-14,
+        "P_six_W": 2.796951987146045e-14,
+        "closure": 0.0009983428505508153,
+        "source_power_W": 1.3830232993859658e-13,
+        "faces": {
+          "run010_flux_x_min": {
+            "signed_axis_power_W": -2.6709304309160358e-18,
+            "outward_power_W": 2.6709304309160358e-18
+          },
+          "run010_flux_x_max": {
+            "signed_axis_power_W": 1.0330916052621637e-18,
+            "outward_power_W": 1.0330916052621637e-18
+          },
+          "run010_flux_y_min": {
+            "signed_axis_power_W": -2.7137941738898997e-18,
+            "outward_power_W": 2.7137941738898997e-18
+          },
+          "run010_flux_y_max": {
+            "signed_axis_power_W": 4.451126101011506e-18,
+            "outward_power_W": 4.451126101011506e-18
+          },
+          "run010_flux_z_min": {
+            "signed_axis_power_W": -2.1349276396478758e-14,
+            "outward_power_W": 2.1349276396478758e-14
+          },
+          "run010_flux_z_max": {
+            "signed_axis_power_W": -4.932966521025029e-14,
+            "outward_power_W": -4.932966521025029e-14
+          }
+        },
+        "coordinate_mismatch_m": 5.082197683525802e-21,
+        "resources": {
+          "1": {
+            "active": "1",
+            "device type": "CPU",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": ""
+          },
+          "2": {
+            "active": "1",
+            "device type": "GPU 3",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": "-gpu"
+          },
+          "global_gpu_engine_lock": {
+            "path": "/tmp/seunghyun_lumerical_run059_gpu3.lock",
+            "wait_s": 8.611753582954407e-05,
+            "pid": 1406181
+          }
+        },
+        "resource_used": "Local Host",
+        "wall_s": 46.12003753334284,
+        "polarization_angle_deg": 90.0,
+        "project": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea.fsp",
+          "size_bytes": 204145909,
+          "sha256": "a1152cb34a761c455797030aa838631477c0ac138e6a63f45ee8ad4ed4b4506f"
+        },
+        "log_audit": {
+          "logs": [
+            "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea_p0.log"
+          ],
+          "final_auto_shutoff": 9.26746e-08,
+          "logged_grid": {
+            "shape_xyz": [
+              338,
+              338,
+              106
+            ],
+            "grid_points": 12109864
+          },
+          "precise_GPU_memory_GiB": 0.423,
+          "simulation_completed_successfully": true
+        }
+      },
+      "gates": {
+        "optical_closure": 0.0009983428505508153,
+        "Q_mapping_error": 0.0,
+        "thermal_forward_residual": 9.616804511920262e-11,
+        "thermal_energy_balance": 4.51145959813571e-12,
+        "electrical_weighting_residual": 5.115405535761564e-11,
+        "maximum_binary_objective_loss_fraction": 0.01
+      },
+      "inputs": {
+        "base_FSP": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+          "size_bytes": 179792716,
+          "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+        },
+        "binary_density": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03.npz",
+          "size_bytes": 3465,
+          "sha256": "221f93e05be384e096635ff775b237789aa5c332345dc0ea6d5def26132bc64f"
+        }
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_fields.npz",
+        "size_bytes": 10905463,
+        "sha256": "74e39156d8ced5d2cb7233bd9f20005cbdb3057bf2e33056ad301ba3c7845301"
+      },
+      "Maxwell_solves": {
+        "forward": 1,
+        "adjoint": 0
+      },
+      "posthoc_objective_or_gradient_rescaling": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false,
+      "CPU_FDTD_fallback": false,
+      "CPU_thermal_linear_solve_fallback": false,
+      "wall_s": 64.488739579916
+    }
+  },
+  "all_exact_candidates": [
+    {
+      "rank": 0,
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00.npz",
+        "size_bytes": 3468,
+        "sha256": "c58269f29e004eb26450dcc6befe1e262065407b1d16a9aa8143925f5560d539"
+      },
+      "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00_physics/binary_objective_result.json",
+      "objective_A": 3.175511718223749e-16,
+      "physical_gates_passed": true,
+      "objective_gate_passed": false,
+      "result": {
+        "schema": "contact-anchored-exact-binary-objective-v1",
+        "status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+        "passed": false,
+        "generated_at_utc": "2026-08-23T08:15:50.793797+00:00",
+        "polarization": "Ea",
+        "polarization_angle_deg": 90.0,
+        "axis_contract": "Lumerical x=b, y=a, z=c",
+        "thermal_interface_contract": {
+          "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+          "TaIrTe4_SiO2_scenario": "evaporated",
+          "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+          "G_SiO2_Si_W_m2K": 1100000000.0,
+          "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged",
+          "rotated_device_Au": {
+            "enabled": false,
+            "model": "absent; ideal terminals exist only in electrical weighting solve"
+          }
+        },
+        "objective_A": 3.175511718223749e-16,
+        "reference_continuous_objective_A": 3.2523083145092993e-16,
+        "relative_objective_change_from_continuous": -0.023612950821096247,
+        "physical_gates_passed": true,
+        "objective_gate_passed": false,
+        "binary_objective_preserved_within_one_percent": false,
+        "equivalent_objective_at_285uW_A": 6.54378592244671e-07,
+        "responsivity_A_W": 0.002296065235946214,
+        "terminal_conductance_S": 0.013957332098701663,
+        "rho_values": [
+          0.0,
+          1.0
+        ],
+        "forward": {
+          "P_Q_W": 2.7994621300538486e-14,
+          "P_six_W": 2.796667143646574e-14,
+          "closure": 0.0009984012204590901,
+          "source_power_W": 1.3830232993859658e-13,
+          "faces": {
+            "run010_flux_x_min": {
+              "signed_axis_power_W": -2.6714808869175928e-18,
+              "outward_power_W": 2.6714808869175928e-18
+            },
+            "run010_flux_x_max": {
+              "signed_axis_power_W": 1.0338217601871897e-18,
+              "outward_power_W": 1.0338217601871897e-18
+            },
+            "run010_flux_y_min": {
+              "signed_axis_power_W": -2.7274311411229886e-18,
+              "outward_power_W": 2.7274311411229886e-18
+            },
+            "run010_flux_y_max": {
+              "signed_axis_power_W": 4.457383753812968e-18,
+              "outward_power_W": 4.457383753812968e-18
+            },
+            "run010_flux_z_min": {
+              "signed_axis_power_W": -2.136535662712066e-14,
+              "outward_power_W": 2.136535662712066e-14
+            },
+            "run010_flux_z_max": {
+              "signed_axis_power_W": -4.934291818112844e-14,
+              "outward_power_W": -4.934291818112844e-14
+            }
+          },
+          "coordinate_mismatch_m": 5.082197683525802e-21,
+          "resources": {
+            "1": {
+              "active": "1",
+              "device type": "CPU",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": ""
+            },
+            "2": {
+              "active": "1",
+              "device type": "GPU 3",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": "-gpu"
+            },
+            "global_gpu_engine_lock": {
+              "path": "/tmp/seunghyun_lumerical_run059_gpu3.lock",
+              "wait_s": 9.841099381446838e-05,
+              "pid": 1396461
+            }
+          },
+          "resource_used": "Local Host",
+          "wall_s": 45.41501525789499,
+          "polarization_angle_deg": 90.0,
+          "project": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00_physics/exact_binary_forward_Ea.fsp",
+            "size_bytes": 204145909,
+            "sha256": "804a9da78478942a3c2853debcef0b20f00f48df65bc82f508e2accc8524c802"
+          },
+          "log_audit": {
+            "logs": [
+              "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00_physics/exact_binary_forward_Ea_p0.log"
+            ],
+            "final_auto_shutoff": 9.25366e-08,
+            "logged_grid": {
+              "shape_xyz": [
+                338,
+                338,
+                106
+              ],
+              "grid_points": 12109864
+            },
+            "precise_GPU_memory_GiB": 0.423,
+            "simulation_completed_successfully": true
+          }
+        },
+        "gates": {
+          "optical_closure": 0.0009984012204590901,
+          "Q_mapping_error": 0.0,
+          "thermal_forward_residual": 9.726245462428899e-11,
+          "thermal_energy_balance": 4.629847091413412e-12,
+          "electrical_weighting_residual": 4.707362275444711e-11,
+          "maximum_binary_objective_loss_fraction": 0.01
+        },
+        "inputs": {
+          "base_FSP": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+            "size_bytes": 179792716,
+            "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+          },
+          "binary_density": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00.npz",
+            "size_bytes": 3468,
+            "sha256": "c58269f29e004eb26450dcc6befe1e262065407b1d16a9aa8143925f5560d539"
+          }
+        },
+        "raw_artifact": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_00_physics/binary_objective_fields.npz",
+          "size_bytes": 10905500,
+          "sha256": "c961c4bcb4614ce0cde403636cc80f5f55ec7aaa05be4dc76c4fc93b2aa58281"
+        },
+        "Maxwell_solves": {
+          "forward": 1,
+          "adjoint": 0
+        },
+        "posthoc_objective_or_gradient_rescaling": false,
+        "Q_clipping_smoothing_gain_or_rescaling": false,
+        "CPU_FDTD_fallback": false,
+        "CPU_thermal_linear_solve_fallback": false,
+        "wall_s": 64.91708815097809
+      }
+    },
+    {
+      "rank": 1,
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01.npz",
+        "size_bytes": 3467,
+        "sha256": "6bfc996023c784c78bf0e4553bf7cf3fad65ed8fdc8fc9abdead5848011a1e5c"
+      },
+      "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01_physics/binary_objective_result.json",
+      "objective_A": 3.1777208268859535e-16,
+      "physical_gates_passed": true,
+      "objective_gate_passed": false,
+      "result": {
+        "schema": "contact-anchored-exact-binary-objective-v1",
+        "status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+        "passed": false,
+        "generated_at_utc": "2026-08-23T08:16:57.422403+00:00",
+        "polarization": "Ea",
+        "polarization_angle_deg": 90.0,
+        "axis_contract": "Lumerical x=b, y=a, z=c",
+        "thermal_interface_contract": {
+          "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+          "TaIrTe4_SiO2_scenario": "evaporated",
+          "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+          "G_SiO2_Si_W_m2K": 1100000000.0,
+          "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged",
+          "rotated_device_Au": {
+            "enabled": false,
+            "model": "absent; ideal terminals exist only in electrical weighting solve"
+          }
+        },
+        "objective_A": 3.1777208268859535e-16,
+        "reference_continuous_objective_A": 3.2523083145092993e-16,
+        "relative_objective_change_from_continuous": -0.022933707511859754,
+        "physical_gates_passed": true,
+        "objective_gate_passed": false,
+        "binary_objective_preserved_within_one_percent": false,
+        "equivalent_objective_at_285uW_A": 6.548338238875563e-07,
+        "responsivity_A_W": 0.002297662539956338,
+        "terminal_conductance_S": 0.01395733210037404,
+        "rho_values": [
+          0.0,
+          1.0
+        ],
+        "forward": {
+          "P_Q_W": 2.7995726406312746e-14,
+          "P_six_W": 2.796778394556404e-14,
+          "closure": 0.000998097364689424,
+          "source_power_W": 1.3830232993859658e-13,
+          "faces": {
+            "run010_flux_x_min": {
+              "signed_axis_power_W": -2.6712035370059646e-18,
+              "outward_power_W": 2.6712035370059646e-18
+            },
+            "run010_flux_x_max": {
+              "signed_axis_power_W": 1.033600867797518e-18,
+              "outward_power_W": 1.033600867797518e-18
+            },
+            "run010_flux_y_min": {
+              "signed_axis_power_W": -2.723422885285601e-18,
+              "outward_power_W": 2.723422885285601e-18
+            },
+            "run010_flux_y_max": {
+              "signed_axis_power_W": 4.454354285223567e-18,
+              "outward_power_W": 4.454354285223567e-18
+            },
+            "run010_flux_z_min": {
+              "signed_axis_power_W": -2.135910365798959e-14,
+              "outward_power_W": 2.135910365798959e-14
+            },
+            "run010_flux_z_max": {
+              "signed_axis_power_W": -4.933777018512894e-14,
+              "outward_power_W": -4.933777018512894e-14
+            }
+          },
+          "coordinate_mismatch_m": 5.082197683525802e-21,
+          "resources": {
+            "1": {
+              "active": "1",
+              "device type": "CPU",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": ""
+            },
+            "2": {
+              "active": "1",
+              "device type": "GPU 3",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": "-gpu"
+            },
+            "global_gpu_engine_lock": {
+              "path": "/tmp/seunghyun_lumerical_run059_gpu3.lock",
+              "wait_s": 9.59634780883789e-05,
+              "pid": 1399287
+            }
+          },
+          "resource_used": "Local Host",
+          "wall_s": 46.03964888677001,
+          "polarization_angle_deg": 90.0,
+          "project": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01_physics/exact_binary_forward_Ea.fsp",
+            "size_bytes": 204145909,
+            "sha256": "15db962c234898545d3cebb196e74b137e6ff60fbc14bebda6f194333a6c5cbb"
+          },
+          "log_audit": {
+            "logs": [
+              "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01_physics/exact_binary_forward_Ea_p0.log"
+            ],
+            "final_auto_shutoff": 9.2555e-08,
+            "logged_grid": {
+              "shape_xyz": [
+                338,
+                338,
+                106
+              ],
+              "grid_points": 12109864
+            },
+            "precise_GPU_memory_GiB": 0.423,
+            "simulation_completed_successfully": true
+          }
+        },
+        "gates": {
+          "optical_closure": 0.000998097364689424,
+          "Q_mapping_error": 2.3282218485692657e-16,
+          "thermal_forward_residual": 7.810911474210326e-11,
+          "thermal_energy_balance": 6.649052366236538e-12,
+          "electrical_weighting_residual": 4.772427488480434e-11,
+          "maximum_binary_objective_loss_fraction": 0.01
+        },
+        "inputs": {
+          "base_FSP": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+            "size_bytes": 179792716,
+            "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+          },
+          "binary_density": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01.npz",
+            "size_bytes": 3467,
+            "sha256": "6bfc996023c784c78bf0e4553bf7cf3fad65ed8fdc8fc9abdead5848011a1e5c"
+          }
+        },
+        "raw_artifact": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_01_physics/binary_objective_fields.npz",
+          "size_bytes": 10905732,
+          "sha256": "94821a8fdc68e92d2955e47777fb277b04a3bc77ff980e3935a7e2dbc86b5568"
+        },
+        "Maxwell_solves": {
+          "forward": 1,
+          "adjoint": 0
+        },
+        "posthoc_objective_or_gradient_rescaling": false,
+        "Q_clipping_smoothing_gain_or_rescaling": false,
+        "CPU_FDTD_fallback": false,
+        "CPU_thermal_linear_solve_fallback": false,
+        "wall_s": 64.68058220297098
+      }
+    },
+    {
+      "rank": 2,
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02.npz",
+        "size_bytes": 3471,
+        "sha256": "aff946504811693f9a4ffc4781f1e4af531f46ace970625b1b6f8a857010825c"
+      },
+      "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02_physics/binary_objective_result.json",
+      "objective_A": 3.1759929500503284e-16,
+      "physical_gates_passed": true,
+      "objective_gate_passed": false,
+      "result": {
+        "schema": "contact-anchored-exact-binary-objective-v1",
+        "status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+        "passed": false,
+        "generated_at_utc": "2026-08-23T08:18:06.066984+00:00",
+        "polarization": "Ea",
+        "polarization_angle_deg": 90.0,
+        "axis_contract": "Lumerical x=b, y=a, z=c",
+        "thermal_interface_contract": {
+          "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+          "TaIrTe4_SiO2_scenario": "evaporated",
+          "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+          "G_SiO2_Si_W_m2K": 1100000000.0,
+          "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged",
+          "rotated_device_Au": {
+            "enabled": false,
+            "model": "absent; ideal terminals exist only in electrical weighting solve"
+          }
+        },
+        "objective_A": 3.1759929500503284e-16,
+        "reference_continuous_objective_A": 3.2523083145092993e-16,
+        "relative_objective_change_from_continuous": -0.02346498458295312,
+        "physical_gates_passed": true,
+        "objective_gate_passed": false,
+        "binary_objective_preserved_within_one_percent": false,
+        "equivalent_objective_at_285uW_A": 6.544777598224233e-07,
+        "responsivity_A_W": 0.00229641319235938,
+        "terminal_conductance_S": 0.013957332107623302,
+        "rho_values": [
+          0.0,
+          1.0
+        ],
+        "forward": {
+          "P_Q_W": 2.7996951898934625e-14,
+          "P_six_W": 2.7969059417216235e-14,
+          "closure": 0.000996268515911241,
+          "source_power_W": 1.3830232993859658e-13,
+          "faces": {
+            "run010_flux_x_min": {
+              "signed_axis_power_W": -2.6695351882531738e-18,
+              "outward_power_W": 2.6695351882531738e-18
+            },
+            "run010_flux_x_max": {
+              "signed_axis_power_W": 1.0303080783771184e-18,
+              "outward_power_W": 1.0303080783771184e-18
+            },
+            "run010_flux_y_min": {
+              "signed_axis_power_W": -2.708146042342635e-18,
+              "outward_power_W": 2.708146042342635e-18
+            },
+            "run010_flux_y_max": {
+              "signed_axis_power_W": 4.45797811898511e-18,
+              "outward_power_W": 4.45797811898511e-18
+            },
+            "run010_flux_z_min": {
+              "signed_axis_power_W": -2.1343571138297008e-14,
+              "outward_power_W": 2.1343571138297008e-14
+            },
+            "run010_flux_z_max": {
+              "signed_axis_power_W": -4.93234965229412e-14,
+              "outward_power_W": -4.93234965229412e-14
+            }
+          },
+          "coordinate_mismatch_m": 5.082197683525802e-21,
+          "resources": {
+            "1": {
+              "active": "1",
+              "device type": "CPU",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": ""
+            },
+            "2": {
+              "active": "1",
+              "device type": "GPU 3",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": "-gpu"
+            },
+            "global_gpu_engine_lock": {
+              "path": "/tmp/seunghyun_lumerical_run059_gpu3.lock",
+              "wait_s": 0.00015938282012939453,
+              "pid": 1401956
+            }
+          },
+          "resource_used": "Local Host",
+          "wall_s": 46.13893735036254,
+          "polarization_angle_deg": 90.0,
+          "project": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02_physics/exact_binary_forward_Ea.fsp",
+            "size_bytes": 204145909,
+            "sha256": "41544178ed411b240705216bc13341ea166b687b5d580f1a7dcc3b07cc72457c"
+          },
+          "log_audit": {
+            "logs": [
+              "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02_physics/exact_binary_forward_Ea_p0.log"
+            ],
+            "final_auto_shutoff": 9.25643e-08,
+            "logged_grid": {
+              "shape_xyz": [
+                338,
+                338,
+                106
+              ],
+              "grid_points": 12109864
+            },
+            "precise_GPU_memory_GiB": 0.423,
+            "simulation_completed_successfully": true
+          }
+        },
+        "gates": {
+          "optical_closure": 0.000996268515911241,
+          "Q_mapping_error": 0.0,
+          "thermal_forward_residual": 9.702756790801318e-11,
+          "thermal_energy_balance": 4.613420661649821e-12,
+          "electrical_weighting_residual": 5.037771034563197e-11,
+          "maximum_binary_objective_loss_fraction": 0.01
+        },
+        "inputs": {
+          "base_FSP": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+            "size_bytes": 179792716,
+            "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+          },
+          "binary_density": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02.npz",
+            "size_bytes": 3471,
+            "sha256": "aff946504811693f9a4ffc4781f1e4af531f46ace970625b1b6f8a857010825c"
+          }
+        },
+        "raw_artifact": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_02_physics/binary_objective_fields.npz",
+          "size_bytes": 10906081,
+          "sha256": "e8c18fb96a84384971d143a7305bf7a5c5ba3366962135d744099cc046add368"
+        },
+        "Maxwell_solves": {
+          "forward": 1,
+          "adjoint": 0
+        },
+        "posthoc_objective_or_gradient_rescaling": false,
+        "Q_clipping_smoothing_gain_or_rescaling": false,
+        "CPU_FDTD_fallback": false,
+        "CPU_thermal_linear_solve_fallback": false,
+        "wall_s": 65.3653056062758
+      }
+    },
+    {
+      "rank": 3,
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03.npz",
+        "size_bytes": 3465,
+        "sha256": "221f93e05be384e096635ff775b237789aa5c332345dc0ea6d5def26132bc64f"
+      },
+      "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_result.json",
+      "objective_A": 3.179798853176739e-16,
+      "physical_gates_passed": true,
+      "objective_gate_passed": false,
+      "result": {
+        "schema": "contact-anchored-exact-binary-objective-v1",
+        "status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+        "passed": false,
+        "generated_at_utc": "2026-08-23T08:19:13.133476+00:00",
+        "polarization": "Ea",
+        "polarization_angle_deg": 90.0,
+        "axis_contract": "Lumerical x=b, y=a, z=c",
+        "thermal_interface_contract": {
+          "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+          "TaIrTe4_SiO2_scenario": "evaporated",
+          "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+          "G_SiO2_Si_W_m2K": 1100000000.0,
+          "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged",
+          "rotated_device_Au": {
+            "enabled": false,
+            "model": "absent; ideal terminals exist only in electrical weighting solve"
+          }
+        },
+        "objective_A": 3.179798853176739e-16,
+        "reference_continuous_objective_A": 3.2523083145092993e-16,
+        "relative_objective_change_from_continuous": -0.022294768613750057,
+        "physical_gates_passed": true,
+        "objective_gate_passed": false,
+        "binary_objective_preserved_within_one_percent": false,
+        "equivalent_objective_at_285uW_A": 6.552620433493231e-07,
+        "responsivity_A_W": 0.0022991650643835898,
+        "terminal_conductance_S": 0.013956945209333443,
+        "rho_values": [
+          0.0,
+          1.0
+        ],
+        "forward": {
+          "P_Q_W": 2.7997470946413305e-14,
+          "P_six_W": 2.796951987146045e-14,
+          "closure": 0.0009983428505508153,
+          "source_power_W": 1.3830232993859658e-13,
+          "faces": {
+            "run010_flux_x_min": {
+              "signed_axis_power_W": -2.6709304309160358e-18,
+              "outward_power_W": 2.6709304309160358e-18
+            },
+            "run010_flux_x_max": {
+              "signed_axis_power_W": 1.0330916052621637e-18,
+              "outward_power_W": 1.0330916052621637e-18
+            },
+            "run010_flux_y_min": {
+              "signed_axis_power_W": -2.7137941738898997e-18,
+              "outward_power_W": 2.7137941738898997e-18
+            },
+            "run010_flux_y_max": {
+              "signed_axis_power_W": 4.451126101011506e-18,
+              "outward_power_W": 4.451126101011506e-18
+            },
+            "run010_flux_z_min": {
+              "signed_axis_power_W": -2.1349276396478758e-14,
+              "outward_power_W": 2.1349276396478758e-14
+            },
+            "run010_flux_z_max": {
+              "signed_axis_power_W": -4.932966521025029e-14,
+              "outward_power_W": -4.932966521025029e-14
+            }
+          },
+          "coordinate_mismatch_m": 5.082197683525802e-21,
+          "resources": {
+            "1": {
+              "active": "1",
+              "device type": "CPU",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": ""
+            },
+            "2": {
+              "active": "1",
+              "device type": "GPU 3",
+              "processes": "1",
+              "threads": "8",
+              "solver extra command line options": "-gpu"
+            },
+            "global_gpu_engine_lock": {
+              "path": "/tmp/seunghyun_lumerical_run059_gpu3.lock",
+              "wait_s": 8.611753582954407e-05,
+              "pid": 1406181
+            }
+          },
+          "resource_used": "Local Host",
+          "wall_s": 46.12003753334284,
+          "polarization_angle_deg": 90.0,
+          "project": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea.fsp",
+            "size_bytes": 204145909,
+            "sha256": "a1152cb34a761c455797030aa838631477c0ac138e6a63f45ee8ad4ed4b4506f"
+          },
+          "log_audit": {
+            "logs": [
+              "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea_p0.log"
+            ],
+            "final_auto_shutoff": 9.26746e-08,
+            "logged_grid": {
+              "shape_xyz": [
+                338,
+                338,
+                106
+              ],
+              "grid_points": 12109864
+            },
+            "precise_GPU_memory_GiB": 0.423,
+            "simulation_completed_successfully": true
+          }
+        },
+        "gates": {
+          "optical_closure": 0.0009983428505508153,
+          "Q_mapping_error": 0.0,
+          "thermal_forward_residual": 9.616804511920262e-11,
+          "thermal_energy_balance": 4.51145959813571e-12,
+          "electrical_weighting_residual": 5.115405535761564e-11,
+          "maximum_binary_objective_loss_fraction": 0.01
+        },
+        "inputs": {
+          "base_FSP": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+            "size_bytes": 179792716,
+            "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+          },
+          "binary_density": {
+            "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03.npz",
+            "size_bytes": 3465,
+            "sha256": "221f93e05be384e096635ff775b237789aa5c332345dc0ea6d5def26132bc64f"
+          }
+        },
+        "raw_artifact": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_fields.npz",
+          "size_bytes": 10905463,
+          "sha256": "74e39156d8ced5d2cb7233bd9f20005cbdb3057bf2e33056ad301ba3c7845301"
+        },
+        "Maxwell_solves": {
+          "forward": 1,
+          "adjoint": 0
+        },
+        "posthoc_objective_or_gradient_rescaling": false,
+        "Q_clipping_smoothing_gain_or_rescaling": false,
+        "CPU_FDTD_fallback": false,
+        "CPU_thermal_linear_solve_fallback": false,
+        "wall_s": 64.488739579916
+      }
+    }
+  ],
+  "official_ansys_dfm": {
+    "source": "/opt/lumerical/v261/api/python/lumopt/geometries/topology.py",
+    "implementation": "topoparamstominfeaturesizeindicator and topoparamstominfeaturesizegradient",
+    "contract": {
+      "filter_radius_m": 3e-07,
+      "minimum_feature_m": 5e-07,
+      "eta": 0.5,
+      "dx_m": 1e-07,
+      "dy_m": 1e-07,
+      "activation_beta": 12.0,
+      "penalty_factor": 100.0,
+      "maximum_penalty": 10000.0
+    },
+    "derived": {
+      "delta_eta": 0.4722222222222222,
+      "eta_d": 0.02777777777777779,
+      "eta_e": 0.9722222222222222
+    },
+    "extra_Maxwell_solves": 0
+  },
+  "same_beta_restart_loop_used": false,
+  "empirical_gradient_rescaling": false
+}

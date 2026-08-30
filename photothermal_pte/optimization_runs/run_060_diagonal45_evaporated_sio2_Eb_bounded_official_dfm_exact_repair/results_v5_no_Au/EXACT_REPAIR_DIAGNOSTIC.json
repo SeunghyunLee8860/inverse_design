@@ -1,0 +1,229 @@
+{
+  "schema": "gradient-aware-exact-500nm-repair-v1",
+  "geometry_mode": "diagonal_45_contact_anchored",
+  "contact_axis": "diagonal_45",
+  "source_audit": {
+    "minimum_feature_nm": 500.0,
+    "opening_radius_nm": 250.0,
+    "opening_radius_pixels": 2,
+    "realized_discrete_opening_max_center_offset_nm": 200.0,
+    "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+    "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+    "geometry_mode": "diagonal_45_contact_anchored",
+    "contact_axis": "diagonal_45",
+    "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+    "solid_bad_cell_count": 269,
+    "void_bad_cell_count": 405,
+    "fixed_contact_violation_count": 0,
+    "outside_flake_solid_violation_count": 0,
+    "total_bad_cell_count": 674,
+    "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+    "solid_fraction": 0.6369036345792944,
+    "passed": false
+  },
+  "explored_state_count": 195,
+  "visited_state_count": 169558,
+  "passed": true,
+  "candidates": [
+    {
+      "rank": 0,
+      "exact_audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "geometry_mode": "diagonal_45_contact_anchored",
+        "contact_axis": "diagonal_45",
+        "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+        "solid_bad_cell_count": 0,
+        "void_bad_cell_count": 0,
+        "fixed_contact_violation_count": 0,
+        "outside_flake_solid_violation_count": 0,
+        "total_bad_cell_count": 0,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.6433429176494895,
+        "passed": true
+      },
+      "changed_node_count": 442,
+      "changed_node_fraction": 0.00761006181023054,
+      "predicted_objective_change_A": 9.473577431094967e-19,
+      "search_history": [
+        {
+          "seed_order": "unrepaired",
+          "seed_stop_reason": "source_design",
+          "seed_history": []
+        },
+        {
+          "search_iteration": 1,
+          "exact_bad_cells": 36,
+          "changed_node_count": 405,
+          "predicted_objective_change_A": 9.677574775423745e-19
+        },
+        {
+          "search_iteration": 2,
+          "exact_bad_cells": 34,
+          "changed_node_count": 408,
+          "predicted_objective_change_A": 9.746633418048982e-19
+        },
+        {
+          "search_iteration": 3,
+          "exact_bad_cells": 0,
+          "changed_node_count": 442,
+          "predicted_objective_change_A": 9.473577431094967e-19
+        }
+      ]
+    },
+    {
+      "rank": 1,
+      "exact_audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "geometry_mode": "diagonal_45_contact_anchored",
+        "contact_axis": "diagonal_45",
+        "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+        "solid_bad_cell_count": 0,
+        "void_bad_cell_count": 0,
+        "fixed_contact_violation_count": 0,
+        "outside_flake_solid_violation_count": 0,
+        "total_bad_cell_count": 0,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.6433429176494895,
+        "passed": true
+      },
+      "changed_node_count": 442,
+      "changed_node_fraction": 0.00761006181023054,
+      "predicted_objective_change_A": 9.390246228433385e-19,
+      "search_history": [
+        {
+          "seed_order": "unrepaired",
+          "seed_stop_reason": "source_design",
+          "seed_history": []
+        },
+        {
+          "search_iteration": 1,
+          "exact_bad_cells": 36,
+          "changed_node_count": 405,
+          "predicted_objective_change_A": 9.677574775423745e-19
+        },
+        {
+          "search_iteration": 2,
+          "exact_bad_cells": 34,
+          "changed_node_count": 408,
+          "predicted_objective_change_A": 9.677650557986314e-19
+        },
+        {
+          "search_iteration": 3,
+          "exact_bad_cells": 0,
+          "changed_node_count": 442,
+          "predicted_objective_change_A": 9.390246228433385e-19
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "exact_audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "geometry_mode": "diagonal_45_contact_anchored",
+        "contact_axis": "diagonal_45",
+        "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+        "solid_bad_cell_count": 0,
+        "void_bad_cell_count": 0,
+        "fixed_contact_violation_count": 0,
+        "outside_flake_solid_violation_count": 0,
+        "total_bad_cell_count": 0,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.6434634389903755,
+        "passed": true
+      },
+      "changed_node_count": 449,
+      "changed_node_fraction": 0.007730583151116544,
+      "predicted_objective_change_A": 9.390165921473999e-19,
+      "search_history": [
+        {
+          "seed_order": "unrepaired",
+          "seed_stop_reason": "source_design",
+          "seed_history": []
+        },
+        {
+          "search_iteration": 1,
+          "exact_bad_cells": 36,
+          "changed_node_count": 405,
+          "predicted_objective_change_A": 9.677574775423745e-19
+        },
+        {
+          "search_iteration": 2,
+          "exact_bad_cells": 34,
+          "changed_node_count": 415,
+          "predicted_objective_change_A": 9.677578484671838e-19
+        },
+        {
+          "search_iteration": 3,
+          "exact_bad_cells": 0,
+          "changed_node_count": 449,
+          "predicted_objective_change_A": 9.390165921473999e-19
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "exact_audit": {
+        "minimum_feature_nm": 500.0,
+        "opening_radius_nm": 250.0,
+        "opening_radius_pixels": 2,
+        "realized_discrete_opening_max_center_offset_nm": 200.0,
+        "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+        "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+        "geometry_mode": "diagonal_45_contact_anchored",
+        "contact_axis": "diagonal_45",
+        "outside_design_phase": "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides",
+        "solid_bad_cell_count": 0,
+        "void_bad_cell_count": 0,
+        "fixed_contact_violation_count": 0,
+        "outside_flake_solid_violation_count": 0,
+        "total_bad_cell_count": 0,
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+        "solid_fraction": 0.6434806563247878,
+        "passed": true
+      },
+      "changed_node_count": 450,
+      "changed_node_fraction": 0.007747800485528831,
+      "predicted_objective_change_A": 9.39016581970907e-19,
+      "search_history": [
+        {
+          "seed_order": "unrepaired",
+          "seed_stop_reason": "source_design",
+          "seed_history": []
+        },
+        {
+          "search_iteration": 1,
+          "exact_bad_cells": 36,
+          "changed_node_count": 405,
+          "predicted_objective_change_A": 9.677574775423745e-19
+        },
+        {
+          "search_iteration": 2,
+          "exact_bad_cells": 34,
+          "changed_node_count": 416,
+          "predicted_objective_change_A": 9.677578382906909e-19
+        },
+        {
+          "search_iteration": 3,
+          "exact_bad_cells": 0,
+          "changed_node_count": 450,
+          "predicted_objective_change_A": 9.39016581970907e-19
+        }
+      ]
+    }
+  ]
+}

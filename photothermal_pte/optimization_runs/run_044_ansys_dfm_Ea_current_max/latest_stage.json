@@ -1,0 +1,56 @@
+{
+  "stage_index": 14,
+  "beta": 128.0,
+  "dfm_penalty_weight": 10000.0,
+  "nlopt_result_code": -5,
+  "stage_stop_reason": "adaptive_plateau",
+  "adaptive_plateau_diagnostic": {
+    "passed": true,
+    "minimum_evaluations": 5,
+    "window_evaluations": 4,
+    "fom_relative_range_maximum": 0.0001,
+    "rms_step_maximum": 0.0001,
+    "gray_absolute_range_maximum": 0.001,
+    "stage_evaluations_observed": 5,
+    "reason": "adaptive_plateau",
+    "window_evaluation_ids": [
+      115,
+      116,
+      117,
+      118
+    ],
+    "fom_relative_range": 3.280592141125485e-07,
+    "rms_step_maximum_observed": 6.546115805583613e-13,
+    "gray_absolute_range": 0.0
+  },
+  "full_physics_evaluations": 5,
+  "raw_current_at_reference_power_A": 9.175913912880642e-08,
+  "smooth_solid_residual": 0.001498185777337777,
+  "smooth_void_residual": 0.002202982088296684,
+  "final_geometry_gate": {
+    "passed": false,
+    "discreteness": 0.9982284802693746,
+    "binarization_mean_4rho1mrho": 0.0017715197306253788,
+    "gray_fraction_0p01_0p99": 0.004231952271835842,
+    "exact_500nm_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 2,
+      "realized_discrete_opening_max_center_offset_nm": 200.0,
+      "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+      "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+      "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+      "solid_bad_cell_count": 96,
+      "void_bad_cell_count": 97,
+      "total_bad_cell_count": 193,
+      "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+      "solid_fraction": 0.7073140521459095,
+      "passed": false
+    }
+  },
+  "checkpoint": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0014_beta128.npz",
+    "size_bytes": 128656,
+    "sha256": "89807c9cfae78ef87b8d64f0869bc5845d79058e32905f76f3f3daeaa6d11d26"
+  }
+}

@@ -11,7 +11,7 @@ SCRIPT = (
     REPOSITORY
     / "photothermal_pte"
     / "optimization_runs"
-    / "run_002_gaussian10_w8p5_current_max"
+    / "legacy_v261_optical_support"
     / "run_complex_material_control.py"
 )
 

@@ -1,0 +1,20 @@
+{
+  "status": "protocol only; do not enable production optimization until every gate passes",
+  "signed_branches": [-1, 1],
+  "scaled_variable_order": ["u0=c0/P", "l0=L0/P", "u1=c1/P", "l1=L1/P"],
+  "center_bounds": [null, null],
+  "bulk_mesh_steps_um": [1.0, 0.5, 0.25],
+  "boundary_quadrature_orders": [3, 5, 7, 9],
+  "transition_width_over_boundary_mesh": [2.0, 1.0, 0.5],
+  "central_fd_steps_scaled": [0.01, 0.005, 0.001, 0.0005, 0.0001],
+  "contact_conductance_S_m2_sweep": [10000000000.0, 100000000000.0, 1000000000000.0, 10000000000000.0, 100000000000000.0, 1000000000000000.0],
+  "required_reports": [
+    "raw current A",
+    "four adjoint derivatives with respect to scaled variables",
+    "four central-FD derivatives with respect to scaled variables",
+    "componentwise absolute and relative errors",
+    "state and transpose-adjoint residuals",
+    "matrix asymmetry and conditioning proxy",
+    "hard-contact current and weighting-potential error"
+  ]
+}

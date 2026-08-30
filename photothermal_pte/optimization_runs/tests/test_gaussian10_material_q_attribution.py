@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "run_002_gaussian10_w8p5_current_max" / "audit_production_material_q_attribution.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "legacy_v261_optical_support" / "audit_production_material_q_attribution.py"
 
 
 def load_module():
