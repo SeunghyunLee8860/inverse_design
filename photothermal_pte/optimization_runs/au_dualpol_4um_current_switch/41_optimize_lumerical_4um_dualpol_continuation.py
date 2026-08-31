@@ -23,6 +23,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
+    CAP_SUBSTAGE_MINIMUM_FOM_RETENTION,
     DESIGN_CONSTRAINT_TOLERANCE,
     EPIGRAPH_CONSTRAINT_TOLERANCE,
     FINAL_GRAYNESS_CAP,
@@ -35,8 +36,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     active_design_constraint_names,
     beta_transition_physics_gate,
     continuation_contract,
+    feasible_stage_entry_caps,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    next_constraint_homotopy_caps,
     remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
@@ -59,8 +62,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
-CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v3"
-LEGACY_CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v2"
+CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v5"
+LEGACY_CHECKPOINT_SCHEMAS = {
+    "au-lumerical-continuation-checkpoint-v2",
+    "au-lumerical-continuation-checkpoint-v3",
+    "au-lumerical-continuation-checkpoint-v4",
+}
 PREFLIGHT_STATUS = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
 FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
     "au-lumerical-exact-binary-lateral-pde-certificate-v3"
@@ -134,7 +141,10 @@ def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
             "algorithm": "LD_MMA",
         },
         "optimizer_lifecycle": {
-            "normal_MMA_instances_per_beta": 1,
+            "MMA_instances_per_beta": (
+                "one per fixed constraint-homotopy subproblem"
+            ),
+            "constraint_change_new_MMA": True,
             "same_beta_restart": "crash recovery only",
             "MMA_internal_state_serialized": False,
             "recovery_semantics": "best successful density plus callback history; new MMA",
@@ -196,6 +206,10 @@ def _save_checkpoint(
     attempt: int,
     dfm_caps: np.ndarray,
     grayness_cap: float,
+    cap_substage: int = 0,
+    planned_cap_substage: int = -1,
+    target_dfm_caps: np.ndarray | None = None,
+    target_grayness_cap: float = np.nan,
 ) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp.npz")
     np.savez_compressed(
@@ -204,8 +218,17 @@ def _save_checkpoint(
         latent=np.asarray(latent, dtype=np.float64),
         beta_index=np.asarray(beta_index, dtype=np.int64),
         attempt=np.asarray(attempt, dtype=np.int64),
+        cap_substage=np.asarray(cap_substage, dtype=np.int64),
+        planned_cap_substage=np.asarray(planned_cap_substage, dtype=np.int64),
         dfm_caps=np.asarray(dfm_caps, dtype=np.float64),
         grayness_cap=np.asarray(grayness_cap, dtype=np.float64),
+        target_dfm_caps=np.asarray(
+            np.full(2, np.nan, dtype=np.float64)
+            if target_dfm_caps is None
+            else target_dfm_caps,
+            dtype=np.float64,
+        ),
+        target_grayness_cap=np.asarray(target_grayness_cap, dtype=np.float64),
     )
     temporary.replace(path)
 
@@ -240,19 +263,51 @@ def _save_stage_progress_state(
 def _load_checkpoint(path: Path) -> dict[str, Any]:
     with np.load(path, allow_pickle=False) as data:
         schema = str(np.asarray(data["schema"]).item())
-        if schema not in {CHECKPOINT_SCHEMA, LEGACY_CHECKPOINT_SCHEMA}:
+        if schema != CHECKPOINT_SCHEMA and schema not in LEGACY_CHECKPOINT_SCHEMAS:
             raise RuntimeError(f"checkpoint schema changed: {schema}")
         latent = np.asarray(data["latent"], dtype=np.float64)
         if latent.shape != CONTRACT.design_node_shape:
             raise RuntimeError("checkpoint latent shape changed")
-        return {
+        state = {
             "latent": latent,
             "beta_index": int(np.asarray(data["beta_index"]).item()),
             "attempt": int(np.asarray(data["attempt"]).item()),
             "dfm_caps": np.asarray(data["dfm_caps"], dtype=np.float64),
             "grayness_cap": float(np.asarray(data["grayness_cap"]).item()),
         }
+        if schema == CHECKPOINT_SCHEMA:
+            state.update(
+                cap_substage=int(np.asarray(data["cap_substage"]).item()),
+                planned_cap_substage=int(
+                    np.asarray(data["planned_cap_substage"]).item()
+                ),
+                target_dfm_caps=np.asarray(
+                    data["target_dfm_caps"], dtype=np.float64
+                ),
+                target_grayness_cap=float(
+                    np.asarray(data["target_grayness_cap"]).item()
+                ),
+            )
+        elif schema == "au-lumerical-continuation-checkpoint-v4":
+            state.update(
+                cap_substage=int(np.asarray(data["cap_substage"]).item()),
+                planned_cap_substage=-1,
+                target_dfm_caps=np.asarray(
+                    data["target_dfm_caps"], dtype=np.float64
+                ),
+                target_grayness_cap=float(
+                    np.asarray(data["target_grayness_cap"]).item()
+                ),
+            )
+        else:
+            state.update(
+                cap_substage=0,
+                planned_cap_substage=-1,
+                target_dfm_caps=np.full(2, np.nan, dtype=np.float64),
+                target_grayness_cap=np.nan,
 
+            )
+        return state
 
 def _verified_artifact(
     record: object,
@@ -603,10 +658,19 @@ def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
     return latent
 
 
-def _attempt_directory(root: Path, beta: float, attempt: int) -> tuple[Path, int]:
+def _attempt_directory(
+    root: Path, beta: float, cap_substage: int, attempt: int
+) -> tuple[Path, int]:
     value = int(attempt)
     while True:
-        candidate = root / "stages" / f"beta_{beta:03g}_recovery_{value:02d}"
+        candidate = (
+            root
+            / "stages"
+            / (
+                f"beta_{beta:03g}_cap_{int(cap_substage):02d}_"
+                f"recovery_{value:02d}"
+            )
+        )
         if not candidate.exists():
             return candidate, value
         value += 1
@@ -617,6 +681,30 @@ def _stage_constraints_satisfied(point: dict[str, Any]) -> bool:
         point["design_constraints"]["normalized_values"], dtype=np.float64
     )
     return bool(values.size == 0 or np.max(values) <= DESIGN_CONSTRAINT_TOLERANCE)
+
+
+def _constraint_targets_reached(state: dict[str, Any], beta: float) -> bool:
+    active_count = len(active_design_constraint_names(beta))
+    current = np.asarray(state["dfm_caps"], dtype=np.float64)
+    target = np.asarray(state["target_dfm_caps"], dtype=np.float64)
+    dfm_reached = bool(
+        np.allclose(
+            current[: min(active_count, 2)],
+            target[: min(active_count, 2)],
+            rtol=1.0e-12,
+            atol=1.0e-15,
+        )
+    )
+    gray_reached = bool(
+        active_count < 3
+        or np.isclose(
+            float(state["grayness_cap"]),
+            float(state["target_grayness_cap"]),
+            rtol=1.0e-12,
+            atol=1.0e-15,
+        )
+    )
+    return bool(dfm_reached and gray_reached)
 
 def _previous_stage_currents_nA(
     manifest: dict[str, Any], beta_index: int
@@ -753,8 +841,12 @@ def main() -> int:
                     "latent": latent,
                     "beta_index": 0,
                     "attempt": 0,
+                    "cap_substage": 0,
+                    "planned_cap_substage": -1,
                     "dfm_caps": np.full(2, np.inf, dtype=np.float64),
                     "grayness_cap": np.inf,
+                    "target_dfm_caps": np.full(2, np.nan, dtype=np.float64),
+                    "target_grayness_cap": np.nan,
                 }
             else:
                 state, restart_provenance = restart_seed
@@ -780,8 +872,9 @@ def main() -> int:
         while state["beta_index"] < len(BETA_SCHEDULE):
             beta_index = int(state["beta_index"])
             beta = BETA_SCHEDULE[beta_index]
+            cap_substage = int(state["cap_substage"])
             attempt_dir, attempt = _attempt_directory(
-                output, beta, int(state["attempt"])
+                output, beta, cap_substage, int(state["attempt"])
             )
             attempt_dir.mkdir(parents=True)
             runtime = replace(base_runtime, output_root=attempt_dir, beta=beta)
@@ -802,17 +895,109 @@ def main() -> int:
             # callback, stage caps remain marked as uninitialized.
             # Persist those caps before the expensive solve so such a restart
             # cannot silently disable DFM or grayness constraints.
-            if int(state["attempt"]) == 0:
-                cap_record = stage_design_caps(
-                    beta=beta,
-                    baseline_dfm_values=initial_dfm,
-                    baseline_grayness=initial_grayness,
-                    previous_dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
-                    previous_grayness_cap=float(state["grayness_cap"]),
-                )
-                state["dfm_caps"] = np.asarray(cap_record["DFM_caps"], dtype=np.float64)
-                state["grayness_cap"] = float(cap_record["grayness_cap"])
+            if (
+                int(state["attempt"]) == 0
+                and int(state["planned_cap_substage"]) != cap_substage
+            ):
+                if cap_substage == 0:
+                    target_record = stage_design_caps(
+                        beta=beta,
+                        baseline_dfm_values=initial_dfm,
+                        baseline_grayness=initial_grayness,
+                        previous_dfm_caps=np.asarray(
+                            state["dfm_caps"], dtype=np.float64
+                        ),
+                        previous_grayness_cap=float(state["grayness_cap"]),
+                    )
+                    entry_record = feasible_stage_entry_caps(
+                        beta=beta,
+                        baseline_dfm_values=initial_dfm,
+                        baseline_grayness=initial_grayness,
+                        previous_dfm_caps=np.asarray(
+                            state["dfm_caps"], dtype=np.float64
+                        ),
+                        previous_grayness_cap=float(state["grayness_cap"]),
+                    )
+                    state["target_dfm_caps"] = np.asarray(
+                        target_record["DFM_caps"], dtype=np.float64
+                    )
+                    state["target_grayness_cap"] = float(
+                        target_record["grayness_cap"]
+                    )
+                    state["dfm_caps"] = np.asarray(
+                        entry_record["DFM_caps"], dtype=np.float64
+                    )
+                    state["grayness_cap"] = float(entry_record["grayness_cap"])
+                    plan = {
+                        "beta": beta,
+                        "target_DFM_caps": np.asarray(
+                            state["target_dfm_caps"]
+                        ).tolist(),
+                        "target_grayness_cap": state["target_grayness_cap"],
+                        "entry_DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
+                        "entry_grayness_cap": state["grayness_cap"],
+                        "entry_normalized_constraints": entry_record[
+                            "entry_normalized_constraints"
+                        ],
+                        "entry_feasible": entry_record["feasible_at_entry"],
+                        "prior_cap_relaxation_was_required": entry_record[
+                            "prior_cap_relaxation_was_required"
+                        ],
+                        "substages": [
+                            {
+                                "cap_substage": 0,
+                                "DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
+                                "grayness_cap": state["grayness_cap"],
+                                "entry_normalized_constraints": entry_record[
+                                    "entry_normalized_constraints"
+                                ],
+                                "target_reached": _constraint_targets_reached(
+                                    state, beta
+                                ),
+                            }
+                        ],
+                    }
+                    manifest.setdefault("beta_constraint_homotopy_plans", {})[
+                        _fd_beta_key(beta)
+                    ] = plan
+                else:
+                    cap_record = next_constraint_homotopy_caps(
+                        beta=beta,
+                        baseline_dfm_values=initial_dfm,
+                        baseline_grayness=initial_grayness,
+                        current_dfm_caps=np.asarray(
+                            state["dfm_caps"], dtype=np.float64
+                        ),
+                        current_grayness_cap=float(state["grayness_cap"]),
+                        target_dfm_caps=np.asarray(
+                            state["target_dfm_caps"], dtype=np.float64
+                        ),
+                        target_grayness_cap=float(state["target_grayness_cap"]),
+                    )
+                    state["dfm_caps"] = np.asarray(
+                        cap_record["DFM_caps"], dtype=np.float64
+                    )
+                    state["grayness_cap"] = float(cap_record["grayness_cap"])
+                    manifest["beta_constraint_homotopy_plans"][
+                        _fd_beta_key(beta)
+                    ]["substages"].append(
+                        {
+                            "cap_substage": cap_substage,
+                            "DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
+                            "grayness_cap": state["grayness_cap"],
+                            "entry_normalized_constraints": cap_record[
+                                "entry_normalized_constraints"
+                            ],
+                            "maximum_entry_violation": cap_record[
+                                "maximum_entry_violation"
+                            ],
+                            "target_reached": cap_record["target_reached"],
+                        }
+                    )
+                state["planned_cap_substage"] = cap_substage
                 _save_checkpoint(checkpoint_path, **state)
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
             initial_physics = driver.evaluate(latent_initial)
             if stage_fd_certificate is None:
                 stage_fd_certificate = _record_stage_fd_certificate(
@@ -843,7 +1028,11 @@ def main() -> int:
                 )
                 manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
                 _write_json(manifest_path, manifest)
-            if beta_index > 0 and int(state["attempt"]) == 0:
+            if (
+                beta_index > 0
+                and cap_substage == 0
+                and int(state["attempt"]) == 0
+            ):
                 previous_currents_nA = _previous_stage_currents_nA(
                     manifest, beta_index
                 )
@@ -892,6 +1081,7 @@ def main() -> int:
                 list(active_stage.get("callback_history", []))
                 if isinstance(active_stage, dict)
                 and float(active_stage.get("beta", np.nan)) == beta
+                and int(active_stage.get("cap_substage", -1)) == cap_substage
                 else []
             )
 
@@ -919,6 +1109,7 @@ def main() -> int:
                     "status": "RUNNING_FIXED_BETA_MMA",
                     "beta": beta,
                     "beta_index": beta_index,
+                    "cap_substage": cap_substage,
                     "recovery_index": attempt,
                     "MMA_internal_state_serialized": False,
                     "callback_history": current_problem.complete_callback_history,
@@ -933,10 +1124,19 @@ def main() -> int:
                         selected_point["design_constraints"]["grayness"]
                     ),
                     "state_artifact": artifact(progress_path),
+                    "latest_raw_trial": current_problem.complete_callback_history[-1],
+                    "best_feasible_candidate": {
+                        "callback_index": selected_progress["callback_index"],
+                        "reason": selected_progress["reason"],
+                    },
+                    "unique_physics_evaluation_count": stage_objective_progress(
+                        current_problem.complete_callback_history
+                    )["unique_physical_states"],
                     "updated_at_utc": datetime.now(timezone.utc).isoformat(),
                 }
                 manifest["latest"] = {
                     "beta": beta,
+                    "cap_substage": cap_substage,
                     "recovery_index": attempt,
                     "iteration": len(current_problem.complete_callback_history) - 1,
                     "currents_nA": manifest["active_stage"]["latest_best_currents_nA"],
@@ -959,6 +1159,11 @@ def main() -> int:
             epigraph_initial_nA = 1.0e9 * min(
                 float(initial_physics["currents_A"]["Ea"]),
                 -float(initial_physics["currents_A"]["Eb"]),
+            )
+            retention_floor_nA = (
+                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * epigraph_initial_nA
+                if epigraph_initial_nA > 0.0
+                else -100.0
             )
             optimizer_latent = latent_initial
             optimizer_maxeval = STAGE_MAXEVAL[beta]
@@ -1003,7 +1208,10 @@ def main() -> int:
             variable_count = problem.variable_count
             optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
             optimizer.set_lower_bounds(
-                np.r_[np.zeros(variable_count - 1, dtype=np.float64), -100.0]
+                np.r_[
+                    np.zeros(variable_count - 1, dtype=np.float64),
+                    retention_floor_nA,
+                ]
             )
             optimizer.set_upper_bounds(
                 np.r_[np.ones(variable_count - 1, dtype=np.float64), 1000.0]
@@ -1059,13 +1267,22 @@ def main() -> int:
                 float(final_point["current_a_A"]) > 0.0
                 and float(final_point["current_b_A"]) < 0.0
             )
+            final_balanced_utility_nA = 1.0e9 * float(
+                final_point["balanced_utility_A"]
+            )
+            retention_passed = bool(
+                final_balanced_utility_nA
+                >= retention_floor_nA - EPIGRAPH_CONSTRAINT_TOLERANCE
+            )
+            cap_targets_reached = _constraint_targets_reached(state, beta)
             stage_result = {
                 "status": "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "beta": beta,
                 "beta_index": beta_index,
+                "cap_substage": cap_substage,
                 "recovery_index": attempt,
-                "normal_MMA_instance_for_beta": attempt == 0,
+                "normal_MMA_instance_for_cap_substage": attempt == 0,
                 "same_beta_recovery_MMA": attempt > 0,
                 "plateau_forced_stop": plateau_forced_stop,
                 "active_design_constraints": list(active_design_constraint_names(beta)),
@@ -1075,6 +1292,25 @@ def main() -> int:
                 "latent_bounds": [0.0, 1.0],
                 "MMA_initial_step": MMA_INITIAL_STEP[beta],
                 "initial_grayness": initial_grayness,
+                "constraint_homotopy": {
+                    "current_DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
+                    "current_grayness_cap": float(state["grayness_cap"]),
+                    "target_DFM_caps": np.asarray(
+                        state["target_dfm_caps"]
+                    ).tolist(),
+                    "target_grayness_cap": float(
+                        state["target_grayness_cap"]
+                    ),
+                    "target_reached": cap_targets_reached,
+                    "maximum_allowed_entry_violation": 0.05,
+                },
+                "FOM_retention": {
+                    "entry_balanced_utility_nA": epigraph_initial_nA,
+                    "minimum_fraction": CAP_SUBSTAGE_MINIMUM_FOM_RETENTION,
+                    "lower_bound_nA": retention_floor_nA,
+                    "final_balanced_utility_nA": final_balanced_utility_nA,
+                    "passed": retention_passed,
+                },
                 "uniform_baseline_outside_optimizer": warm_start_audit is not None,
                 "initial_maximin_warm_start": warm_start_audit,
                 "reported_numevals": optimizer.get_numevals(),
@@ -1097,7 +1333,7 @@ def main() -> int:
                     "Ea": 1.0e9 * float(final_point["current_a_A"]),
                     "Eb": 1.0e9 * float(final_point["current_b_A"]),
                 },
-                "balanced_utility_nA": 1.0e9 * float(final_point["balanced_utility_A"]),
+                "balanced_utility_nA": final_balanced_utility_nA,
                 "opposite_current_switching_achieved": switching,
                 "design_constraints": {
                     "names": final_point["design_constraints"]["names"],
@@ -1135,6 +1371,7 @@ def main() -> int:
             manifest["active_stage"] = None
             manifest["latest"] = {
                 "beta": beta,
+                "cap_substage": cap_substage,
                 "recovery_index": attempt,
                 "currents_nA": stage_result["final_currents_nA"],
                 "balanced_utility_nA": stage_result["balanced_utility_nA"],
@@ -1142,6 +1379,8 @@ def main() -> int:
                 "design_constraints_satisfied": design_satisfied,
                 "objective_converged": objective_converged,
                 "opposite_current_switching_achieved": switching,
+                "FOM_retention_passed": retention_passed,
+                "constraint_homotopy_target_reached": cap_targets_reached,
             }
             manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
             _write_json(manifest_path, manifest)
@@ -1156,6 +1395,8 @@ def main() -> int:
                 final_beta
                 and design_satisfied
                 and objective_converged
+                and retention_passed
+                and cap_targets_reached
                 and final_grayness_target_reached
                 and float(final_point["design_constraints"]["grayness"])
                 <= float(state["grayness_cap"]) * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
@@ -1243,11 +1484,37 @@ def main() -> int:
                     print(json.dumps(manifest["final"], indent=2, default=str))
                     return 0
 
-            may_advance = bool(
-                not final_beta
-                and design_satisfied
+            completed_cap_subproblem = bool(
+                design_satisfied
                 and objective_converged
                 and switching
+                and retention_passed
+            )
+            if completed_cap_subproblem and not cap_targets_reached:
+                stage_result["constraint_homotopy_advance"] = {
+                    "from_cap_substage": cap_substage,
+                    "to_cap_substage": cap_substage + 1,
+                    "reason": (
+                        "fixed-cap physics plateau passed; tighten active caps "
+                        "by at most five-percent entry violation"
+                    ),
+                }
+                _write_json(attempt_dir / "stage_result.json", stage_result)
+                state["latent"] = latent_final
+                state["cap_substage"] = cap_substage + 1
+                state["attempt"] = 0
+                manifest["status"] = (
+                    "RUNNING_LUMERICAL_4UM_CONSTRAINT_CAP_HOMOTOPY"
+                )
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _save_checkpoint(checkpoint_path, **state)
+                _write_json(manifest_path, manifest)
+                continue
+
+            may_advance = bool(
+                not final_beta
+                and completed_cap_subproblem
+                and cap_targets_reached
             )
             if may_advance:
                 next_beta = BETA_SCHEDULE[beta_index + 1]
@@ -1285,6 +1552,10 @@ def main() -> int:
                 state["latent"] = np.asarray(beta_remap["latent"], dtype=np.float64)
                 state["beta_index"] = beta_index + 1
                 state["attempt"] = 0
+                state["cap_substage"] = 0
+                state["planned_cap_substage"] = -1
+                state["target_dfm_caps"] = np.full(2, np.nan, dtype=np.float64)
+                state["target_grayness_cap"] = np.nan
                 # The next stage computes a tighter cap from a latent that
                 # preserves the completed stage's physical density.
                 _save_checkpoint(checkpoint_path, **state)
@@ -1298,24 +1569,32 @@ def main() -> int:
                     return 0
                 continue
 
-            manifest["status"] = (
-                "STOPPED_UNRESOLVED_FINAL_BINARY_OR_SWITCHING_GATES"
-                if final_beta
-                else "STOPPED_UNRESOLVED_STAGE_OBJECTIVE_OR_DESIGN_GATES"
-            )
+            manifest["status"] = "RUNNING_SAME_CAP_RECOVERY_MMA"
             manifest["passed"] = False
-            manifest["blocking_beta"] = beta
-            manifest["blocking_recovery_index"] = attempt
-            manifest["blocking_reason"] = (
-                "fixed-beta MMA ended without satisfying the audited plateau, "
-                "current-sign, active-design, and promotion gates"
+            manifest.setdefault("recovery_events", []).append(
+                {
+                    "beta": beta,
+                    "cap_substage": cap_substage,
+                    "completed_recovery_index": attempt,
+                    "next_recovery_index": attempt + 1,
+                    "design_constraints_satisfied": design_satisfied,
+                    "objective_converged": objective_converged,
+                    "opposite_current_switching_achieved": switching,
+                    "FOM_retention_passed": retention_passed,
+                    "constraint_homotopy_target_reached": cap_targets_reached,
+                    "reason": (
+                        "continue from the selected successful density with a new "
+                        "MMA instance; do not stop the production run"
+                    ),
+                    "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+                }
             )
             manifest["wall_s"] = time.monotonic() - started
             state["latent"] = latent_final
             state["attempt"] = attempt + 1
             _save_checkpoint(checkpoint_path, **state)
             _write_json(manifest_path, manifest)
-            return 2
+            continue
 
         raise RuntimeError("continuation exited without exact-binary promotion")
     except Exception as error:

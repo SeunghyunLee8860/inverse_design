@@ -75,8 +75,11 @@ def test_continuation_safety_ceiling_and_lifecycle_are_explicit() -> None:
     assert STAGE_MAXEVAL[128.0] == 96
     assert INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE == 0.05
     lifecycle = continuation_contract()["MMA_lifecycle"]
-    assert lifecycle["normal"] == "exactly one MMA object for each fixed beta"
-    assert "crash recovery only" in lifecycle["same_beta_new_MMA"]
+    assert "fixed-cap homotopy subproblem" in lifecycle["normal"]
+    assert "new cap subproblem" in lifecycle["same_beta_new_MMA"]
+    homotopy = continuation_contract()["constraint_cap_homotopy"]
+    assert homotopy["maximum_entry_violation_per_substage"] == 0.05
+    assert homotopy["minimum_FOM_retention_per_substage"] == 0.90
 
 
 def test_continuation_contract_requires_optical_lateral_and_pde_convergence() -> None:
@@ -345,7 +348,7 @@ def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
         .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
         .read_text(encoding="utf-8")
     )
-    cap_setup = source.index('if int(state["attempt"]) == 0:')
+    cap_setup = source.index('int(state["planned_cap_substage"]) != cap_substage')
     checkpoint = source.index("_save_checkpoint(checkpoint_path, **state)", cap_setup)
     first_maxwell = source.index("initial_physics = driver.evaluate(latent_initial)")
     assert cap_setup < checkpoint < first_maxwell

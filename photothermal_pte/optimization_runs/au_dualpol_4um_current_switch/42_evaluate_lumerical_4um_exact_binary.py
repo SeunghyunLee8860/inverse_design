@@ -35,9 +35,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     binary_mask_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
-    evaluate_fixed_source,
     refine_exact_binary_density,
     thermal_edges,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.volumetric_electrical_4um import (
+    evaluate_fixed_source_volumetric,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     exact_binary_promotion_passed,
@@ -272,7 +274,7 @@ def _pde_resolution(
     )
     source_power_raw, mapping = coupling.map_power(q)
     source_power = source_power_raw * reporting_scale
-    evaluated = evaluate_fixed_source(
+    evaluated = evaluate_fixed_source_volumetric(
         np.asarray(density, dtype=np.float64),
         source_power,
         0,
@@ -295,7 +297,7 @@ def _pde_resolution(
         "exact_binary_void_Au_nodes_removed": bool(
             electrical["exact_binary_geometry"]
             and electrical["electrical_void_Au_nodes_removed"]
-            and int(electrical["inactive_void_Au_node_count"])
+            and int(electrical["inactive_void_Au_cell_count"])
             == int(np.count_nonzero(density == 0))
         ),
         "finite_nonzero_current": bool(

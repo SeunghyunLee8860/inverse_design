@@ -1,4 +1,4 @@
-"""Finite-window 500 nm Au solid/void constraints and exact audit.
+"""Finite-window minimum-feature Au solid/void constraints and exact audit.
 
 The design outside the centered 8 um x 8 um window is void.  The production
 optimizer uses a finite conic filter, tanh projection, and differentiable
@@ -47,10 +47,10 @@ def physical_disk_footprint(radius_m: float, spacing_m: float) -> np.ndarray:
 def exact_500nm_audit(
     physical_density: np.ndarray,
     spacing_m: float = 100.0e-9,
-    minimum_feature_m: float = 500.0e-9,
+    minimum_feature_m: float = CONTRACT.minimum_solid_feature_m,
     threshold: float = 0.5,
 ) -> dict[str, object]:
-    """Audit thresholded Au and void with a physical radius-250 nm opening.
+    """Audit thresholded phases using half the requested feature as radius.
 
     Outside the finite design window is void.  The test is an exact discrete
     audit on the chosen 100 nm grid; it is not used as a differentiable
@@ -289,6 +289,9 @@ def density_metrics(latent: np.ndarray, beta: float) -> dict[str, object]:
         "void_bad_cell_count": int(audit["void_bad_cell_count"]),
         "exact_bad_cell_count": int(
             audit["solid_bad_cell_count"] + audit["void_bad_cell_count"]
+        ),
+        "exact_minimum_feature_pass": bool(
+            audit["solid_pass"] and audit["void_pass"]
         ),
         "exact_500nm_pass": bool(audit["solid_pass"] and audit["void_pass"]),
     }

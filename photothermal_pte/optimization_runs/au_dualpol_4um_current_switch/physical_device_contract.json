@@ -4,14 +4,15 @@
   "current_code_assumptions": {
     "flake": "16 um x 16 um square, 100 nm thick",
     "crystal_mapping": "solver x=b, solver y=a, no in-plane rotation",
-    "terminals": "ideal Dirichlet terminals covering the complete x_min and x_max flake edges",
+    "terminals": "named baseline: fixed top-Au strips at x=[-8,-7] um and x=[7,8] um, y=[-8,8] um, z=[0,50] nm; each full strip is a Dirichlet terminal",
     "weighting_potential_and_sign": "psi=0 at x_min, psi=1 at x_max; positive I is internal conventional current along solver +x from x_min to x_max",
     "au": "8 um x 8 um centered 50 nm binary floating design, in direct thermal/electrical contact with TaIrTe4",
     "substrate": "285 nm SiO2 on Si",
     "illumination": "normal-incidence centered 4 um Gaussian, w0=4 um, 285 uW",
     "thermal_outer_boundary": "ambient-temperature lateral faces at +/-32 um and substrate bottom at -20 um; top convection 10 W m^-2 K^-1",
-    "electrical_void_regularization": "finite Au sheet/contact conductivity floors remain in the matrix only; the floor is subtracted from the Au thermopower source so exact void generates zero Au PTE",
-    "au_transport": "bulk room-temperature scenario: sigma=1/(2.43e-8) S/m, k=317 W/(m K), S_Au=+1.94 uV/K on in-plane Au sheet edges; these are not certified 50 nm film values",
+    "electrical_void_regularization": "finite 3-D Au-volume/contact conductivity floors remain in the relaxed matrix only; the floor is subtracted from Au thermopower and exact-binary void nodes are removed",
+    "au_transport": "bulk room-temperature scenario: sigma=1/(2.43e-8) S/m, k=317 W/(m K), S_Au=+1.94 uV/K on isotropic 3-D Au edges; these are not certified 50 nm film values",
+    "tairte4_out_of_plane_transport": "unmeasured named scenario: sigma_z=1.10e4 S/m baseline with 1.10e3/1.10e4/1.10e5 S/m sensitivity; S_z=0 is omission, not a fit",
     "au_tairte4_vertical_thermopower": "0 V/K placeholder because no measured interface/out-of-plane thermopower is available; no value is invented"
   },
   "confirmations": {

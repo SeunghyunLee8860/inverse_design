@@ -1,8 +1,8 @@
 """Immutable physical and numerical contract for the 4 um Au design.
 
 Coordinates follow the established repository convention: Lumerical x is
-TaIrTe4 b and Lumerical y is TaIrTe4 a.  The electrical measurement terminals
-are boundary conditions on the fixed flake, not optically modelled Au pads.
+TaIrTe4 b and Lumerical y is TaIrTe4 a.  The measurement terminals are fixed
+top-Au strips included in Maxwell, thermal, and explicit 3-D electrical models.
 """
 
 from __future__ import annotations
@@ -33,9 +33,24 @@ class Contract:
     design_span_y_m: float = 8.0e-6
     design_thickness_m: float = 50.0e-9
     design_pitch_m: float = 100.0e-9
-    minimum_solid_feature_m: float = 500.0e-9
-    minimum_void_feature_m: float = 500.0e-9
-    filter_radius_m: float = 500.0e-9
+    measurement_electrode_material: str = "Au"
+    measurement_electrode_overlap_x_m: float = 1.0e-6
+    measurement_electrode_span_y_m: float = 16.0e-6
+    measurement_electrode_thickness_m: float = 50.0e-9
+    measurement_electrode_contact_S_m2: float = 1.0e10
+    electrical_model: str = "explicit_3d_top_contact_volumetric_current_v1"
+    tairte4_sigma_z_S_m: float = 1.10e4
+    tairte4_sigma_z_scenario: str = (
+        "unmeasured_named_baseline_0p1_times_sigma_b; "
+        "must_report_1p10e3_1p10e4_1p10e5_S_m_sensitivity"
+    )
+    tairte4_seebeck_z_V_K: float = 0.0
+    tairte4_seebeck_z_scenario: str = (
+        "unmeasured_out_of_plane_thermopower_omitted_not_fitted"
+    )
+    minimum_solid_feature_m: float = 250.0e-9
+    minimum_void_feature_m: float = 250.0e-9
+    filter_radius_m: float = 250.0e-9
     projection_eta: float = 0.5
     sio2_thickness_m: float = 285.0e-9
     pml_cells_each_face: int = 8
@@ -65,7 +80,7 @@ class Contract:
         "bulk_room_temperature_reference_not_certified_for_50nm_film"
     )
     au_thermopower_discretization: str = (
-        "in_plane_Au_sheet_source_with_numerical_conductivity_floor_subtracted"
+        "bulk_isotropic_3d_Au_edges_floor_subtracted"
     )
     au_material_fraction_law: str = AU_MATERIAL_FRACTION_LAW
     au_material_fraction_exponent: float = AU_MATERIAL_FRACTION_EXPONENT
@@ -113,17 +128,18 @@ class Contract:
             flake_boundary_intensity_over_peak=self.flake_boundary_intensity_fraction,
             periodic_boundary=False,
             optical_boundaries="six PML",
-            optical_electrodes_included=False,
+            optical_electrodes_included=True,
             electrical_terminal_model=(
-                "Dirichlet weighting potential psi=0 at x_min and psi=1 at x_max "
-                "on the fixed TaIrTe4 flake"
+                "explicit top Au strips spanning full y: psi=0 on the left "
+                "strip and psi=1 on the right strip; finite Au/TaIrTe4 contact "
+                "and explicit TaIrTe4 z conduction"
             ),
             au_role=(
                 "floating patterned nanostructure; optical absorber/scatterer and "
                 "thermal/electrical shunt, not a measurement electrode"
             ),
             au_thermopower_role=(
-                "bulk-reference Au Seebeck source is active on in-plane Au sheet "
+                "bulk-reference Au Seebeck source is active on 3-D Au volume "
                 "edges; the numerical void conductivity floor produces no "
                 "thermopower; unknown vertical Au/TaIrTe4 interface thermopower "
                 "is not invented and remains zero"

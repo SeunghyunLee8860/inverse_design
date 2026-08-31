@@ -14,6 +14,7 @@ objective are always present and are not counted as fabrication constraints.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 from typing import Any, Callable
 
 import numpy as np
@@ -110,6 +111,9 @@ STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS = 6
 STAGE_PLATEAU_WINDOW = 4
 STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-2
 STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
+STAGE_PLATEAU_PROJECTED_RMS_LIMIT = 1.0e-3
+CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION = 0.05
+CAP_SUBSTAGE_MINIMUM_FOM_RETENTION = 0.90
 BETA_REMAP_MAXIMUM_ITERATIONS = 1000
 BETA_REMAP_RMS_ERROR_LIMIT = 2.0e-3
 BETA_REMAP_MAX_ERROR_LIMIT = 2.0e-2
@@ -464,15 +468,135 @@ def stage_design_caps(
         "DFM_calibration": calibration,
     }
 
+def feasible_stage_entry_caps(
+    *,
+    beta: float,
+    baseline_dfm_values: np.ndarray,
+    baseline_grayness: float,
+    previous_dfm_caps: np.ndarray,
+    previous_grayness_cap: float,
+) -> dict[str, Any]:
+    """Carry prior caps into a new beta without making its entry infeasible."""
+
+    active_count = len(active_design_constraint_names(beta))
+    baseline = np.asarray(baseline_dfm_values, dtype=np.float64)
+    previous = np.asarray(previous_dfm_caps, dtype=np.float64)
+    if baseline.shape != (2,) or previous.shape != (2,):
+        raise ValueError("entry DFM values and caps must have length two")
+    caps = previous.copy()
+    margin = 1.0e-6
+    for index in range(min(active_count, 2)):
+        feasible_cap = baseline[index] * (1.0 + margin)
+        caps[index] = (
+            feasible_cap
+            if not np.isfinite(caps[index])
+            else max(caps[index], feasible_cap)
+        )
+    grayness = float(baseline_grayness)
+    if active_count < 3:
+        gray_cap = np.inf
+    else:
+        feasible_gray = grayness * (1.0 + margin)
+        gray_cap = (
+            feasible_gray
+            if not np.isfinite(previous_grayness_cap)
+            else max(float(previous_grayness_cap), feasible_gray)
+        )
+    normalized = []
+    if active_count >= 1:
+        normalized.append(float(baseline[0] / caps[0] - 1.0))
+    if active_count >= 2:
+        normalized.append(float(baseline[1] / caps[1] - 1.0))
+    if active_count >= 3:
+        normalized.append(float(grayness / gray_cap - 1.0))
+    return {
+        "DFM_caps": caps,
+        "grayness_cap": float(gray_cap),
+        "entry_normalized_constraints": normalized,
+        "maximum_entry_violation": max(normalized, default=-np.inf),
+        "feasible_at_entry": bool(max(normalized, default=-np.inf) <= 0.0),
+        "prior_cap_relaxation_was_required": bool(
+            np.any(caps[: min(active_count, 2)] > previous[: min(active_count, 2)])
+            or (
+                active_count >= 3
+                and np.isfinite(previous_grayness_cap)
+                and gray_cap > float(previous_grayness_cap)
+            )
+        ),
+    }
+
+
+def next_constraint_homotopy_caps(
+    *,
+    beta: float,
+    baseline_dfm_values: np.ndarray,
+    baseline_grayness: float,
+    current_dfm_caps: np.ndarray,
+    current_grayness_cap: float,
+    target_dfm_caps: np.ndarray,
+    target_grayness_cap: float,
+) -> dict[str, Any]:
+    """Take one cap step whose entry violation cannot exceed five percent."""
+
+    active_count = len(active_design_constraint_names(beta))
+    baseline = np.asarray(baseline_dfm_values, dtype=np.float64)
+    current = np.asarray(current_dfm_caps, dtype=np.float64)
+    target = np.asarray(target_dfm_caps, dtype=np.float64)
+    if any(value.shape != (2,) for value in (baseline, current, target)):
+        raise ValueError("homotopy DFM arrays must have length two")
+    caps = current.copy()
+    for index in range(min(active_count, 2)):
+        violation_limited = baseline[index] / (
+            1.0 + CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION
+        )
+        caps[index] = min(
+            current[index], max(target[index], violation_limited)
+        )
+    gray_cap = float(current_grayness_cap)
+    if active_count >= 3:
+        violation_limited_gray = float(baseline_grayness) / (
+            1.0 + CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION
+        )
+        gray_cap = min(
+            float(current_grayness_cap),
+            max(float(target_grayness_cap), violation_limited_gray),
+        )
+    normalized = []
+    if active_count >= 1:
+        normalized.append(float(baseline[0] / caps[0] - 1.0))
+    if active_count >= 2:
+        normalized.append(float(baseline[1] / caps[1] - 1.0))
+    if active_count >= 3:
+        normalized.append(float(baseline_grayness / gray_cap - 1.0))
+    reached = bool(
+        np.allclose(caps[: min(active_count, 2)], target[: min(active_count, 2)], rtol=1.0e-12, atol=1.0e-15)
+        and (active_count < 3 or np.isclose(gray_cap, target_grayness_cap, rtol=1.0e-12, atol=1.0e-15))
+    )
+    return {
+        "DFM_caps": caps,
+        "grayness_cap": gray_cap,
+        "entry_normalized_constraints": normalized,
+        "maximum_entry_violation": max(normalized, default=-np.inf),
+        "maximum_allowed_entry_violation": CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION,
+        "target_reached": reached,
+    }
 
 def stage_objective_progress(
     callback_history: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Audit whether feasible balanced utility stopped improving recently."""
+    """Audit a plateau using unique physical densities, not MMA callbacks."""
 
+    unique: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, row in enumerate(callback_history):
+        state_hash = str(row.get("density_state_sha256", f"legacy-{index}"))
+        if state_hash in seen:
+            continue
+        seen.add(state_hash)
+        unique.append(row)
     feasible = [
         row
-        for row in callback_history
+        for row in unique
         if float(row.get("maximum_design_constraint", -np.inf))
         <= DESIGN_CONSTRAINT_TOLERANCE
     ]
@@ -496,8 +620,32 @@ def stage_objective_progress(
         recent_best = float(np.max(values)) if values.size else np.nan
         improvement = np.inf
         tolerance = np.nan
+    recent_rows = feasible[-STAGE_PLATEAU_WINDOW:]
+    movement_available = any(
+        "projected_density_change_RMS" in row for row in recent_rows
+    )
+    recent_movement = np.asarray(
+        [float(row.get("projected_density_change_RMS", np.inf)) for row in recent_rows],
+        dtype=np.float64,
+    )
+    movement_converged = bool(
+        not movement_available
+        or (
+            recent_movement.size == STAGE_PLATEAU_WINDOW
+            and np.all(np.isfinite(recent_movement))
+            and float(np.max(recent_movement))
+            <= STAGE_PLATEAU_PROJECTED_RMS_LIMIT
+        )
+    )
     return {
-        "converged": bool(enough and has_prior_window and improvement <= tolerance),
+        "converged": bool(
+            enough
+            and has_prior_window
+            and improvement <= tolerance
+            and movement_converged
+        ),
+        "raw_callback_points": len(callback_history),
+        "unique_physical_states": len(unique),
         "feasible_physics_points": int(values.size),
         "minimum_feasible_points": STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS,
         "window": STAGE_PLATEAU_WINDOW,
@@ -505,6 +653,13 @@ def stage_objective_progress(
         "recent_best_balanced_utility_nA": recent_best,
         "recent_best_improvement_nA": float(improvement),
         "allowed_improvement_nA": float(tolerance),
+        "recent_projected_density_change_RMS_max": (
+            float(np.max(recent_movement))
+            if movement_available and recent_movement.size
+            else np.nan
+        ),
+        "projected_density_movement_gate_applied": movement_available,
+        "projected_density_change_RMS_limit": STAGE_PLATEAU_PROJECTED_RMS_LIMIT,
     }
 
 
@@ -569,6 +724,7 @@ class ContinuationEpigraphProblem:
         self._candidate_points: list[dict[str, Any]] = []
         self._last_latent: np.ndarray | None = None
         self._last_point: dict[str, Any] | None = None
+        self._last_projected_callback: np.ndarray | None = None
         self._force_stop: Callable[[], None] | None = None
         self.plateau_stop_requested = False
         self.plateau_result: dict[str, Any] | None = None
@@ -632,8 +788,28 @@ class ContinuationEpigraphProblem:
         maximum_design = (
             float(np.max(normalized_design)) if normalized_design.size else -np.inf
         )
-        self.callback_history.append(
-            {
+        projected_callback = OPTIMIZER_250NM_MAPPING.physical(latent, self.beta)
+        if self._last_projected_callback is None:
+            projected_change_rms = np.inf
+        else:
+            projected_change_rms = float(
+                np.sqrt(
+                    np.mean(
+                        (projected_callback - self._last_projected_callback) ** 2
+                    )
+                )
+            )
+        self._last_projected_callback = projected_callback.copy()
+        density_record = point.get("density_state", {})
+        density_hash = density_record.get("density_state_sha256")
+        production_density_record = bool(
+            isinstance(density_hash, str) and density_hash
+        )
+        if not production_density_record:
+            density_hash = hashlib.sha256(
+                np.ascontiguousarray(projected_callback, dtype=np.float64).tobytes()
+            ).hexdigest()
+        callback_record = {
                 "callback_index": len(self.history_prefix) + len(self.callback_history),
                 "current_Ea_nA": 1.0e9 * float(point["current_a_A"]),
                 "current_Eb_nA": 1.0e9 * float(point["current_b_A"]),
@@ -644,8 +820,14 @@ class ContinuationEpigraphProblem:
                 "grayness": design["grayness"],
                 "maximum_design_constraint": maximum_design,
                 "design_feasible": bool(maximum_design <= DESIGN_CONSTRAINT_TOLERANCE),
-            }
-        )
+                "density_state_sha256": density_hash,
+        }
+        if production_density_record:
+            callback_record.update(
+                physics_cache_hit=bool(point.get("cache_hit", False)),
+                projected_density_change_RMS=projected_change_rms,
+            )
+        self.callback_history.append(callback_record)
         self._candidate_latents.append(latent.copy())
         self._candidate_points.append(point)
         if self.progress_callback is not None:
@@ -749,12 +931,24 @@ def continuation_contract() -> dict[str, Any]:
             str(key): value for key, value in STAGE_MAXEVAL.items()
         },
         "MMA_lifecycle": {
-            "normal": "exactly one MMA object for each fixed beta",
+            "normal": (
+                "one MMA object for each fixed-beta, fixed-cap homotopy subproblem"
+            ),
             "normal_stop": "callback-requested stop after audited physics plateau",
             "same_beta_new_MMA": (
-                "crash recovery only; NLopt MMA internal asymptotes are not serializable"
+                "new cap subproblem or recovery from the best successful density; "
+                "NLopt MMA internal asymptotes are not serializable"
             ),
             "beta_change_new_MMA": True,
+        },
+        "constraint_cap_homotopy": {
+            "maximum_entry_violation_per_substage": (
+                CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION
+            ),
+            "minimum_FOM_retention_per_substage": (
+                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION
+            ),
+            "target_caps_are_fixed_at_beta_entry": True,
         },
         "continuation_evaluation_budget": {
             "all_stage_emergency_ceiling": MINIMUM_CONTINUATION_EVALUATIONS,
@@ -802,6 +996,8 @@ def continuation_contract() -> dict[str, Any]:
             "window": STAGE_PLATEAU_WINDOW,
             "relative_tolerance": STAGE_PLATEAU_RELATIVE_TOLERANCE,
             "absolute_tolerance_nA": STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA,
+            "unique_projected_density_states_only": True,
+            "projected_density_RMS_limit": STAGE_PLATEAU_PROJECTED_RMS_LIMIT,
         },
         "initial_density": "exact uniform latent rho=0.5",
         "floating_Au_terminal_conductance_constraint": False,

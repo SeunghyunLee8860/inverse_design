@@ -24,6 +24,7 @@ PRODUCTION_ENTRYPOINTS = (
 PRODUCTION_SUPPORT = (
     "contract.py",
     "multiphysics_4um.py",
+    "volumetric_electrical_4um.py",
     "au_density_relaxation.py",
     "dfm.py",
     "robust_contract.py",

@@ -3,8 +3,9 @@
 
 The optical heat source is intentionally frozen.  This validates the complete
 downstream density derivative, including Au thermal transport, Au/Ta thermal
-contact, floating-Au electrical weighting, bulk Au thermopower, and both
-custom-PDE adjoints.  It does not claim to validate the Maxwell density term.
+and electrical contact, explicit 3-D top-contact weighting, bulk Au
+thermopower, and both custom-PDE adjoints.  It does not claim to validate the
+Maxwell density term.
 """
 
 from __future__ import annotations
@@ -40,9 +41,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (
     require_lumerical_only_source_boundary,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
-    evaluate_fixed_source,
-    thermal_edges,
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import thermal_edges
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.volumetric_electrical_4um import (
+    evaluate_fixed_source_volumetric,
 )
 
 
@@ -129,7 +130,7 @@ def main() -> int:
         )
         source = source_raw * source_scale
 
-        base = evaluate_fixed_source(
+        base = evaluate_fixed_source_volumetric(
             rho, source, args.cuda_device, need_gradient=True
         )
         gradient = np.asarray(base["gradient_direct_A"], dtype=np.float64)
@@ -145,12 +146,12 @@ def main() -> int:
             if np.min(minus_rho) <= 0.0 or np.max(plus_rho) >= 1.0:
                 raise RuntimeError("AD-FD perturbation would clip rho")
             plus = float(
-                evaluate_fixed_source(
+                evaluate_fixed_source_volumetric(
                     plus_rho, source, args.cuda_device, need_gradient=False
                 )["objective_A"]
             )
             minus = float(
-                evaluate_fixed_source(
+                evaluate_fixed_source_volumetric(
                     minus_rho, source, args.cuda_device, need_gradient=False
                 )["objective_A"]
             )
@@ -195,6 +196,13 @@ def main() -> int:
                 float(electrical["S_Au_Ta_contact_V_K"])
                 == CONTRACT.au_tairte4_interfacial_seebeck_V_K
                 == 0.0
+            ),
+            "explicit_3d_top_contact_volumetric_model": bool(
+                electrical["electrical_model"] == CONTRACT.electrical_model
+            ),
+            "volumetric_integral_matches_terminal_lt_1e_12": bool(
+                float(electrical["volumetric_integral_relative_error"])
+                < 1.0e-12
             ),
             "finite": bool(
                 np.all(np.isfinite(gradient))

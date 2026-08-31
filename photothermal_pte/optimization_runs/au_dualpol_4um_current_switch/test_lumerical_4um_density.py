@@ -166,7 +166,13 @@ def test_layout_uses_one_import_object_and_no_exact_au_prisms() -> None:
     assert imported["index"].shape == (81, 81, 2)
     assert imported["index"][0, 0, 0] == 1.0 + 0.0j
     assert imported["index"][-1, 0, 0] == ordal_au_index()
-    assert len(fdtd.rectangles) == 3
+    assert len(fdtd.rectangles) == 5
+    assert {
+        item["name"] for item in fdtd.rectangles if "measurement_electrode" in item["name"]
+    } == {
+        "fixed_measurement_electrode_left",
+        "fixed_measurement_electrode_right",
+    }
     assert not any(str(item["name"]).startswith("exact_Au_prism") for item in fdtd.rectangles)
     assert audit["Maxwell_solve_run"] is False
     assert audit["density_state"]["density_state_sha256"] == density_state_sha256(nodes)

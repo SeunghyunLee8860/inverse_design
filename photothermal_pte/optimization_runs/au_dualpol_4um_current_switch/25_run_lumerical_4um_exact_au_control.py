@@ -85,6 +85,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     exact_control_masks,
     mask_rectangles,
     material_contract_audit,
+    measurement_electrode_bounds,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
     ACCELERATOR_POLICIES,
@@ -639,17 +640,27 @@ def _exact_layout_audit_without_mutation(
         for axis in "xyz"
         for side in ("min", "max")
     }
+    design_rectangle_count = len(
+        mask_rectangles(
+            mask,
+            x_edges_m=x_edges,
+            y_edges_m=y_edges,
+            z_bounds_m=z_bounds,
+        )
+    )
+    electrode_bounds = measurement_electrode_bounds()
     geometry = {
         "status": "PROVISIONAL_UNCONFIRMED_DEVICE_GEOMETRY",
         "exact_au_geometry": control_geometry_audits()[args.case],
-        "Au_rectangle_count": len(
-            mask_rectangles(
-                mask,
-                x_edges_m=x_edges,
-                y_edges_m=y_edges,
-                z_bounds_m=z_bounds,
-            )
-        ),
+        "Au_rectangle_count": design_rectangle_count + len(electrode_bounds),
+        "design_Au_rectangle_count": design_rectangle_count,
+        "fixed_measurement_electrode_rectangle_count": len(electrode_bounds),
+        "measurement_electrodes": {
+            side: {axis: list(values) for axis, values in bounds.items()}
+            for side, bounds in electrode_bounds.items()
+        },
+        "measurement_electrode_material": CONTRACT.measurement_electrode_material,
+        "measurement_electrodes_are_fixed_not_design_variables": True,
         "layers_z_m": {
             "Si": [spec.z_min_m, -385.0e-9],
             "SiO2": [-385.0e-9, -100.0e-9],

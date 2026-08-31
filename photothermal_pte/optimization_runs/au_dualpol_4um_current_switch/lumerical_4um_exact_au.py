@@ -491,6 +491,33 @@ def _add_rect(
     rectangle["z min"], rectangle["z max"] = z_bounds_m
 
 
+def measurement_electrode_bounds() -> dict[str, dict[str, tuple[float, float]]]:
+    """Return the two fixed top-Au measurement contacts in physical metres."""
+
+    half_x = 0.5 * CONTRACT.flake_span_x_m
+    half_y = 0.5 * CONTRACT.measurement_electrode_span_y_m
+    if half_y > 0.5 * CONTRACT.flake_span_y_m + 1.0e-18:
+        raise ValueError("measurement electrode exceeds the TaIrTe4 flake in y")
+    overlap = CONTRACT.measurement_electrode_overlap_x_m
+    if not 0.0 < overlap < 0.5 * (
+        CONTRACT.flake_span_x_m - CONTRACT.design_span_x_m
+    ):
+        raise ValueError("measurement electrode overlaps or misses the design gap")
+    z_bounds = (0.0, CONTRACT.measurement_electrode_thickness_m)
+    return {
+        "left": {
+            "x": (-half_x, -half_x + overlap),
+            "y": (-half_y, half_y),
+            "z": z_bounds,
+        },
+        "right": {
+            "x": (half_x - overlap, half_x),
+            "y": (-half_y, half_y),
+            "z": z_bounds,
+        },
+    }
+
+
 def add_exact_stack_geometry(
     fdtd: Any,
     mask: np.ndarray,
@@ -539,6 +566,16 @@ def add_exact_stack_geometry(
         y_bounds_m=flake_y,
         z_bounds_m=(-100.0e-9, 0.0),
     )
+    electrode_bounds = measurement_electrode_bounds()
+    for side, bounds in electrode_bounds.items():
+        _add_rect(
+            fdtd,
+            name=f"fixed_measurement_electrode_{side}",
+            material=AU_MATERIAL,
+            x_bounds_m=bounds["x"],
+            y_bounds_m=bounds["y"],
+            z_bounds_m=bounds["z"],
+        )
     rectangles = mask_rectangles(
         mask,
         x_edges_m=x_edges,
@@ -557,7 +594,15 @@ def add_exact_stack_geometry(
     return {
         "status": "PROVISIONAL_UNCONFIRMED_DEVICE_GEOMETRY",
         "exact_au_geometry": geometry_audit,
-        "Au_rectangle_count": len(rectangles),
+        "Au_rectangle_count": len(rectangles) + len(electrode_bounds),
+        "design_Au_rectangle_count": len(rectangles),
+        "fixed_measurement_electrode_rectangle_count": len(electrode_bounds),
+        "measurement_electrodes": {
+            side: {axis: list(values) for axis, values in bounds.items()}
+            for side, bounds in electrode_bounds.items()
+        },
+        "measurement_electrode_material": CONTRACT.measurement_electrode_material,
+        "measurement_electrodes_are_fixed_not_design_variables": True,
         "layers_z_m": {
             "Si": [optical_z_min_m, -385.0e-9],
             "SiO2": [-385.0e-9, -100.0e-9],

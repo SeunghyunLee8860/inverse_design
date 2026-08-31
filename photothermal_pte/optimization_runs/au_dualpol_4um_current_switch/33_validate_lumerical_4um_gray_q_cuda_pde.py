@@ -38,9 +38,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_yee_jacobian import (
     validate_completed_density_record,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
-    evaluate_fixed_source,
-    thermal_edges,
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import thermal_edges
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.volumetric_electrical_4um import (
+    evaluate_fixed_source_volumetric,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_provenance import (
     sha256,
@@ -135,7 +135,7 @@ def main() -> int:
             normalization = forward["reporting_normalization"]
             scale = float(normalization["scalar_reporting_factor"])
             source_power = source_power_raw * scale
-            evaluated = evaluate_fixed_source(
+            evaluated = evaluate_fixed_source_volumetric(
                 rho_cell,
                 source_power,
                 args.cuda_device,
@@ -176,6 +176,16 @@ def main() -> int:
             "electrical_forward_residual_lt_1e_8": float(electrical_audit["relative_residual"]) < 1.0e-8,
             "electrical_adjoint_residual_lt_1e_8": float(electrical_adjoint_audit["relative_residual"]) < 1.0e-8,
             "electrical_terminal_balance_lt_1pct": float(electrical_audit["terminal_balance_relative"]) < 1.0e-2,
+            "explicit_3d_top_contact_volumetric_model": bool(
+                electrical_audit["electrical_model"] == CONTRACT.electrical_model
+            ),
+            "volumetric_integral_matches_terminal_lt_1e_12": bool(
+                float(electrical_audit["volumetric_integral_relative_error"])
+                < 1.0e-12
+            ),
+            "electrical_matrix_symmetric_lt_1e_13": bool(
+                float(electrical_audit["matrix_symmetry_relative"]) < 1.0e-13
+            ),
             "finite_nonzero_current_and_gradients": bool(
                 np.isfinite(evaluated["objective_A"])
                 and float(evaluated["objective_A"]) != 0.0
@@ -207,6 +217,12 @@ def main() -> int:
             temperature_K=np.asarray(evaluated["temperature"]),
             ta_temperature_K=np.asarray(evaluated["ta_temperature"]),
             au_temperature_K=np.asarray(evaluated["au_temperature"]),
+            volumetric_current_density_A_m3=np.asarray(
+                evaluated["volumetric_current_density_A_m3"]
+            ),
+            weighting_potential_all_electrical_nodes=np.asarray(
+                evaluated["weighting"]
+            ),
             gradient_direct_cell_A=gradient_direct_cell,
             gradient_direct_nodal_A=gradient_direct_nodal,
             **{

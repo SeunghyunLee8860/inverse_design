@@ -50,7 +50,7 @@ class LumericalMaxwellContract:
     maxwell_solver: str = "Ansys Lumerical FDTD v261 (2026 R1.2)"
     thermal_solver: str = "repository custom CUDA finite-volume steady heat solver"
     electrical_solver: str = (
-        "repository custom CUDA weighting-potential finite-element solver"
+        "repository custom CUDA explicit-3D finite-volume weighting-potential solver"
     )
     maxwell_accelerator_required: str = "NVIDIA B200"
     maxwell_execution_mode: str = "3D FDTD GPU"

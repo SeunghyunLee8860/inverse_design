@@ -1,10 +1,10 @@
-"""Explicit thermal and floating-Au electrical operators for the 4 um design.
+"""Thermal operator and retained legacy 2-D electrical reference model.
 
 Coordinates are fixed to Lumerical x=b and y=a.  The fixed TaIrTe4 flake is
 16 x 16 x 0.1 um, the floating Au design window is 8 x 8 x 0.05 um, and both
-operators use a 100 nm lateral grid over the physical device.  Optical
-electrodes are absent; the electrical readout is represented by psi=0 on the
-left flake boundary and psi=1 on the right flake boundary.
+operators use a 100 nm lateral grid over the physical device.  Production
+uses :mod:`volumetric_electrical_4um`; the sheet operator below is retained
+only for explicit 2-D-versus-3-D audits and historical artifact replay.
 """
 
 from __future__ import annotations
@@ -252,10 +252,26 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     x_au = (x >= -4e-6) & (x < 4e-6)
     y_au = (y >= -4e-6) & (y < 4e-6)
     z_au = (z >= 0.0) & (z < 0.05e-6)
+    half_flake = 0.5 * CONTRACT.flake_span_x_m
+    overlap = CONTRACT.measurement_electrode_overlap_x_m
+    half_electrode_y = 0.5 * CONTRACT.measurement_electrode_span_y_m
+    x_electrode = ((x >= -half_flake) & (x < -half_flake + overlap)) | (
+        (x >= half_flake - overlap) & (x < half_flake)
+    )
+    y_electrode = (y >= -half_electrode_y) & (y < half_electrode_y)
+    z_electrode = (z >= 0.0) & (
+        z < CONTRACT.measurement_electrode_thickness_m
+    )
     z_sio2 = (z >= -0.385e-6) & (z < -0.1e-6)
     z_si = z < -0.385e-6
     ta = x_ta[:, None, None] & y_ta[None, :, None] & z_ta[None, None, :]
-    au = x_au[:, None, None] & y_au[None, :, None] & z_au[None, None, :]
+    design_au = x_au[:, None, None] & y_au[None, :, None] & z_au[None, None, :]
+    electrodes = (
+        x_electrode[:, None, None]
+        & y_electrode[None, :, None]
+        & z_electrode[None, None, :]
+    )
+    au = design_au | electrodes
     sio2 = np.broadcast_to(z_sio2[None, None, :], shape)
     si = np.broadcast_to(z_si[None, None, :], shape)
     ix_au, iy_au, iz_au = map(np.flatnonzero, (x_au, y_au, z_au))
@@ -273,6 +289,7 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     for iz in iz_au:
         for component in range(3):
             kappa[np.ix_(ix_au, iy_au, [iz], [component])] = k_au[:, :, None, None]
+    kappa[electrodes] = K_AU_W_MK
 
     rx = np.zeros((shape[0] - 1, shape[1], shape[2]), dtype=np.float64)
     ry = np.zeros((shape[0], shape[1] - 1, shape[2]), dtype=np.float64)
@@ -307,6 +324,11 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     if np.min(r_interface) < -1e-15:
         raise RuntimeError("negative equivalent Au/Ta interface resistance")
     rz[np.ix_(ix_au, iy_au, [ta_top_face])] = np.maximum(r_interface, 0.0)[:, :, None]
+    ix_electrode = np.flatnonzero(x_electrode)
+    iy_electrode = np.flatnonzero(y_electrode)
+    rz[np.ix_(ix_electrode, iy_electrode, [ta_top_face])] = (
+        1.0 / G_AU_TA_W_M2K
+    )
 
     system = fvm.assemble_steady_diagonal_kappa(
         x_edges_m=edges[0],
@@ -331,7 +353,14 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
         centers=centers,
         system=system,
         kappa=kappa,
-        masks={"au": au, "tairte4": ta, "sio2": sio2, "si": si},
+        masks={
+            "au": au,
+            "design_au": design_au,
+            "measurement_electrodes": electrodes,
+            "tairte4": ta,
+            "sio2": sio2,
+            "si": si,
+        },
         interface_resistance={"x": rx, "y": ry, "z": rz},
         rho=density.copy(),
         material_fraction=fraction.copy(),
