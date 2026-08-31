@@ -87,7 +87,9 @@ def main() -> int:
             and np.sign(adjoint_directional) == np.sign(finite_difference)
             and float(forward_audit["relative_residual"]) < 1.0e-8
             and float(adjoint_audit["relative_residual"]) < 1.0e-8
-            and float(forward_audit["volumetric_integral_relative_error"])
+            and float(
+                forward_audit["volumetric_integral_normwise_relative_error"]
+            )
             < 1.0e-12
         )
         report = {

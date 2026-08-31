@@ -294,6 +294,10 @@ def _pde_resolution(
             electrical["terminal_balance_relative"]
         )
         < 1.0e-2,
+        "volumetric_integral_normwise_matches_terminal_lt_1e_12": float(
+            electrical["volumetric_integral_normwise_relative_error"]
+        )
+        < 1.0e-12,
         "exact_binary_void_Au_nodes_removed": bool(
             electrical["exact_binary_geometry"]
             and electrical["electrical_void_Au_nodes_removed"]

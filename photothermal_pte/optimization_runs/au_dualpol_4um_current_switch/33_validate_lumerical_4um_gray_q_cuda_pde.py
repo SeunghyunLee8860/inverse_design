@@ -179,8 +179,12 @@ def main() -> int:
             "explicit_3d_top_contact_volumetric_model": bool(
                 electrical_audit["electrical_model"] == CONTRACT.electrical_model
             ),
-            "volumetric_integral_matches_terminal_lt_1e_12": bool(
-                float(electrical_audit["volumetric_integral_relative_error"])
+            "volumetric_integral_normwise_matches_terminal_lt_1e_12": bool(
+                float(
+                    electrical_audit[
+                        "volumetric_integral_normwise_relative_error"
+                    ]
+                )
                 < 1.0e-12
             ),
             "electrical_matrix_symmetric_lt_1e_13": bool(

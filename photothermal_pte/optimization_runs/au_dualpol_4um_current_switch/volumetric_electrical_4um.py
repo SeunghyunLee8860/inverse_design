@@ -470,9 +470,18 @@ def solve_volumetric_electrical(
         np.linalg.norm(system.reduced_rhs_A), np.finfo(float).tiny
     )
     integrand = volumetric_current_integrand(system, psi)
-    integrated = float(np.sum(integrand * system.thermal_cell_volume_m3))
-    integration_error = abs(integrated - current) / max(
+    integrated_cell_current = integrand * system.thermal_cell_volume_m3
+    integrated = float(np.sum(integrated_cell_current))
+    integration_absolute_error = abs(integrated - current)
+    integration_current_relative_error = integration_absolute_error / max(
         abs(current), np.finfo(float).tiny
+    )
+    current_absolute_scale = float(np.sum(np.abs(integrated_cell_current)))
+    integration_normwise_error = integration_absolute_error / max(
+        current_absolute_scale, np.finfo(float).tiny
+    )
+    cancellation_ratio = abs(current) / max(
+        current_absolute_scale, np.finfo(float).tiny
     )
     matrix_asymmetry = system.full_matrix_S - system.full_matrix_S.T
     matrix_scale = max(
@@ -491,7 +500,17 @@ def solve_volumetric_electrical(
         "high_terminal_A_per_V": high,
         "matrix_symmetry_relative": float(asymmetry),
         "volumetric_integral_current_A": integrated,
-        "volumetric_integral_relative_error": float(integration_error),
+        "volumetric_integral_absolute_error_A": float(
+            integration_absolute_error
+        ),
+        "volumetric_current_absolute_scale_A": current_absolute_scale,
+        "volumetric_current_cancellation_ratio": float(cancellation_ratio),
+        "volumetric_integral_relative_error": float(
+            integration_current_relative_error
+        ),
+        "volumetric_integral_normwise_relative_error": float(
+            integration_normwise_error
+        ),
         "tairte4_thermoelectric_current_A": float(
             system.tairte4_thermoelectric_load_A @ psi
         ),

@@ -200,8 +200,8 @@ def main() -> int:
             "explicit_3d_top_contact_volumetric_model": bool(
                 electrical["electrical_model"] == CONTRACT.electrical_model
             ),
-            "volumetric_integral_matches_terminal_lt_1e_12": bool(
-                float(electrical["volumetric_integral_relative_error"])
+            "volumetric_integral_normwise_matches_terminal_lt_1e_12": bool(
+                float(electrical["volumetric_integral_normwise_relative_error"])
                 < 1.0e-12
             ),
             "finite": bool(

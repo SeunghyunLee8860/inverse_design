@@ -127,7 +127,7 @@ def main() -> int:
             )
             < 1.0e-8,
             "volumetric_integral_lt_1e_12": float(
-                electrical["volumetric_integral_relative_error"]
+                electrical["volumetric_integral_normwise_relative_error"]
             )
             < 1.0e-12,
             "exact_binary_void_cells_removed": bool(
