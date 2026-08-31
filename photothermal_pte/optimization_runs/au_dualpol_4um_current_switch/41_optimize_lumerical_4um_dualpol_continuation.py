@@ -170,6 +170,14 @@ def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
                 "separate fresh exact-binary physical certificate"
             ),
             "relative_error_limit": 0.01,
+            "latent_step_policy": {
+                "beta_le_16": 0.0025,
+                "beta_gt_16": "0.0025 * 16 / beta",
+                "reason": (
+                    "bound tanh-projection curvature error without changing "
+                    "the one-percent AD-FD acceptance gate"
+                ),
+            },
             "stage_certificates": {},
         },
         "active_stage": None,

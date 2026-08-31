@@ -63,8 +63,27 @@ SMOKE_MAXEVAL = 2
 CURRENT_SCALE_A = 1.0e-9
 DFM_CONSTRAINT_SCALE = 0.01
 FULL_CHAIN_ADFD_STEP = 0.0025
+FULL_CHAIN_ADFD_REFERENCE_BETA = 16.0
 FULL_CHAIN_ADFD_RELATIVE_ERROR_LIMIT = 0.01
 FULL_CHAIN_ADFD_MINIMUM_RELATIVE_SIGNAL = 1.0e-6
+
+
+def full_chain_adfd_step(beta: float) -> float:
+    """Keep the projected-density excursion bounded as beta sharpens.
+
+    The tanh projection curvature scales with beta. A fixed latent FD step
+    therefore ceases to be a local derivative test at late continuation
+    stages. Preserve the established step through beta=16, then scale it as
+    1/beta. This changes neither the AD gradient nor the one-percent gate.
+    """
+
+    value = float(beta)
+    if not np.isfinite(value) or value <= 0.0:
+        raise ValueError("full-chain AD-FD beta must be finite and positive")
+    return float(
+        FULL_CHAIN_ADFD_STEP
+        * min(1.0, FULL_CHAIN_ADFD_REFERENCE_BETA / value)
+    )
 
 
 def sha256(path: Path) -> str:
@@ -1088,13 +1107,15 @@ class LumericalEvaluationDriver:
         *,
         validation_scope: str,
         direction_index: int = 0,
-        step: float = FULL_CHAIN_ADFD_STEP,
+        step: float | None = None,
     ) -> dict[str, Any]:
         """Certify the full latent-to-current chain in one independent direction."""
 
         latent_value = np.asarray(latent, dtype=np.float64)
         if baseline_evaluation.get("passed") is not True:
             raise RuntimeError("full-chain AD-FD baseline evaluation did not pass")
+        if step is None:
+            step = full_chain_adfd_step(self.runtime.beta)
         direction, plus, minus, pair_audit = bounded_centered_latent_pair(
             latent_value, step=step, direction_index=direction_index
         )

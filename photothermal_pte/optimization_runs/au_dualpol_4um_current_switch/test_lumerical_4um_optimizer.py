@@ -18,6 +18,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     OptimizerRuntime,
     SmokeEpigraphProblem,
     artifact,
+    full_chain_adfd_step,
     initial_latent_density,
 )
 
@@ -258,3 +259,11 @@ def test_full_chain_adfd_uses_current_only_perturbations(
     assert result["solver_counts"]["additional_Lumerical_forward"] == 4
     assert result["solver_counts"]["additional_Lumerical_adjoint"] == 0
     assert result["solver_counts"]["additional_layout_only_Jacobian_sessions"] == 0
+
+
+def test_full_chain_adfd_step_scales_after_beta_16() -> None:
+    assert full_chain_adfd_step(1.0) == pytest.approx(0.0025)
+    assert full_chain_adfd_step(16.0) == pytest.approx(0.0025)
+    assert full_chain_adfd_step(32.0) == pytest.approx(0.00125)
+    assert full_chain_adfd_step(64.0) == pytest.approx(0.000625)
+    assert full_chain_adfd_step(128.0) == pytest.approx(0.0003125)
