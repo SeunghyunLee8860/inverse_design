@@ -3,8 +3,21 @@ set -uo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
-output_root="${1:?usage: $0 NEW_OUTPUT_ROOT B200_CALIBRATION_ROOT}"
-calibration_root="${2:?usage: $0 NEW_OUTPUT_ROOT B200_CALIBRATION_ROOT}"
+output_root="${1:?usage: $0 NEW_OUTPUT_ROOT B200_CALIBRATION_ROOT [RESTART_CHECKPOINT RESTART_MANIFEST]}"
+calibration_root="${2:?usage: $0 NEW_OUTPUT_ROOT B200_CALIBRATION_ROOT [RESTART_CHECKPOINT RESTART_MANIFEST]}"
+restart_checkpoint="${3:-}"
+restart_manifest="${4:-}"
+if [[ -n "$restart_checkpoint" || -n "$restart_manifest" ]]; then
+  if [[ -z "$restart_checkpoint" || -z "$restart_manifest" ]]; then
+    echo "restart checkpoint and manifest must be provided together" >&2
+    exit 2
+  fi
+  export AU_LUMERICAL_RESTART_CHECKPOINT="$restart_checkpoint"
+  export AU_LUMERICAL_RESTART_MANIFEST="$restart_manifest"
+else
+  unset AU_LUMERICAL_RESTART_CHECKPOINT
+  unset AU_LUMERICAL_RESTART_MANIFEST
+fi
 gpu_index="${LUMERICAL_B200_GPU_INDEX:?set the physical B200 GPU index}"
 uniform_launcher="$script_dir/launch_lumerical_b200_uniform_rho0p5.sh"
 resume_launcher="$script_dir/run_lumerical_b200.sh"
@@ -45,9 +58,6 @@ export OPENBLAS_NUM_THREADS="$FDTD_THREADS"
 export NUMEXPR_NUM_THREADS="$FDTD_THREADS"
 export XDG_CONFIG_HOME="$output_root/.xdg_config"
 export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
-unset AU_LUMERICAL_RESTART_CHECKPOINT
-unset AU_LUMERICAL_RESTART_MANIFEST
-
 timestamp() {
   date --iso-8601=seconds
 }
@@ -73,7 +83,7 @@ transient_license_failure() {
 }
 
 run_once() {
-  if [[ ! -e "$output_root" ]]; then
+  if [[ ! -e "$output_root" && -z "$restart_checkpoint" ]]; then
     "$uniform_launcher" "$output_root" "$calibration_root"
   else
     "$resume_launcher" "$optimizer_script"

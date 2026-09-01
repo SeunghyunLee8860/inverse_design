@@ -401,8 +401,10 @@ def test_direct_checkout_watchdog_retries_only_transient_license_failures() -> N
     )
     assert 'AU_LUMERICAL_LICENSE_MODE="direct_checkout"' in source
     assert "sleep 60" in source
-    assert 'if [[ ! -e "$output_root" ]]' in source
+    assert 'if [[ ! -e "$output_root" && -z "$restart_checkpoint" ]]' in source
     assert '"$uniform_launcher" "$output_root" "$calibration_root"' in source
+    assert 'export AU_LUMERICAL_RESTART_CHECKPOINT="$restart_checkpoint"' in source
+    assert 'export AU_LUMERICAL_RESTART_MANIFEST="$restart_manifest"' in source
     assert '"$resume_launcher" "$optimizer_script"' in source
     assert "watchdog_stop non_license_failure" in source
     assert "FlexNet Licensing error:-4,132" in source
@@ -552,6 +554,67 @@ def test_explicit_stopped_checkpoint_restart_is_verified(
     assert state["attempt"] == 2
     assert provenance["resumed_beta_index"] == 0
     assert provenance["source_status"].startswith("STOPPED_")
+
+
+def test_cross_commit_restart_accepts_hash_bound_active_stage_progress(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    driver = _load_continuation_driver()
+    terminal_latent = _latent()
+    active_latent = np.clip(terminal_latent + 0.01, 0.0, 1.0)
+    checkpoint = tmp_path / "continuation_checkpoint.npz"
+    driver._save_checkpoint(
+        checkpoint,
+        latent=active_latent,
+        beta_index=0,
+        attempt=2,
+        cap_substage=0,
+        dfm_caps=np.full(2, np.inf),
+        grayness_cap=np.inf,
+    )
+    terminal_state = tmp_path / "stage_final_state.npz"
+    np.savez_compressed(terminal_state, latent_final=terminal_latent)
+    active_state = tmp_path / "latest_successful_state.npz"
+    np.savez_compressed(
+        active_state,
+        latent=active_latent,
+        projected=active_latent,
+    )
+    manifest = tmp_path / "restart_manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "status": "STOPPED_AFTER_VALIDATED_SOLVER_FIX",
+                "passed": False,
+                "git_commit": "old-commit",
+                "restart_checkpoint_attempt": 2,
+                "latest": {"beta": 1.0, "recovery_index": 1},
+                "active_stage": {
+                    "status": "RUNNING_FIXED_BETA_MMA",
+                    "beta": 1.0,
+                    "beta_index": 0,
+                    "cap_substage": 0,
+                    "recovery_index": 1,
+                    "state_artifact": driver.artifact(active_state),
+                },
+                "stages": [
+                    {
+                        "beta": 1.0,
+                        "state_artifact": driver.artifact(terminal_state),
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_CHECKPOINT", str(checkpoint))
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_MANIFEST", str(manifest))
+    state, provenance = driver._restart_seed_from_environment()
+    assert np.array_equal(state["latent"], active_latent)
+    assert provenance["source_resume_state_kind"] == "active_stage_progress"
+    assert provenance["source_resume_state"]["sha256"] == driver.artifact(
+        active_state
+    )["sha256"]
 
 
 def test_portable_restart_manifest_resolves_relative_terminal_state(

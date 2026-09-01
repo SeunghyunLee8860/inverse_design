@@ -541,27 +541,59 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
     target_beta = BETA_SCHEDULE[beta_index]
     terminal_beta = float(terminal_stage.get("beta", target_beta))
     prepared_beta = terminal_beta
+    resume_state_kind = "terminal_stage"
+    resume_state_path = terminal_state_path
     if not np.array_equal(terminal_latent, checkpoint_latent):
-        transition = terminal_stage.get("beta_transition_to_next")
-        if not isinstance(transition, dict):
-            raise RuntimeError(
-                "restart checkpoint differs from terminal stage without a "
-                "verified beta-transition remap"
-            )
-        transition_state_path = _verified_artifact(
-            transition.get("state_artifact"),
-            label="restart beta-transition state",
-            relative_to=manifest_path.parent,
+        active_stage = source_manifest.get("active_stage")
+        active_progress_matches = bool(
+            isinstance(active_stage, dict)
+            and active_stage.get("status") == "RUNNING_FIXED_BETA_MMA"
+            and int(active_stage.get("beta_index", -1)) == beta_index
+            and float(active_stage.get("beta", np.nan)) == target_beta
+            and int(active_stage.get("cap_substage", -1))
+            == int(state.get("cap_substage", 0))
+            and int(active_stage.get("recovery_index", -2)) + 1
+            == int(state["attempt"])
         )
-        with np.load(transition_state_path, allow_pickle=False) as arrays:
-            transition_latent = np.asarray(
-                arrays["target_latent"], dtype=np.float64
+        if active_progress_matches:
+            active_state_path = _verified_artifact(
+                active_stage.get("state_artifact"),
+                label="restart active-stage progress state",
+                relative_to=manifest_path.parent,
             )
-        if not np.array_equal(transition_latent, checkpoint_latent):
-            raise RuntimeError(
-                "restart checkpoint differs from both terminal and remapped state"
+            with np.load(active_state_path, allow_pickle=False) as arrays:
+                active_latent = np.asarray(arrays["latent"], dtype=np.float64)
+            active_progress_matches = np.array_equal(
+                active_latent, checkpoint_latent
             )
-        prepared_beta = float(transition.get("target_beta", np.nan))
+        if active_progress_matches:
+            prepared_beta = float(active_stage["beta"])
+            resume_state_kind = "active_stage_progress"
+            resume_state_path = active_state_path
+        else:
+            transition = terminal_stage.get("beta_transition_to_next")
+            if not isinstance(transition, dict):
+                raise RuntimeError(
+                    "restart checkpoint differs from terminal stage and verified "
+                    "active-stage progress without a beta-transition remap"
+                )
+            transition_state_path = _verified_artifact(
+                transition.get("state_artifact"),
+                label="restart beta-transition state",
+                relative_to=manifest_path.parent,
+            )
+            with np.load(transition_state_path, allow_pickle=False) as arrays:
+                transition_latent = np.asarray(
+                    arrays["target_latent"], dtype=np.float64
+                )
+            if not np.array_equal(transition_latent, checkpoint_latent):
+                raise RuntimeError(
+                    "restart checkpoint differs from terminal, active-progress, "
+                    "and remapped states"
+                )
+            prepared_beta = float(transition.get("target_beta", np.nan))
+            resume_state_kind = "beta_transition"
+            resume_state_path = transition_state_path
 
     if not np.isfinite(prepared_beta) or prepared_beta > target_beta:
         raise RuntimeError("restart checkpoint beta preparation is invalid")
@@ -589,6 +621,8 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
             "balanced_utility_nA": terminal_stage.get("balanced_utility_nA"),
         },
         "source_terminal_state": artifact(terminal_state_path),
+        "source_resume_state_kind": resume_state_kind,
+        "source_resume_state": artifact(resume_state_path),
         "checkpoint_prepared_beta": prepared_beta,
         "target_beta": target_beta,
         "restart_beta_remap": restart_remap_audit,
