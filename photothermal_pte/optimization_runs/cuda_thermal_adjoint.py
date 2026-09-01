@@ -80,11 +80,20 @@ class PersistentCudaCSR:
         relative_tolerance: float = 1.0e-10,
         max_iterations: int = 20000,
         residual_check_interval: int = 25,
+        reliable_restart_interval: int | None = None,
     ) -> CudaPCGResult:
         if relative_tolerance <= 0.0:
             raise ValueError("relative_tolerance must be positive")
         if max_iterations <= 0 or residual_check_interval <= 0:
             raise ValueError("iteration controls must be positive")
+        if reliable_restart_interval is not None and (
+            reliable_restart_interval <= 0
+            or reliable_restart_interval % residual_check_interval != 0
+        ):
+            raise ValueError(
+                "reliable_restart_interval must be a positive multiple of "
+                "residual_check_interval"
+            )
         torch = self.torch
         rhs_np = np.asarray(rhs, dtype=np.float64).reshape(-1)
         if rhs_np.size != self.shape[0] or not np.all(np.isfinite(rhs_np)):
@@ -151,6 +160,19 @@ class PersistentCudaCSR:
                     r = explicit
                     converged = True
                     break
+                if (
+                    reliable_restart_interval is not None
+                    and iteration % reliable_restart_interval == 0
+                ):
+                    # Replace the recursive residual with the literal b-Ax
+                    # residual to recover from roundoff drift.  The requested
+                    # convergence tolerance is unchanged.
+                    r = explicit
+                    z = r / self.diagonal
+                    p = z.clone()
+                    rz = torch.dot(r, z)
+                    restarts += 1
+                    continue
                 recursive_norm = torch.linalg.vector_norm(r)
                 if bool(recursive_norm.le(threshold).item()):
                     r = explicit

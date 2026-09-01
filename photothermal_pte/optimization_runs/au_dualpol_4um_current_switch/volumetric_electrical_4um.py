@@ -45,7 +45,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     tairte4_temperature,
     thermal_density_gradient,
 )
-from photothermal_pte.optimization_runs.cuda_thermal_adjoint import PersistentCudaCSR
+from photothermal_pte.optimization_runs.cuda_thermal_adjoint import (
+    CudaPCGResult,
+    PersistentCudaCSR,
+)
 
 
 @dataclass(frozen=True)
@@ -448,15 +451,86 @@ def build_volumetric_electrical_system(
     )
 
 
+def _solve_electrical_spd(
+    matrix: sparse.spmatrix,
+    rhs: np.ndarray,
+    cuda_device: int,
+) -> tuple[CudaPCGResult, int]:
+    """Solve the high-contrast electrical system to its literal residual gate."""
+
+    operator_matrix = sparse.csr_matrix(matrix, dtype=np.float64)
+    rhs_value = np.asarray(rhs, dtype=np.float64).reshape(-1)
+    diagonal = np.asarray(operator_matrix.diagonal(), dtype=np.float64)
+    if (
+        diagonal.size != operator_matrix.shape[0]
+        or np.any(~np.isfinite(diagonal))
+        or np.any(diagonal <= 0.0)
+    ):
+        raise ValueError("electrical scaling requires a finite positive diagonal")
+
+    # Symmetric diagonal scaling preserves the physical solution and SPD
+    # structure while reducing the approximately 8e4 diagonal dynamic range.
+    scale = 1.0 / np.sqrt(diagonal)
+    scaling = sparse.diags(scale, format="csr")
+    scaled_matrix = (scaling @ operator_matrix @ scaling).tocsr()
+    scaled_operator = PersistentCudaCSR(scaled_matrix, cuda_device=cuda_device)
+    primary = scaled_operator.solve(
+        scale * rhs_value,
+        relative_tolerance=1.0e-11,
+        max_iterations=60000,
+        residual_check_interval=10,
+        reliable_restart_interval=5000,
+    )
+    solution = scale * primary.solution
+    rhs_norm = max(np.linalg.norm(rhs_value), np.finfo(float).tiny)
+    explicit_relative = float(
+        np.linalg.norm(rhs_value - operator_matrix @ solution) / rhs_norm
+    )
+    total_iterations = int(primary.iterations)
+    total_seconds = float(primary.solve_seconds)
+    total_restarts = int(primary.reliable_restarts)
+    refinements = 0
+
+    # A correction equation recovers the last digits lost when transforming
+    # the scaled solution back to the original high-contrast coordinates.
+    while explicit_relative > 1.0e-10 and refinements < 3:
+        correction_rhs = rhs_value - operator_matrix @ solution
+        correction = scaled_operator.solve(
+            scale * correction_rhs,
+            relative_tolerance=1.0e-7,
+            max_iterations=20000,
+            residual_check_interval=10,
+            reliable_restart_interval=5000,
+        )
+        solution += scale * correction.solution
+        explicit_relative = float(
+            np.linalg.norm(rhs_value - operator_matrix @ solution) / rhs_norm
+        )
+        total_iterations += int(correction.iterations)
+        total_seconds += float(correction.solve_seconds)
+        total_restarts += int(correction.reliable_restarts)
+        refinements += 1
+
+    if explicit_relative > 1.0e-10:
+        raise RuntimeError(
+            "scaled CUDA PCG refinement did not meet the original electrical "
+            f"residual gate: refinements={refinements}, "
+            f"explicit_relative_residual={explicit_relative:.6e}"
+        )
+    return CudaPCGResult(
+        solution=solution,
+        iterations=total_iterations,
+        explicit_relative_residual=explicit_relative,
+        solve_seconds=total_seconds,
+        reliable_restarts=total_restarts,
+    ), refinements
+
+
 def solve_volumetric_electrical(
     system: VolumetricElectricalSystem, cuda_device: int
 ) -> tuple[np.ndarray, float, dict[str, object]]:
-    operator = PersistentCudaCSR(system.reduced_matrix_S, cuda_device=cuda_device)
-    solved = operator.solve(
-        system.reduced_rhs_A,
-        relative_tolerance=1.0e-10,
-        max_iterations=30000,
-        residual_check_interval=10,
+    solved, refinements = _solve_electrical_spd(
+        system.reduced_matrix_S, system.reduced_rhs_A, cuda_device
     )
     psi = np.zeros(system.full_matrix_S.shape[0], dtype=np.float64)
     psi[system.fixed] = system.fixed_values_V
@@ -495,6 +569,8 @@ def solve_volumetric_electrical(
         "relative_residual": float(solved.explicit_relative_residual),
         "explicit_free_residual": float(explicit_free),
         "iterations": int(solved.iterations),
+        "symmetric_diagonal_scaling": True,
+        "iterative_refinements": int(refinements),
         "terminal_balance_relative": float(balance),
         "low_terminal_A_per_V": low,
         "high_terminal_A_per_V": high,
@@ -592,19 +668,19 @@ def volumetric_temperature_pullback(
 
 def solve_volumetric_electrical_adjoint(
     system: VolumetricElectricalSystem, cuda_device: int
-) -> tuple[np.ndarray, dict[str, float | int]]:
-    operator = PersistentCudaCSR(system.reduced_matrix_S, cuda_device=cuda_device)
-    solved = operator.solve(
+) -> tuple[np.ndarray, dict[str, object]]:
+    solved, refinements = _solve_electrical_spd(
+        system.reduced_matrix_S,
         system.objective_gradient_psi_A[system.free],
-        relative_tolerance=1.0e-10,
-        max_iterations=30000,
-        residual_check_interval=10,
+        cuda_device,
     )
     adjoint = np.zeros(system.full_matrix_S.shape[0], dtype=np.float64)
     adjoint[system.free] = solved.solution
     return adjoint, {
         "relative_residual": float(solved.explicit_relative_residual),
         "iterations": int(solved.iterations),
+        "symmetric_diagonal_scaling": True,
+        "iterative_refinements": int(refinements),
     }
 
 
