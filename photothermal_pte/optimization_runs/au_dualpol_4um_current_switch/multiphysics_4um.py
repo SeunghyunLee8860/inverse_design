@@ -246,11 +246,11 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     centers = tuple(_centers(axis) for axis in edges)
     x, y, z = centers
     shape = tuple(len(value) for value in centers)
-    x_ta = (x >= -8e-6) & (x < 8e-6)
-    y_ta = (y >= -8e-6) & (y < 8e-6)
+    x_ta = (x >= -0.5 * CONTRACT.flake_span_x_m) & (x < 0.5 * CONTRACT.flake_span_x_m)
+    y_ta = (y >= -0.5 * CONTRACT.flake_span_y_m) & (y < 0.5 * CONTRACT.flake_span_y_m)
     z_ta = (z >= -0.1e-6) & (z < 0.0)
-    x_au = (x >= -4e-6) & (x < 4e-6)
-    y_au = (y >= -4e-6) & (y < 4e-6)
+    x_au = (x >= -0.5 * CONTRACT.design_span_x_m) & (x < 0.5 * CONTRACT.design_span_x_m)
+    y_au = (y >= -0.5 * CONTRACT.design_span_y_m) & (y < 0.5 * CONTRACT.design_span_y_m)
     z_au = (z >= 0.0) & (z < 0.05e-6)
     half_flake = 0.5 * CONTRACT.flake_span_x_m
     overlap = CONTRACT.measurement_electrode_overlap_x_m
@@ -522,8 +522,8 @@ def solve_thermal_adjoint(
 
 def tairte4_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndarray:
     x, y, z = state.centers
-    ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
-    iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
+    ix = np.flatnonzero((x >= -0.5 * CONTRACT.flake_span_x_m) & (x < 0.5 * CONTRACT.flake_span_x_m))
+    iy = np.flatnonzero((y >= -0.5 * CONTRACT.flake_span_y_m) & (y < 0.5 * CONTRACT.flake_span_y_m))
     iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
     weights = state.widths[2][iz]
     result = np.tensordot(
@@ -538,8 +538,8 @@ def au_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndarray:
     """Return the thickness-averaged temperature of the Au/air design layer."""
 
     x, y, z = state.centers
-    ix = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
-    iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    ix = np.flatnonzero((x >= -0.5 * CONTRACT.design_span_x_m) & (x < 0.5 * CONTRACT.design_span_x_m))
+    iy = np.flatnonzero((y >= -0.5 * CONTRACT.design_span_y_m) & (y < 0.5 * CONTRACT.design_span_y_m))
     iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
     weights = state.widths[2][iz]
     result = np.tensordot(
@@ -1045,15 +1045,15 @@ def explicit_temperature_pullback(
     coarse = temperature_pullback(psi, n_ta=state.n_ta, n_design=state.n_design)
     coarse_au = au_temperature_pullback(system, psi)
     x, y, z = state.centers
-    ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
-    iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
+    ix = np.flatnonzero((x >= -0.5 * CONTRACT.flake_span_x_m) & (x < 0.5 * CONTRACT.flake_span_x_m))
+    iy = np.flatnonzero((y >= -0.5 * CONTRACT.flake_span_y_m) & (y < 0.5 * CONTRACT.flake_span_y_m))
     iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
     z_weight = state.widths[2][iz]
     z_weight = z_weight / np.sum(z_weight)
     result = np.zeros(state.system.shape, dtype=np.float64)
     result[np.ix_(ix, iy, iz)] = coarse[:, :, None] * z_weight[None, None, :]
-    ix_au = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
-    iy_au = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    ix_au = np.flatnonzero((x >= -0.5 * CONTRACT.design_span_x_m) & (x < 0.5 * CONTRACT.design_span_x_m))
+    iy_au = np.flatnonzero((y >= -0.5 * CONTRACT.design_span_y_m) & (y < 0.5 * CONTRACT.design_span_y_m))
     iz_au = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
     z_weight_au = state.widths[2][iz_au]
     z_weight_au = z_weight_au / np.sum(z_weight_au)
@@ -1149,8 +1149,8 @@ def thermal_density_gradient(
         state.system.shape
     )
     x, y, z = state.centers
-    ix = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
-    iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    ix = np.flatnonzero((x >= -0.5 * CONTRACT.design_span_x_m) & (x < 0.5 * CONTRACT.design_span_x_m))
+    iy = np.flatnonzero((y >= -0.5 * CONTRACT.design_span_y_m) & (y < 0.5 * CONTRACT.design_span_y_m))
     iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
     result = np.zeros(state.rho.shape, dtype=np.float64)
     d_fraction = np.asarray(d_au_material_fraction_drho(state.rho), dtype=np.float64)

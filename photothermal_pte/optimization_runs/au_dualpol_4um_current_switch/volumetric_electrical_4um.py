@@ -176,8 +176,8 @@ def build_volumetric_electrical_system(
 
     rho_index = np.full(shape, -1, dtype=np.int64)
     x, y, z = state.centers
-    ix_design = np.flatnonzero((x >= -4.0e-6) & (x < 4.0e-6))
-    iy_design = np.flatnonzero((y >= -4.0e-6) & (y < 4.0e-6))
+    ix_design = np.flatnonzero((x >= -0.5 * CONTRACT.design_span_x_m) & (x < 0.5 * CONTRACT.design_span_x_m))
+    iy_design = np.flatnonzero((y >= -0.5 * CONTRACT.design_span_y_m) & (y < 0.5 * CONTRACT.design_span_y_m))
     iz_au = np.flatnonzero((z >= 0.0) & (z < CONTRACT.design_thickness_m))
     if (ix_design.size, iy_design.size) != density.shape:
         raise RuntimeError("design density and 3-D electrical footprint disagree")
