@@ -77,8 +77,8 @@ def scenario_contract():
     return replace(
         contract_module.CONTRACT,
         gaussian_waist_m=8.0e-6,
-        optical_lateral_span_m=30.0e-6,
-        source_aperture_span_m=24.0e-6,
+        optical_lateral_span_m=34.0e-6,
+        source_aperture_span_m=28.0e-6,
         reporting_incident_power_W=100.0e-6,
         flake_span_x_m=FLAKE_SPAN_UM * 1.0e-6,
         flake_span_y_m=FLAKE_SPAN_UM * 1.0e-6,
@@ -227,7 +227,9 @@ def run_lumerical_case(runner, output: Path, arguments: list[str]) -> tuple[Path
         result_path, result = one_json(destination)
         if code == 0 and result.get("all_gates_passed") is True:
             return result_path, result
-        message = json.dumps(result).lower()
+        message = (
+            f"{result.get('error', '')} {result.get('traceback', '')}"
+        ).lower()
         transient = any(
             token in message
             for token in (
@@ -317,12 +319,12 @@ def main() -> int:
     common = [
         "--gpu-index", str(args.gpu_index), "--accelerator-policy", "b200",
         "--source-object-w0-um", str(SOURCE_OBJECT_W0_UM),
-        "--mesh-label", "sideways_t_w0_8um_xy100_z5_cv0_pml8_span30",
+        "--mesh-label", "sideways_t_w0_8um_xy100_z5_cv0_pml8_span34",
         "--flake-dxy-nm", "100", "--stack-dz-nm", "5",
         "--bulk-dz-nm", "50", "--outer-dxy-nm", "250",
         "--mesh-accuracy", "3", "--au-max-coefficients", "6",
         "--au-fit-tolerance", "0", "--mesh-refinement", "conformal variant 0",
-        "--pml-layers", "8", "--lateral-span-um", "30",
+        "--pml-layers", "8", "--lateral-span-um", "34",
         "--z-min-um", "-3", "--z-max-um", "3",
         "--simulation-time-ps", "1", "--auto-shutoff-min", "1e-7",
         "--threads", str(args.threads),
