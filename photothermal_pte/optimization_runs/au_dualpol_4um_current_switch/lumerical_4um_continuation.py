@@ -114,7 +114,17 @@ STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
 STAGE_PLATEAU_PROJECTED_RMS_LIMIT = 1.0e-3
 CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION = 0.05
 CAP_SUBSTAGE_MINIMUM_FOM_RETENTION = 0.90
-BETA_REMAP_MAXIMUM_ITERATIONS = 1000
+# The beta-2 -> beta-4 production remap can require about 3,500 iterations
+# before all three deterministic starts meet the same bounded optimum.  A
+# 1,000-iteration ceiling returned three status=1 (iteration-limit) points
+# whose objective spread narrowly failed the independent-optimum certificate.
+# This solve is solver-free, so converge it rather than weakening any density
+# preservation or multistart-agreement gate.
+BETA_REMAP_MAXIMUM_ITERATIONS = 8000
+BETA_REMAP_PROJECTED_GRADIENT_TOLERANCE = 1.0e-12
+BETA_REMAP_MAXIMUM_LINE_SEARCH_STEPS = 100
+BETA_REMAP_MAXIMUM_FUNCTION_EVALUATIONS = 500_000
+BETA_REMAP_MAXIMUM_CORRECTIONS = 30
 BETA_REMAP_RMS_ERROR_LIMIT = 2.0e-3
 BETA_REMAP_MAX_ERROR_LIMIT = 2.0e-2
 BETA_TRANSITION_MINIMUM_FOM_RETENTION = 0.80
@@ -180,9 +190,13 @@ def remap_latent_between_betas(
             bounds=scipy_optimize.Bounds(0.0, 1.0),
             options={
                 "maxiter": BETA_REMAP_MAXIMUM_ITERATIONS,
-                "ftol": 1.0e-15,
-                "gtol": 1.0e-10,
-                "maxls": 50,
+                # Do not let relative function reduction terminate a start
+                # before the projected-gradient convergence certificate.
+                "ftol": 0.0,
+                "gtol": BETA_REMAP_PROJECTED_GRADIENT_TOLERANCE,
+                "maxls": BETA_REMAP_MAXIMUM_LINE_SEARCH_STEPS,
+                "maxfun": BETA_REMAP_MAXIMUM_FUNCTION_EVALUATIONS,
+                "maxcor": BETA_REMAP_MAXIMUM_CORRECTIONS,
             },
         )
         runs.append((label, optimized))
