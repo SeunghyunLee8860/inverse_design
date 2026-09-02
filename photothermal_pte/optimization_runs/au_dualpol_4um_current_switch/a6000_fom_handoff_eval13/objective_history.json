@@ -1,0 +1,270 @@
+{
+  "schema": "au-lumerical-objective-history-v1",
+  "source_git_commit": "be8aa5c0d824a1abcaae844c7bc5553c730a679f",
+  "latest": {
+    "beta": 2.0,
+    "cap_substage": 0,
+    "recovery_index": 5,
+    "iteration": 13,
+    "currents_nA": {
+      "Ea": 9.832544948595896,
+      "Eb": -9.855522194283846
+    },
+    "balanced_utility_nA": 9.832544948595896,
+    "grayness": 0.43050143330213925
+  },
+  "callback_history": [
+    {
+      "callback_index": 0,
+      "current_Ea_nA": 8.951631664255428,
+      "current_Eb_nA": -9.046253829019697,
+      "balanced_utility_nA": 8.951631664255428,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8129747599233443,
+        0.15620009853143837
+      ],
+      "grayness": 0.45398323967737475,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "b34eb7bd18bd533773a928d5a2e80358959b2e2d45779288add00ee39948fbc6",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": Infinity
+    },
+    {
+      "callback_index": 1,
+      "current_Ea_nA": 8.951877970506592,
+      "current_Eb_nA": -9.045953899020821,
+      "balanced_utility_nA": 8.951877970506592,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8129747276396552,
+        0.15620013185267148
+      ],
+      "grayness": 0.4539827424263776,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "8973f955c2470eaf5b9db0e324766ffd6d86b718e2625919b392423a2174efb3",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 2.623297053065896e-06
+    },
+    {
+      "callback_index": 2,
+      "current_Ea_nA": 8.954260406168885,
+      "current_Eb_nA": -9.043091512427898,
+      "balanced_utility_nA": 8.954260406168885,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8129744155614601,
+        0.156200453833213
+      ],
+      "grayness": 0.45397798753355606,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "6d1a469c67e6722fc398d60117e4e279b72ce22494b82217dd77fd8543684554",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 2.521336382800545e-05
+    },
+    {
+      "callback_index": 3,
+      "current_Ea_nA": 8.987781081059762,
+      "current_Eb_nA": -9.002353842864231,
+      "balanced_utility_nA": 8.987781081059762,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8129696901446039,
+        0.15620530736233854
+      ],
+      "grayness": 0.4539149144841882,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "0c329d190a6745a57087b15a4235e7f64125483b87b68d64c7752b8a681bcf1b",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0003563554751367114
+    },
+    {
+      "callback_index": 4,
+      "current_Ea_nA": 9.02228881608769,
+      "current_Eb_nA": -9.02340107927457,
+      "balanced_utility_nA": 9.02228881608769,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.81298733226323,
+        0.15628591664777472
+      ],
+      "grayness": 0.453438015834065,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "9120d078d5dc86c42aa1fc59611980edb770eeeca551b929ed1ee9bd61b4ab39",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0006435439174225121
+    },
+    {
+      "callback_index": 5,
+      "current_Ea_nA": 9.087443451409545,
+      "current_Eb_nA": -9.090761424693715,
+      "balanced_utility_nA": 9.087443451409545,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8130555826197629,
+        0.15691886412415124
+      ],
+      "grayness": 0.45232698158318113,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "46e10b9aed6d7105684a82e26e42ca4b7df2394bd9ec06a40e721f4fcd0cf33c",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0017045058735842013
+    },
+    {
+      "callback_index": 6,
+      "current_Ea_nA": 9.168231437422076,
+      "current_Eb_nA": -9.181245031519248,
+      "balanced_utility_nA": 9.168231437422076,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8134087354587582,
+        0.1593610492897759
+      ],
+      "grayness": 0.45012533800458554,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "4910c153f18395de93ce038db0bef5ecd925cf45421ff759010af7c3f2105a84",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0028707250131232175
+    },
+    {
+      "callback_index": 7,
+      "current_Ea_nA": 9.25060491974667,
+      "current_Eb_nA": -9.266467969598136,
+      "balanced_utility_nA": 9.25060491974667,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8137881625678333,
+        0.1610795203102305
+      ],
+      "grayness": 0.4478065389267749,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "bb331e18b49272e624dc0b7b59b179d100c2ad2de0240c8cc2fb80edcee66d88",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0030879153990911725
+    },
+    {
+      "callback_index": 8,
+      "current_Ea_nA": 9.338254226700139,
+      "current_Eb_nA": -9.354444244300844,
+      "balanced_utility_nA": 9.338254226700139,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8141541557706516,
+        0.16374714131432544
+      ],
+      "grayness": 0.444945085627694,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "7d25bc687eda599a823a5ee1592a6d20eba558f23c73a888ae7e52e9aa23b40f",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0033336035218598918
+    },
+    {
+      "callback_index": 9,
+      "current_Ea_nA": 9.430213860502528,
+      "current_Eb_nA": -9.444986446682377,
+      "balanced_utility_nA": 9.430213860502528,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8145866684889849,
+        0.16579798707518334
+      ],
+      "grayness": 0.4421852151900215,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "51062d90795173f0b0bd28a9f5669fd480456afa855a92ad6ee37ed3c123c69c",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.003946617472637115
+    },
+    {
+      "callback_index": 10,
+      "current_Ea_nA": 9.523444345688375,
+      "current_Eb_nA": -9.542103120156593,
+      "balanced_utility_nA": 9.523444345688375,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8151848619918707,
+        0.16837597894752312
+      ],
+      "grayness": 0.4391161566947155,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "24194db036af53ceb75794cdbe1ae2fc50c764ce01950a08731f1eb6daba2b06",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.0036711095474671763
+    },
+    {
+      "callback_index": 11,
+      "current_Ea_nA": 9.621882349239351,
+      "current_Eb_nA": -9.640568751503984,
+      "balanced_utility_nA": 9.621882349239351,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8160212425508311,
+        0.17152412488177907
+      ],
+      "grayness": 0.4362282253412244,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "878c6eb55f71653674237ff7d5594cb0adde8028b5d53ccbe61a17b59d8157bd",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.004141862788053515
+    },
+    {
+      "callback_index": 12,
+      "current_Ea_nA": 9.728841966750242,
+      "current_Eb_nA": -9.752218596840358,
+      "balanced_utility_nA": 9.728841966750242,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8167832164649528,
+        0.1744093466269653
+      ],
+      "grayness": 0.43307340917223547,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "35a1402726093974c298a60b97298581ba2152dac79397acd786ac5df9b0dee9",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.004352050415627464
+    },
+    {
+      "callback_index": 13,
+      "current_Ea_nA": 9.832544948595896,
+      "current_Eb_nA": -9.855522194283846,
+      "balanced_utility_nA": 9.832544948595896,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8173013359795162,
+        0.1775465162795462
+      ],
+      "grayness": 0.43050143330213925,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "eab25aeee787c90719afe18bfbf3b669140ab5d7fc98c2b82439046985a10e24",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.004869799291630687
+    }
+  ]
+}

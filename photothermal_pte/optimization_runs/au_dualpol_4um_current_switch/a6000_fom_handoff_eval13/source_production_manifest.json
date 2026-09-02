@@ -1,0 +1,886 @@
+{
+  "schema": "au-lumerical-dualpol-production-continuation-v2",
+  "status": "RUNNING_LUMERICAL_4UM_DUALPOL_BETA_CONTINUATION",
+  "passed": false,
+  "created_at_utc": "2026-09-02T14:08:34.562431+00:00",
+  "updated_at_utc": "2026-09-02T16:29:15.435197+00:00",
+  "git_commit": "be8aa5c0d824a1abcaae844c7bc5553c730a679f",
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA"
+  },
+  "optimizer_lifecycle": {
+    "MMA_instances_per_beta": "one per fixed constraint-homotopy subproblem",
+    "constraint_change_new_MMA": true,
+    "same_beta_restart": "crash recovery only",
+    "MMA_internal_state_serialized": false,
+    "recovery_semantics": "best successful density plus callback history; new MMA"
+  },
+  "physical_device_contract_status": "BLOCKED_DEVICE_GEOMETRY_CONFIRMATION_REQUIRED",
+  "physical_device_assumptions_confirmed": false,
+  "runtime": {
+    "output_root": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_be8aa5c0_gpu5_restart",
+    "GPU_physical_index": 5,
+    "accelerator_policy": "b200",
+    "threads": 8,
+    "beta": 1.0,
+    "mesh_label": "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps",
+    "source_calibrations": {
+      "Ea": {
+        "artifact": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/source_calibrations_f5665a86_gpu5_attempt_0/xy100/Ea/source_only_Ea_fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps.json",
+          "size_bytes": 34663,
+          "sha256": "29d95a4615c0c9b298f33469e2a52c3c4b38c5867e576e47f0965fa31f0356bd"
+        },
+        "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE",
+        "solver_version": "8.35.4522",
+        "requested_gpu_uuid": "GPU-48bf3705-8160-2de5-531b-dc480c83eabe",
+        "mesh_spec": {
+          "label": "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps",
+          "flake_dxy_m": 1.0000000000000001e-07,
+          "stack_dz_m": 2.5e-09,
+          "bulk_dz_m": 5.0000000000000004e-08,
+          "outer_dxy_m": 2.0000000000000002e-07,
+          "mesh_accuracy": 3,
+          "pml_layers": 8,
+          "lateral_span_m": 1.9999999999999998e-05,
+          "z_min_m": -3e-06,
+          "z_max_m": 3e-06,
+          "simulation_time_s": 1e-12,
+          "auto_shutoff_min": 1e-07,
+          "conformal_mesh": "conformal variant 0"
+        },
+        "gates": {
+          "source_only_case": true,
+          "polarization_matches": true,
+          "source_status_passed": true,
+          "all_source_gates_passed": true,
+          "mesh_label_matches": true,
+          "flake_dxy_matches": true,
+          "outer_dxy_is_200nm": true,
+          "stack_dz_is_2p5nm": true,
+          "bulk_dz_is_50nm": true,
+          "mesh_accuracy_is_3": true,
+          "PML_is_8_layers": true,
+          "lateral_span_is_20um": true,
+          "z_span_is_minus3_to_plus3um": true,
+          "simulation_time_is_1ps": true,
+          "auto_shutoff_min_is_1e_minus7": true,
+          "CV0": true,
+          "accelerator_policy_matches": true,
+          "B200_promotion_state_matches": true,
+          "GPU_UUID_present": true,
+          "solver_version_present": true
+        }
+      },
+      "Eb": {
+        "artifact": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/source_calibrations_f5665a86_gpu5_attempt_0/xy100/Eb/source_only_Eb_fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps.json",
+          "size_bytes": 34664,
+          "sha256": "3b165306d4f59921530d41b17aef7bdcf36e9f02cbe29cf1fdbe3e2fcd4c61e6"
+        },
+        "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE",
+        "solver_version": "8.35.4522",
+        "requested_gpu_uuid": "GPU-48bf3705-8160-2de5-531b-dc480c83eabe",
+        "mesh_spec": {
+          "label": "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps",
+          "flake_dxy_m": 1.0000000000000001e-07,
+          "stack_dz_m": 2.5e-09,
+          "bulk_dz_m": 5.0000000000000004e-08,
+          "outer_dxy_m": 2.0000000000000002e-07,
+          "mesh_accuracy": 3,
+          "pml_layers": 8,
+          "lateral_span_m": 1.9999999999999998e-05,
+          "z_min_m": -3e-06,
+          "z_max_m": 3e-06,
+          "simulation_time_s": 1e-12,
+          "auto_shutoff_min": 1e-07,
+          "conformal_mesh": "conformal variant 0"
+        },
+        "gates": {
+          "source_only_case": true,
+          "polarization_matches": true,
+          "source_status_passed": true,
+          "all_source_gates_passed": true,
+          "mesh_label_matches": true,
+          "flake_dxy_matches": true,
+          "outer_dxy_is_200nm": true,
+          "stack_dz_is_2p5nm": true,
+          "bulk_dz_is_50nm": true,
+          "mesh_accuracy_is_3": true,
+          "PML_is_8_layers": true,
+          "lateral_span_is_20um": true,
+          "z_span_is_minus3_to_plus3um": true,
+          "simulation_time_is_1ps": true,
+          "auto_shutoff_min_is_1e_minus7": true,
+          "CV0": true,
+          "accelerator_policy_matches": true,
+          "B200_promotion_state_matches": true,
+          "GPU_UUID_present": true,
+          "solver_version_present": true
+        }
+      }
+    },
+    "final_xy50_source_calibrations": {
+      "Ea": {
+        "artifact": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/source_calibrations_f5665a86_gpu5_attempt_0/xy50/Ea/source_only_Ea_fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps.json",
+          "size_bytes": 34653,
+          "sha256": "c230a9c777eb9e3d5598a6f9257911bef1cb73d8c559775a0daf92b23ebdc899"
+        },
+        "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE",
+        "solver_version": "8.35.4522",
+        "requested_gpu_uuid": "GPU-48bf3705-8160-2de5-531b-dc480c83eabe",
+        "mesh_spec": {
+          "label": "fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps",
+          "flake_dxy_m": 5.0000000000000004e-08,
+          "stack_dz_m": 2.5e-09,
+          "bulk_dz_m": 5.0000000000000004e-08,
+          "outer_dxy_m": 2.0000000000000002e-07,
+          "mesh_accuracy": 3,
+          "pml_layers": 8,
+          "lateral_span_m": 1.9999999999999998e-05,
+          "z_min_m": -3e-06,
+          "z_max_m": 3e-06,
+          "simulation_time_s": 1e-12,
+          "auto_shutoff_min": 1e-07,
+          "conformal_mesh": "conformal variant 0"
+        },
+        "gates": {
+          "source_only_case": true,
+          "polarization_matches": true,
+          "source_status_passed": true,
+          "all_source_gates_passed": true,
+          "mesh_label_matches": true,
+          "flake_dxy_matches": true,
+          "outer_dxy_is_200nm": true,
+          "stack_dz_is_2p5nm": true,
+          "bulk_dz_is_50nm": true,
+          "mesh_accuracy_is_3": true,
+          "PML_is_8_layers": true,
+          "lateral_span_is_20um": true,
+          "z_span_is_minus3_to_plus3um": true,
+          "simulation_time_is_1ps": true,
+          "auto_shutoff_min_is_1e_minus7": true,
+          "CV0": true,
+          "accelerator_policy_matches": true,
+          "B200_promotion_state_matches": true,
+          "GPU_UUID_present": true,
+          "solver_version_present": true
+        }
+      },
+      "Eb": {
+        "artifact": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/source_calibrations_f5665a86_gpu5_attempt_0/xy50/Eb/source_only_Eb_fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps.json",
+          "size_bytes": 34655,
+          "sha256": "88b95b1e39bafaa9be38fcaf264c6d88d5fc2f276cfe59c77c2271f104273fdb"
+        },
+        "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE",
+        "solver_version": "8.35.4522",
+        "requested_gpu_uuid": "GPU-48bf3705-8160-2de5-531b-dc480c83eabe",
+        "mesh_spec": {
+          "label": "fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps",
+          "flake_dxy_m": 5.0000000000000004e-08,
+          "stack_dz_m": 2.5e-09,
+          "bulk_dz_m": 5.0000000000000004e-08,
+          "outer_dxy_m": 2.0000000000000002e-07,
+          "mesh_accuracy": 3,
+          "pml_layers": 8,
+          "lateral_span_m": 1.9999999999999998e-05,
+          "z_min_m": -3e-06,
+          "z_max_m": 3e-06,
+          "simulation_time_s": 1e-12,
+          "auto_shutoff_min": 1e-07,
+          "conformal_mesh": "conformal variant 0"
+        },
+        "gates": {
+          "source_only_case": true,
+          "polarization_matches": true,
+          "source_status_passed": true,
+          "all_source_gates_passed": true,
+          "mesh_label_matches": true,
+          "flake_dxy_matches": true,
+          "outer_dxy_is_200nm": true,
+          "stack_dz_is_2p5nm": true,
+          "bulk_dz_is_50nm": true,
+          "mesh_accuracy_is_3": true,
+          "PML_is_8_layers": true,
+          "lateral_span_is_20um": true,
+          "z_span_is_minus3_to_plus3um": true,
+          "simulation_time_is_1ps": true,
+          "auto_shutoff_min_is_1e_minus7": true,
+          "CV0": true,
+          "accelerator_policy_matches": true,
+          "B200_promotion_state_matches": true,
+          "GPU_UUID_present": true,
+          "solver_version_present": true
+        }
+      }
+    },
+    "final_xy50_source_calibrations_required": true,
+    "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
+    "thermal_electrical_solver": "repository custom CUDA PDE",
+    "Lumerical_HEAT_or_CHARGE_used": false,
+    "FDTDX_used": false,
+    "Lumerical_only_source_boundary": {
+      "passed": true,
+      "source_count": 37,
+      "sources": [
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/25_run_lumerical_4um_exact_au_control.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/26_build_lumerical_4um_yee_jacobian.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/33_validate_lumerical_4um_gray_q_cuda_pde.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/34_run_lumerical_4um_gray_maxwell_adjoint.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/40_optimize_lumerical_4um_dualpol_smoke.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/41_optimize_lumerical_4um_dualpol_continuation.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/42_evaluate_lumerical_4um_exact_binary.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/43_certify_lumerical_4um_exact_binary_lateral.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/44_validate_lumerical_4um_fixed_q_au_thermopower_adfd.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/au_density_relaxation.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/contract.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/dfm.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_adfd.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_adjoint.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_continuation.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_control_comparison.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_density.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_design_mapping.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_exact_au.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_forward.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_gray_q_coupling.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_interface_comparison.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_material_fraction.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_mesh_contract.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_multiphysics_comparison.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_official_downstream.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_optimizer.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_overlap_remap.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_provenance.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_signed_objective.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_4um_yee_jacobian.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_maxwell_contract.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/lumerical_only_boundary.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/multiphysics_4um.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/objective.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/robust_contract.py",
+        "/home/seunghyun200/inverse_design/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/volumetric_electrical_4um.py"
+      ],
+      "forbidden_imports": [],
+      "solver_contract": {
+        "Maxwell_forward": "Lumerical FDTD",
+        "Maxwell_adjoint": "Lumerical FDTD",
+        "thermal_forward_adjoint": "custom CUDA PDE",
+        "electrical_forward_adjoint": "custom CUDA PDE",
+        "Lumerical_HEAT": false,
+        "Lumerical_CHARGE": false,
+        "alternative_Maxwell_solver": false
+      }
+    }
+  },
+  "continuation_contract": {
+    "beta_schedule": [
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0,
+      128.0
+    ],
+    "stage_safety_maxeval": {
+      "1.0": 64,
+      "2.0": 48,
+      "4.0": 48,
+      "8.0": 48,
+      "16.0": 64,
+      "32.0": 64,
+      "64.0": 80,
+      "128.0": 96
+    },
+    "MMA_lifecycle": {
+      "normal": "one MMA object for each fixed-beta, fixed-cap homotopy subproblem",
+      "normal_stop": "callback-requested stop after audited physics plateau",
+      "same_beta_new_MMA": "new cap subproblem or recovery from the best successful density; NLopt MMA internal asymptotes are not serializable",
+      "beta_change_new_MMA": true
+    },
+    "constraint_cap_homotopy": {
+      "maximum_entry_violation_per_substage": 0.05,
+      "minimum_FOM_retention_per_substage": 0.9,
+      "target_caps_are_fixed_at_beta_entry": true
+    },
+    "continuation_evaluation_budget": {
+      "all_stage_emergency_ceiling": 512,
+      "counting_rule": "each beta lifetime includes its starting physics point; the initial maximin warm start remains inside the beta-1 emergency ceiling"
+    },
+    "latent_bounds": [
+      0.0,
+      1.0
+    ],
+    "stage_start_is_not_a_permanent_move_box": true,
+    "MMA_initial_step": {
+      "1.0": 0.025,
+      "2.0": 0.02,
+      "4.0": 0.018,
+      "8.0": 0.015,
+      "16.0": 0.012,
+      "32.0": 0.01,
+      "64.0": 0.008,
+      "128.0": 0.006
+    },
+    "design_constraint_activation": {
+      "1.0": [],
+      "2.0": [],
+      "4.0": [
+        "minimum_250nm_Au_feature"
+      ],
+      "8.0": [
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing"
+      ],
+      "16.0": [
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing",
+        "grayness_mean_4rho1mrho"
+      ],
+      "32.0": [
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing",
+        "grayness_mean_4rho1mrho"
+      ],
+      "64.0": [
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing",
+        "grayness_mean_4rho1mrho"
+      ],
+      "128.0": [
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing",
+        "grayness_mean_4rho1mrho"
+      ]
+    },
+    "DFM_baseline_reduction": {
+      "4.0": [
+        1.0,
+        Infinity
+      ],
+      "8.0": [
+        0.98,
+        1.0
+      ],
+      "16.0": [
+        0.9,
+        0.97
+      ],
+      "32.0": [
+        0.75,
+        0.85
+      ],
+      "64.0": [
+        0.5,
+        0.65
+      ],
+      "128.0": [
+        0.0,
+        0.0
+      ]
+    },
+    "beta_transition": {
+      "latent_initialization": "bounded L-BFGS-B remap preserving the completed-beta physical projected density",
+      "physical_density_RMS_error_limit": 0.002,
+      "physical_density_max_error_limit": 0.02,
+      "pre_MMA_current_sign_gate": "I_Ea > 0 and I_Eb < 0",
+      "pre_MMA_minimum_FOM_retention": 0.8
+    },
+    "grayness_target_caps": {
+      "16.0": 0.6,
+      "32.0": 0.2,
+      "64.0": 0.04,
+      "128.0": 0.005
+    },
+    "grayness_baseline_reduction": {
+      "16.0": 1.0,
+      "32.0": 0.8,
+      "64.0": 0.5,
+      "128.0": 0.25
+    },
+    "final_grayness_gate": 0.005,
+    "stage_ftol_rel": 0.0,
+    "stage_xtol_rel": 0.0,
+    "initial_maximin_warm_maximum_change": 0.05,
+    "external_physics_objective_plateau_gate": {
+      "minimum_feasible_points": 6,
+      "window": 4,
+      "relative_tolerance": 0.01,
+      "absolute_tolerance_nA": 0.001,
+      "unique_projected_density_states_only": true,
+      "projected_density_RMS_limit": 0.001
+    },
+    "initial_density": "exact uniform latent rho=0.5",
+    "floating_Au_terminal_conductance_constraint": false,
+    "objective": "maximize min(I_Ea, -I_Eb) by epigraph LD_MMA",
+    "final_promotion_requires": [
+      "I_Ea > 0 and I_Eb < 0",
+      "continuous grayness <= final cap",
+      "thresholded cell mask exact 250 nm solid/void audit",
+      "fresh ordinary-dispersive exact-binary Au Maxwell forwards for Ea/Eb",
+      "Ea and Eb 100-to-50-nm optical lateral comparisons below 0.5%",
+      "100-nm and 50-nm optical raw Q through adaptive custom-CUDA PDE convergence",
+      "same-PDE-grid 100-to-50-nm current and temperature changes below 0.5%",
+      "fine-reference exact-binary I_Ea > 0 and I_Eb < 0"
+    ],
+    "posthoc_morphology_repair": false
+  },
+  "component_yee_independent_FD_cadence": {
+    "schema": "component-yee-independent-fd-cadence-v1",
+    "stage_policy": "one full independent mapping FD at the first representative physics evaluation of each beta; later evaluations use the hash-bound certificate plus fresh construction/transpose gates",
+    "final_policy": "one final full independent mapping FD on the continuous precursor after its exact-binary physical certificate passes",
+    "mapping_FD_relative_limit_unchanged": true,
+    "stage_certificates": {
+      "2": {
+        "beta": 2.0,
+        "attempt": 5,
+        "recorded_at_utc": "2026-09-02T14:18:46.252622+00:00",
+        "representative_density_state": {
+          "schema": "au-projected-nodal-density-v1",
+          "density_state_sha256": "b34eb7bd18bd533773a928d5a2e80358959b2e2d45779288add00ee39948fbc6",
+          "nodal_shape_xy": [
+            81,
+            81
+          ],
+          "pde_cell_shape_xy": [
+            80,
+            80
+          ],
+          "nodal_range": [
+            2.999999999997449e-05,
+            0.99997
+          ],
+          "cell_range": [
+            5.4828644929699744e-05,
+            0.99997
+          ],
+          "x_bounds_m": [
+            -4e-06,
+            4e-06
+          ],
+          "y_bounds_m": [
+            -4e-06,
+            4e-06
+          ],
+          "z_bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "axis_mapping": {
+            "x": "b",
+            "y": "a"
+          },
+          "optical_law": "christiansen_nk_then_square_v1",
+          "optical_rho_power": null,
+          "minimum_epsilon_imaginary": 0.0017340624239985253,
+          "all_constitutive_maps_derive_from_this_nodal_state": true,
+          "gray_state_claimed_as_fabricated_material": false
+        },
+        "Jacobian_result": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_be8aa5c0_gpu5_restart/evaluation_cache/beta_002/state_b34eb7bd18bd533773a928d5a2e80358959b2e2d45779288add00ee39948fbc6/yee_jacobian/component_yee_jacobian_result.json",
+          "size_bytes": 16355,
+          "sha256": "663a6d2a94e36b3946c6209048eddffca7378a3c2ad4d1ae23acc6e093b68c26"
+        },
+        "mapping_FD_relative_limit_unchanged": true
+      }
+    }
+  },
+  "full_chain_current_AD_FD_cadence": {
+    "schema": "full-chain-current-adfd-cadence-v1",
+    "stage_policy": "one independent centered latent-direction Ea/Eb current audit at each beta entry; no per-evaluation full-chain FD",
+    "final_policy": "one audit on the differentiable continuous precursor plus a separate fresh exact-binary physical certificate",
+    "relative_error_limit": 0.01,
+    "latent_step_policy": {
+      "beta_le_16": 0.0025,
+      "beta_gt_16": "0.0025 * 16 / beta",
+      "reason": "bound tanh-projection curvature error without changing the one-percent AD-FD acceptance gate"
+    },
+    "stage_certificates": {
+      "2": {
+        "beta": 2.0,
+        "attempt": 5,
+        "recorded_at_utc": "2026-09-02T14:25:51.965737+00:00",
+        "result": {
+          "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_be8aa5c0_gpu5_restart/stages/beta_002_cap_00_recovery_05/stage_entry_full_chain_adfd/full_chain_adfd_result.json",
+          "size_bytes": 6367,
+          "sha256": "e9a9b735badb19b6607cabb0dc13787a9dfacb3f50068ffcd3daaf4cd429ff26"
+        }
+      }
+    }
+  },
+  "active_stage": {
+    "status": "RUNNING_FIXED_BETA_MMA",
+    "beta": 2.0,
+    "beta_index": 1,
+    "cap_substage": 0,
+    "recovery_index": 5,
+    "MMA_internal_state_serialized": false,
+    "callback_history": [
+      {
+        "callback_index": 0,
+        "current_Ea_nA": 8.951631664255428,
+        "current_Eb_nA": -9.046253829019697,
+        "balanced_utility_nA": 8.951631664255428,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8129747599233443,
+          0.15620009853143837
+        ],
+        "grayness": 0.45398323967737475,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "b34eb7bd18bd533773a928d5a2e80358959b2e2d45779288add00ee39948fbc6",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": Infinity
+      },
+      {
+        "callback_index": 1,
+        "current_Ea_nA": 8.951877970506592,
+        "current_Eb_nA": -9.045953899020821,
+        "balanced_utility_nA": 8.951877970506592,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8129747276396552,
+          0.15620013185267148
+        ],
+        "grayness": 0.4539827424263776,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "8973f955c2470eaf5b9db0e324766ffd6d86b718e2625919b392423a2174efb3",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 2.623297053065896e-06
+      },
+      {
+        "callback_index": 2,
+        "current_Ea_nA": 8.954260406168885,
+        "current_Eb_nA": -9.043091512427898,
+        "balanced_utility_nA": 8.954260406168885,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8129744155614601,
+          0.156200453833213
+        ],
+        "grayness": 0.45397798753355606,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "6d1a469c67e6722fc398d60117e4e279b72ce22494b82217dd77fd8543684554",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 2.521336382800545e-05
+      },
+      {
+        "callback_index": 3,
+        "current_Ea_nA": 8.987781081059762,
+        "current_Eb_nA": -9.002353842864231,
+        "balanced_utility_nA": 8.987781081059762,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8129696901446039,
+          0.15620530736233854
+        ],
+        "grayness": 0.4539149144841882,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "0c329d190a6745a57087b15a4235e7f64125483b87b68d64c7752b8a681bcf1b",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0003563554751367114
+      },
+      {
+        "callback_index": 4,
+        "current_Ea_nA": 9.02228881608769,
+        "current_Eb_nA": -9.02340107927457,
+        "balanced_utility_nA": 9.02228881608769,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.81298733226323,
+          0.15628591664777472
+        ],
+        "grayness": 0.453438015834065,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "9120d078d5dc86c42aa1fc59611980edb770eeeca551b929ed1ee9bd61b4ab39",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0006435439174225121
+      },
+      {
+        "callback_index": 5,
+        "current_Ea_nA": 9.087443451409545,
+        "current_Eb_nA": -9.090761424693715,
+        "balanced_utility_nA": 9.087443451409545,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8130555826197629,
+          0.15691886412415124
+        ],
+        "grayness": 0.45232698158318113,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "46e10b9aed6d7105684a82e26e42ca4b7df2394bd9ec06a40e721f4fcd0cf33c",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0017045058735842013
+      },
+      {
+        "callback_index": 6,
+        "current_Ea_nA": 9.168231437422076,
+        "current_Eb_nA": -9.181245031519248,
+        "balanced_utility_nA": 9.168231437422076,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8134087354587582,
+          0.1593610492897759
+        ],
+        "grayness": 0.45012533800458554,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "4910c153f18395de93ce038db0bef5ecd925cf45421ff759010af7c3f2105a84",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0028707250131232175
+      },
+      {
+        "callback_index": 7,
+        "current_Ea_nA": 9.25060491974667,
+        "current_Eb_nA": -9.266467969598136,
+        "balanced_utility_nA": 9.25060491974667,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8137881625678333,
+          0.1610795203102305
+        ],
+        "grayness": 0.4478065389267749,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "bb331e18b49272e624dc0b7b59b179d100c2ad2de0240c8cc2fb80edcee66d88",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0030879153990911725
+      },
+      {
+        "callback_index": 8,
+        "current_Ea_nA": 9.338254226700139,
+        "current_Eb_nA": -9.354444244300844,
+        "balanced_utility_nA": 9.338254226700139,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8141541557706516,
+          0.16374714131432544
+        ],
+        "grayness": 0.444945085627694,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "7d25bc687eda599a823a5ee1592a6d20eba558f23c73a888ae7e52e9aa23b40f",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0033336035218598918
+      },
+      {
+        "callback_index": 9,
+        "current_Ea_nA": 9.430213860502528,
+        "current_Eb_nA": -9.444986446682377,
+        "balanced_utility_nA": 9.430213860502528,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8145866684889849,
+          0.16579798707518334
+        ],
+        "grayness": 0.4421852151900215,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "51062d90795173f0b0bd28a9f5669fd480456afa855a92ad6ee37ed3c123c69c",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.003946617472637115
+      },
+      {
+        "callback_index": 10,
+        "current_Ea_nA": 9.523444345688375,
+        "current_Eb_nA": -9.542103120156593,
+        "balanced_utility_nA": 9.523444345688375,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8151848619918707,
+          0.16837597894752312
+        ],
+        "grayness": 0.4391161566947155,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "24194db036af53ceb75794cdbe1ae2fc50c764ce01950a08731f1eb6daba2b06",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.0036711095474671763
+      },
+      {
+        "callback_index": 11,
+        "current_Ea_nA": 9.621882349239351,
+        "current_Eb_nA": -9.640568751503984,
+        "balanced_utility_nA": 9.621882349239351,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8160212425508311,
+          0.17152412488177907
+        ],
+        "grayness": 0.4362282253412244,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "878c6eb55f71653674237ff7d5594cb0adde8028b5d53ccbe61a17b59d8157bd",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.004141862788053515
+      },
+      {
+        "callback_index": 12,
+        "current_Ea_nA": 9.728841966750242,
+        "current_Eb_nA": -9.752218596840358,
+        "balanced_utility_nA": 9.728841966750242,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8167832164649528,
+          0.1744093466269653
+        ],
+        "grayness": 0.43307340917223547,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "35a1402726093974c298a60b97298581ba2152dac79397acd786ac5df9b0dee9",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.004352050415627464
+      },
+      {
+        "callback_index": 13,
+        "current_Ea_nA": 9.832544948595896,
+        "current_Eb_nA": -9.855522194283846,
+        "balanced_utility_nA": 9.832544948595896,
+        "design_constraint_names": [],
+        "design_constraint_values": [],
+        "raw_DFM_values": [
+          0.8173013359795162,
+          0.1775465162795462
+        ],
+        "grayness": 0.43050143330213925,
+        "maximum_design_constraint": -Infinity,
+        "design_feasible": true,
+        "density_state_sha256": "eab25aeee787c90719afe18bfbf3b669140ab5d7fc98c2b82439046985a10e24",
+        "physics_cache_hit": false,
+        "projected_density_change_RMS": 0.004869799291630687
+      }
+    ],
+    "latest_best_currents_nA": {
+      "Ea": 9.832544948595896,
+      "Eb": -9.855522194283846
+    },
+    "latest_best_balanced_utility_nA": 9.832544948595896,
+    "latest_best_grayness": 0.43050143330213925,
+    "state_artifact": {
+      "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_be8aa5c0_gpu5_restart/stages/beta_002_cap_00_recovery_05/latest_successful_state.npz",
+      "size_bytes": 63687,
+      "sha256": "cc1beb368a0b83aab0d6bf1755605b6351480920ae598c3c99ccb7e1666b93cc"
+    },
+    "latest_raw_trial": {
+      "callback_index": 13,
+      "current_Ea_nA": 9.832544948595896,
+      "current_Eb_nA": -9.855522194283846,
+      "balanced_utility_nA": 9.832544948595896,
+      "design_constraint_names": [],
+      "design_constraint_values": [],
+      "raw_DFM_values": [
+        0.8173013359795162,
+        0.1775465162795462
+      ],
+      "grayness": 0.43050143330213925,
+      "maximum_design_constraint": -Infinity,
+      "design_feasible": true,
+      "density_state_sha256": "eab25aeee787c90719afe18bfbf3b669140ab5d7fc98c2b82439046985a10e24",
+      "physics_cache_hit": false,
+      "projected_density_change_RMS": 0.004869799291630687
+    },
+    "best_feasible_candidate": {
+      "callback_index": 13,
+      "reason": "maximum_balanced_utility_among_design_feasible_points"
+    },
+    "unique_physics_evaluation_count": 14,
+    "updated_at_utc": "2026-09-02T16:29:15.435185+00:00"
+  },
+  "stages": [],
+  "final": null,
+  "Lumerical_HEAT_or_CHARGE_solves": 0,
+  "FDTDX_Maxwell_solves": 0,
+  "restart_provenance": {
+    "schema": "au-lumerical-continuation-restart-provenance-v2",
+    "reason": "explicit_cross_commit_density_recovery_from_stopped_run",
+    "source_git_commit": "d01f7c4b375c0e9f5bcda5ce0589c0f2dab96d11",
+    "source_status": "STOPPED_AFTER_BETA_REMAP_NUMERICAL_CONVERGENCE_FIX",
+    "source_latest": {
+      "beta": 2.0,
+      "cap_substage": 0,
+      "recovery_index": 4,
+      "currents_nA": {
+        "Ea": 8.951631664255428,
+        "Eb": -9.046253829019697
+      },
+      "balanced_utility_nA": 8.951631664255428,
+      "grayness": 0.45398323967737475,
+      "design_constraints_satisfied": true,
+      "objective_converged": true,
+      "opposite_current_switching_achieved": true,
+      "FOM_retention_passed": true,
+      "constraint_homotopy_target_reached": true
+    },
+    "source_manifest": {
+      "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_d01f7c4b_gpu4_restart/restart_manifest_for_f5665a86.json",
+      "size_bytes": 57567,
+      "sha256": "bd430197a30d19ee4cce7732cdf52f53caac80e3d9ca114345733849c8275c33"
+    },
+    "source_checkpoint": {
+      "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_d01f7c4b_gpu4_restart/continuation_checkpoint.npz",
+      "size_bytes": 31166,
+      "sha256": "5fd5f05c1546f9cc9c188922204b8ac7a5612cc3e7809e56bba4f9e54e4f8a95"
+    },
+    "source_terminal_stage_reference": {
+      "beta": 2.0,
+      "final_currents_nA": {
+        "Ea": 8.951631664255428,
+        "Eb": -9.046253829019697
+      },
+      "balanced_utility_nA": 8.951631664255428
+    },
+    "source_terminal_state": {
+      "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_d01f7c4b_gpu4_restart/stages/beta_002_cap_00_recovery_04/stage_final_state.npz",
+      "size_bytes": 133185,
+      "sha256": "6d51cee96c94954c37deb69da5259424cf93be77c808bd4e237fc7f972bc4401"
+    },
+    "source_resume_state_kind": "terminal_stage",
+    "source_resume_state": {
+      "path": "/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_lumerical_b200/volumetric_top_contacts_adaptive_250nm_d01f7c4b_gpu4_restart/stages/beta_002_cap_00_recovery_04/stage_final_state.npz",
+      "size_bytes": 133185,
+      "sha256": "6d51cee96c94954c37deb69da5259424cf93be77c808bd4e237fc7f972bc4401"
+    },
+    "checkpoint_prepared_beta": 2.0,
+    "target_beta": 2.0,
+    "restart_beta_remap": null,
+    "resumed_beta_index": 1,
+    "resumed_attempt": 5
+  },
+  "latest": {
+    "beta": 2.0,
+    "cap_substage": 0,
+    "recovery_index": 5,
+    "iteration": 13,
+    "currents_nA": {
+      "Ea": 9.832544948595896,
+      "Eb": -9.855522194283846
+    },
+    "balanced_utility_nA": 9.832544948595896,
+    "grayness": 0.43050143330213925
+  }
+}

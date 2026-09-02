@@ -1,0 +1,52 @@
+{
+  "schema": "au-lumerical-a6000-fom-handoff-bundle-v1",
+  "source_git_commit": "be8aa5c0d824a1abcaae844c7bc5553c730a679f",
+  "snapshot_latest": {
+    "beta": 2.0,
+    "cap_substage": 0,
+    "recovery_index": 5,
+    "iteration": 13,
+    "currents_nA": {
+      "Ea": 9.832544948595896,
+      "Eb": -9.855522194283846
+    },
+    "balanced_utility_nA": 9.832544948595896,
+    "grayness": 0.43050143330213925
+  },
+  "checkpoint": {
+    "path": "continuation_checkpoint.npz",
+    "size_bytes": 24802,
+    "sha256": "f72bca2cef02ab9d4a32a9ce8600de568d63a956044eca86dc220494a0ba134b"
+  },
+  "stage_final_state": {
+    "path": "stage_final_state.npz",
+    "size_bytes": 63711,
+    "sha256": "44cf4b13227497c47d984dbaeb52ca7a64841c6de256491f5ad7af800b9de586"
+  },
+  "latest_successful_state": {
+    "path": "latest_successful_state.npz",
+    "size_bytes": 63687,
+    "sha256": "cc1beb368a0b83aab0d6bf1755605b6351480920ae598c3c99ccb7e1666b93cc"
+  },
+  "restart_manifest": {
+    "path": "restart_manifest.json",
+    "size_bytes": 1421,
+    "sha256": "c4bb434a151b7fadb4812e488fd8c9d31f8433f85cd9c2e42d6192f17c866c45"
+  },
+  "objective_history": {
+    "path": "objective_history.json",
+    "size_bytes": 9446,
+    "sha256": "fe355d2fe5473dde80d4fe50e185d346519f333dfd3b9b61931d6a6109064e39"
+  },
+  "source_production_manifest": {
+    "path": "source_production_manifest.json",
+    "size_bytes": 37102,
+    "sha256": "6c039c69d2b37ef16ce4c06db06cbf4ef9abcbad059ad0285971f39851980900"
+  },
+  "gates": {
+    "checkpoint_matches_latest_successful_latent_bitwise": true,
+    "checkpoint_attempt_matches_recovery_plus_one": true,
+    "source_git_commit_is_be8aa5c0": true,
+    "MMA_internal_state_not_claimed": true
+  }
+}

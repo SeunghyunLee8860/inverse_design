@@ -1,0 +1,48 @@
+{
+  "schema": "au-lumerical-a6000-fom-handoff-restart-v1",
+  "passed": false,
+  "status": "STOPPED_FOR_A6000_FOM_CHANGE_HANDOFF",
+  "git_commit": "be8aa5c0d824a1abcaae844c7bc5553c730a679f",
+  "latest": {
+    "beta": 2.0,
+    "cap_substage": 0,
+    "recovery_index": 5,
+    "iteration": 13,
+    "currents_nA": {
+      "Ea": 9.832544948595896,
+      "Eb": -9.855522194283846
+    },
+    "balanced_utility_nA": 9.832544948595896,
+    "grayness": 0.43050143330213925
+  },
+  "restart_checkpoint_attempt": 6,
+  "stages": [
+    {
+      "beta": 2.0,
+      "state_artifact": {
+        "path": "stage_final_state.npz",
+        "size_bytes": 63711,
+        "sha256": "44cf4b13227497c47d984dbaeb52ca7a64841c6de256491f5ad7af800b9de586"
+      },
+      "final_currents_nA": {
+        "Ea": 9.832544948595896,
+        "Eb": -9.855522194283846
+      },
+      "balanced_utility_nA": 9.832544948595896,
+      "grayness": 0.43050143330213925,
+      "source_live_iteration": 13
+    }
+  ],
+  "handoff": {
+    "source_status": "RUNNING_LUMERICAL_4UM_DUALPOL_BETA_CONTINUATION",
+    "source_active_stage": {
+      "beta": 2.0,
+      "beta_index": 1,
+      "cap_substage": 0,
+      "recovery_index": 5
+    },
+    "MMA_internal_state_serialized": false,
+    "restart_kind": "density restart; new MMA required after FOM change",
+    "source_calibration_policy": "regenerate Ea/Eb xy100 and xy50 on A6000 because calibration is GPU-UUID-bound"
+  }
+}
