@@ -127,6 +127,11 @@ BETA_REMAP_MAXIMUM_FUNCTION_EVALUATIONS = 500_000
 BETA_REMAP_MAXIMUM_CORRECTIONS = 30
 BETA_REMAP_RMS_ERROR_LIMIT = 2.0e-3
 BETA_REMAP_MAX_ERROR_LIMIT = 2.0e-2
+# L2 density retention can leave a few outlier cells just above the unchanged
+# maximum-error gate. Polish only those outliers against a guard band below
+# that gate; this is not an acceptance-tolerance relaxation.
+BETA_REMAP_MAX_ERROR_POLISH_GUARD_FRACTION = 0.95
+BETA_REMAP_MAX_ERROR_POLISH_WEIGHT = 1.0e3
 BETA_TRANSITION_MINIMUM_FOM_RETENTION = 0.80
 
 
@@ -210,6 +215,58 @@ def remap_latent_between_betas(
     )
     all_multistarts_converged = all(bool(result.success) for _, result in runs)
 
+    l2_remapped = np.asarray(optimized.x, dtype=np.float64).reshape(value.shape)
+    l2_physical_remapped = OPTIMIZER_250NM_MAPPING.physical(l2_remapped, target)
+    l2_remap_error = l2_physical_remapped - physical_source
+    l2_rms_error = float(np.sqrt(np.mean(l2_remap_error * l2_remap_error)))
+    l2_maximum_error = float(np.max(np.abs(l2_remap_error)))
+    polish_required = l2_maximum_error > BETA_REMAP_MAX_ERROR_LIMIT
+    polish_guard = (
+        BETA_REMAP_MAX_ERROR_POLISH_GUARD_FRACTION
+        * BETA_REMAP_MAX_ERROR_LIMIT
+    )
+    polished = None
+    if polish_required:
+        def polished_objective(flat: np.ndarray) -> tuple[float, np.ndarray]:
+            candidate = np.asarray(flat, dtype=np.float64).reshape(value.shape)
+            difference = (
+                OPTIMIZER_250NM_MAPPING.physical(candidate, target)
+                - physical_source
+            )
+            excess = np.maximum(np.abs(difference) - polish_guard, 0.0)
+            penalty_residual = np.sign(difference) * excess
+            objective_value = (
+                0.5 * float(np.mean(difference * difference))
+                + 0.5
+                * BETA_REMAP_MAX_ERROR_POLISH_WEIGHT
+                * float(np.mean(penalty_residual * penalty_residual))
+            )
+            physical_gradient = (
+                difference
+                + BETA_REMAP_MAX_ERROR_POLISH_WEIGHT * penalty_residual
+            ) / difference.size
+            gradient = OPTIMIZER_250NM_MAPPING.vjp(
+                candidate, physical_gradient, target
+            )
+            return objective_value, gradient.ravel()
+
+        polished = scipy_optimize.minimize(
+            polished_objective,
+            l2_remapped.ravel(),
+            jac=True,
+            method="L-BFGS-B",
+            bounds=scipy_optimize.Bounds(0.0, 1.0),
+            options={
+                "maxiter": BETA_REMAP_MAXIMUM_ITERATIONS,
+                "ftol": 0.0,
+                "gtol": BETA_REMAP_PROJECTED_GRADIENT_TOLERANCE,
+                "maxls": BETA_REMAP_MAXIMUM_LINE_SEARCH_STEPS,
+                "maxfun": BETA_REMAP_MAXIMUM_FUNCTION_EVALUATIONS,
+                "maxcor": BETA_REMAP_MAXIMUM_CORRECTIONS,
+            },
+        )
+        optimized = polished
+
     remapped = np.asarray(optimized.x, dtype=np.float64).reshape(value.shape)
     physical_remapped = OPTIMIZER_250NM_MAPPING.physical(remapped, target)
     remap_error = physical_remapped - physical_source
@@ -219,9 +276,11 @@ def remap_latent_between_betas(
     same_latent_rms = float(np.sqrt(np.mean(same_latent_error * same_latent_error)))
     nominal_rms_passed = rms_error <= BETA_REMAP_RMS_ERROR_LIMIT
     maximum_error_passed = maximum_error <= BETA_REMAP_MAX_ERROR_LIMIT
+    polish_converged = polished is None or bool(polished.success)
     bounded_optimum_certified = bool(
         all_multistarts_converged
         and objective_agreement_relative <= 1.0e-5
+        and polish_converged
         and rms_error < same_latent_rms
         and maximum_error_passed
     )
@@ -232,6 +291,8 @@ def remap_latent_between_betas(
     acceptance_mode = (
         "nominal_RMS_and_maximum_limits"
         if nominal_rms_passed and maximum_error_passed
+        else "multistart_certified_L2_plus_guard_band_max_error_polish"
+        if bounded_optimum_certified and polish_required
         else "multistart_certified_bounded_optimum_plus_maximum_limit"
         if bounded_optimum_certified
         else "failed"
@@ -247,7 +308,7 @@ def remap_latent_between_betas(
         "optimizer_iterations": int(optimized.nit),
         "optimizer_function_evaluations": int(optimized.nfev),
         "selected_start": best_label,
-        "objective": float(optimized.fun),
+        "objective": 0.5 * float(np.mean(remap_error * remap_error)),
         "multistart": {
             "all_converged": all_multistarts_converged,
             "objective_agreement_relative": objective_agreement_relative,
@@ -269,6 +330,26 @@ def remap_latent_between_betas(
             "RMS": same_latent_rms,
             "mean_abs": float(np.mean(np.abs(same_latent_error))),
             "max_abs": float(np.max(np.abs(same_latent_error))),
+        },
+        "maximum_error_polish": {
+            "triggered": polish_required,
+            "gate_unchanged": BETA_REMAP_MAX_ERROR_LIMIT,
+            "guard_fraction": BETA_REMAP_MAX_ERROR_POLISH_GUARD_FRACTION,
+            "guard_limit": polish_guard,
+            "penalty_weight": BETA_REMAP_MAX_ERROR_POLISH_WEIGHT,
+            "L2_optimum_RMS_before_polish": l2_rms_error,
+            "L2_optimum_max_abs_before_polish": l2_maximum_error,
+            "optimizer_success": None if polished is None else bool(polished.success),
+            "optimizer_status": None if polished is None else int(polished.status),
+            "optimizer_message": None if polished is None else str(polished.message),
+            "optimizer_iterations": None if polished is None else int(polished.nit),
+            "optimizer_function_evaluations": (
+                None if polished is None else int(polished.nfev)
+            ),
+            "augmented_objective": (
+                None if polished is None else float(polished.fun)
+            ),
+            "converged": polish_converged,
         },
         "remapped_physical_error": {
             "RMS": rms_error,

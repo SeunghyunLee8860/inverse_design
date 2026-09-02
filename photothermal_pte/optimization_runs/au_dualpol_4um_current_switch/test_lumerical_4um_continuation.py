@@ -162,6 +162,44 @@ def test_beta_remap_accepts_only_certified_bounded_optimum_beyond_nominal_rms() 
     assert result["audit"]["multistart"]["objective_agreement_relative"] <= 1.0e-5
 
 
+def test_beta_remap_polishes_max_error_without_relaxing_gate(monkeypatch) -> None:
+    from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
+        lumerical_4um_continuation as continuation,
+    )
+
+    class CoupledToyMapping:
+        def physical(self, latent, beta):
+            output = np.zeros_like(latent, dtype=np.float64)
+            if beta == 2.0:
+                output[0, 1] = 0.3
+            else:
+                output[0, 0] = latent[0, 0]
+                output[0, 1] = 2.0 * latent[0, 0]
+            return output
+
+        def vjp(self, latent, vector, beta):
+            output = np.zeros_like(latent, dtype=np.float64)
+            output[0, 0] = vector[0, 0] + 2.0 * vector[0, 1]
+            return output
+
+    monkeypatch.setattr(continuation, "OPTIMIZER_250NM_MAPPING", CoupledToyMapping())
+    monkeypatch.setattr(continuation, "BETA_REMAP_RMS_ERROR_LIMIT", 1.0e-6)
+    monkeypatch.setattr(continuation, "BETA_REMAP_MAX_ERROR_LIMIT", 0.11)
+    latent = np.full(continuation.CONTRACT.design_node_shape, 0.4)
+    result = continuation.remap_latent_between_betas(
+        latent=latent, source_beta=2.0, target_beta=4.0
+    )
+    audit = result["audit"]
+    assert audit["maximum_error_polish"]["triggered"] is True
+    assert audit["maximum_error_polish"]["converged"] is True
+    assert audit["remapped_physical_error"]["max_abs"] <= 0.11
+    assert audit["acceptance_limits"]["maximum_error_passed"] is True
+    assert audit["acceptance_limits"]["acceptance_mode"] == (
+        "multistart_certified_L2_plus_guard_band_max_error_polish"
+    )
+    assert audit["passed"] is True
+
+
 def test_beta_transition_gate_rejects_sign_flip_and_large_fom_loss() -> None:
     passed = beta_transition_physics_gate(
         previous_currents_nA={"Ea": 5.0, "Eb": -5.2},
@@ -634,6 +672,75 @@ def test_cross_commit_restart_accepts_hash_bound_active_stage_progress(
     assert provenance["source_resume_state"]["sha256"] == driver.artifact(
         active_state
     )["sha256"]
+
+def test_restart_advances_only_certified_completed_stage_transition(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    driver = _load_continuation_driver()
+    latent = _latent()
+    remapped = np.clip(latent + 1.0e-3, 0.0, 1.0)
+    checkpoint = tmp_path / "continuation_checkpoint.npz"
+    driver._save_checkpoint(
+        checkpoint,
+        latent=latent,
+        beta_index=1,
+        attempt=7,
+        cap_substage=0,
+        planned_cap_substage=-1,
+        dfm_caps=np.full(2, np.inf),
+        grayness_cap=np.inf,
+        target_dfm_caps=np.full(2, np.nan),
+        target_grayness_cap=np.nan,
+    )
+    terminal_state = tmp_path / "stage_final_state.npz"
+    np.savez_compressed(terminal_state, latent_final=latent)
+    manifest = tmp_path / "restart_manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "status": "STOPPED_AFTER_BETA_REMAP_MAX_ERROR",
+                "passed": False,
+                "git_commit": "old-commit",
+                "restart_checkpoint_attempt": 7,
+                "restart_after_completed_stage_transition": True,
+                "latest": {"beta": 2.0, "recovery_index": 6},
+                "stages": [
+                    {
+                        "status": "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
+                        "beta": 2.0,
+                        "beta_index": 1,
+                        "recovery_index": 6,
+                        "objective_converged": True,
+                        "opposite_current_switching_achieved": True,
+                        "design_constraints": {"satisfied": True},
+                        "FOM_retention": {"passed": True},
+                        "constraint_homotopy": {"target_reached": True},
+                        "final_currents_nA": {"Ea": 12.0, "Eb": -12.0},
+                        "balanced_utility_nA": 12.0,
+                        "state_artifact": driver.artifact(terminal_state),
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        driver,
+        "remap_latent_between_betas",
+        lambda **kwargs: {"latent": remapped, "audit": {"passed": True}},
+    )
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_CHECKPOINT", str(checkpoint))
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_MANIFEST", str(manifest))
+    state, provenance = driver._restart_seed_from_environment()
+    assert state["beta_index"] == 2
+    assert state["attempt"] == 0
+    assert np.array_equal(state["latent"], remapped)
+    assert provenance["source_checkpoint_beta"] == 2.0
+    assert provenance["checkpoint_prepared_beta"] == 4.0
+    assert provenance["target_beta"] == 4.0
+    assert provenance["post_completed_stage_transition_advanced"] is True
+    assert provenance["restart_beta_remap"]["passed"] is True
+
 
 
 def test_portable_restart_manifest_resolves_relative_terminal_state(

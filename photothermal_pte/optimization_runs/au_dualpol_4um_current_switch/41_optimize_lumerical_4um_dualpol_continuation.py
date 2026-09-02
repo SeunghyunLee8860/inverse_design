@@ -598,7 +598,70 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
     if not np.isfinite(prepared_beta) or prepared_beta > target_beta:
         raise RuntimeError("restart checkpoint beta preparation is invalid")
     restart_remap_audit: dict[str, Any] | None = None
-    if prepared_beta < target_beta:
+    source_checkpoint_beta = target_beta
+    advance_completed_stage = bool(
+        source_manifest.get("restart_after_completed_stage_transition") is True
+    )
+    if advance_completed_stage:
+        if resume_state_kind != "terminal_stage" or prepared_beta != target_beta:
+            raise RuntimeError(
+                "post-stage transition restart requires the hash-matched terminal state"
+            )
+        transition_ready = {
+            "stage_status": terminal_stage.get("status")
+            == "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
+            "stage_beta_index": int(terminal_stage.get("beta_index", -1))
+            == beta_index,
+            "stage_recovery_precedes_checkpoint": int(
+                terminal_stage.get("recovery_index", -2)
+            )
+            + 1
+            == int(state["attempt"]),
+            "objective_converged": terminal_stage.get("objective_converged")
+            is True,
+            "switching_achieved": terminal_stage.get(
+                "opposite_current_switching_achieved"
+            )
+            is True,
+            "design_constraints_satisfied": terminal_stage.get(
+                "design_constraints", {}
+            ).get("satisfied")
+            is True,
+            "FOM_retention_passed": terminal_stage.get("FOM_retention", {}).get(
+                "passed"
+            )
+            is True,
+            "constraint_homotopy_target_reached": terminal_stage.get(
+                "constraint_homotopy", {}
+            ).get("target_reached")
+            is True,
+        }
+        if not all(transition_ready.values()):
+            raise RuntimeError(
+                "post-stage transition restart source is not fully certified: "
+                f"{transition_ready}"
+            )
+        if beta_index + 1 >= len(BETA_SCHEDULE):
+            raise RuntimeError("post-stage transition restart has no next beta")
+        target_beta = BETA_SCHEDULE[beta_index + 1]
+        remap = remap_latent_between_betas(
+            latent=checkpoint_latent,
+            source_beta=prepared_beta,
+            target_beta=target_beta,
+        )
+        state.update(
+            latent=np.asarray(remap["latent"], dtype=np.float64),
+            beta_index=beta_index + 1,
+            attempt=0,
+            cap_substage=0,
+            planned_cap_substage=-1,
+            target_dfm_caps=np.full(2, np.nan, dtype=np.float64),
+            target_grayness_cap=np.nan,
+        )
+        restart_remap_audit = remap["audit"]
+        prepared_beta = target_beta
+        beta_index = int(state["beta_index"])
+    elif prepared_beta < target_beta:
         remap = remap_latent_between_betas(
             latent=checkpoint_latent,
             source_beta=prepared_beta,
@@ -623,6 +686,8 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
         "source_terminal_state": artifact(terminal_state_path),
         "source_resume_state_kind": resume_state_kind,
         "source_resume_state": artifact(resume_state_path),
+        "source_checkpoint_beta": source_checkpoint_beta,
+        "post_completed_stage_transition_advanced": advance_completed_stage,
         "checkpoint_prepared_beta": prepared_beta,
         "target_beta": target_beta,
         "restart_beta_remap": restart_remap_audit,
