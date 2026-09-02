@@ -2,7 +2,8 @@
 set -uo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-watchdog="$script_dir/watch_lumerical_b200_direct_checkout.sh"
+supervised_script_dir="${AU_LUMERICAL_SUPERVISED_SCRIPT_DIR:-$script_dir}"
+watchdog="$supervised_script_dir/watch_lumerical_b200_direct_checkout.sh"
 main_session="${1:?usage: $0 MAIN_TMUX_SESSION OUTPUT_ROOT CALIBRATION_ROOT GPU_INDEX [RESTART_CHECKPOINT RESTART_MANIFEST]}"
 output_root="${2:?usage: $0 MAIN_TMUX_SESSION OUTPUT_ROOT CALIBRATION_ROOT GPU_INDEX [RESTART_CHECKPOINT RESTART_MANIFEST]}"
 calibration_root="${3:?usage: $0 MAIN_TMUX_SESSION OUTPUT_ROOT CALIBRATION_ROOT GPU_INDEX [RESTART_CHECKPOINT RESTART_MANIFEST]}"
@@ -25,6 +26,13 @@ final_certified() {
 }
 
 launch_main_session() {
+  expected_commit="$(jq -r '.git_commit // empty' "$manifest" 2>/dev/null)"
+  actual_commit="$(git -C "$supervised_script_dir" rev-parse HEAD 2>/dev/null)"
+  if [[ -z "$expected_commit" || "$actual_commit" != "$expected_commit" ]]; then
+    printf '%s restart_refused expected_commit=%s actual_commit=%s\n' \
+      "$(timestamp)" "$expected_commit" "$actual_commit" >>"$event_log"
+    return 1
+  fi
   tmux new-session -d -s "$main_session" \
     env \
     ANSYSLMD_LICENSE_FILE=1055@166.104.112.74 \
@@ -42,6 +50,8 @@ launch_main_session() {
 
 printf '%s supervisor_started main_session=%s gpu=%s\n' \
   "$(timestamp)" "$main_session" "$gpu_index" >>"$event_log"
+printf '%s supervised_script_dir=%s\n' \
+  "$(timestamp)" "$supervised_script_dir" >>"$event_log"
 
 while true; do
   if final_certified; then
