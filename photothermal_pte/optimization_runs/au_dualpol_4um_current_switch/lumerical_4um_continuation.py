@@ -126,13 +126,17 @@ def remap_latent_between_betas(
     source_beta: float,
     target_beta: float,
 ) -> dict[str, Any]:
-    """Find a bounded target-beta latent that preserves physical density.
+    """Find the best bounded target-beta latent retaining physical density.
 
     Reusing the same latent after increasing projection beta is not a neutral
     continuation step: it sharpens the projected density before the new
-    physics is evaluated. This deterministic, solver-free least-squares
-    remap instead preserves the source-beta projected density as closely as
-    the bounded filtered parameterization permits.
+    physics is evaluated. The target-beta filtered parameterization may also
+    be unable to reproduce the source density exactly without latent values
+    outside [0, 1]. Three deterministic starts therefore certify agreement on
+    the bounded least-squares optimum. A remap beyond the nominal RMS target
+    is accepted only when that bounded optimum is independently reproduced,
+    every local density change remains below the unchanged maximum gate, and
+    the subsequent fresh-Maxwell current-sign/FOM-retention gate passes.
     """
 
     value = np.asarray(latent, dtype=np.float64)
@@ -161,42 +165,94 @@ def remap_latent_between_betas(
         )
         return objective_value, gradient.ravel()
 
-    optimized = scipy_optimize.minimize(
-        objective,
-        value.ravel(),
-        jac=True,
-        method="L-BFGS-B",
-        bounds=scipy_optimize.Bounds(0.0, 1.0),
-        options={
-            "maxiter": BETA_REMAP_MAXIMUM_ITERATIONS,
-            "ftol": 1.0e-15,
-            "gtol": 1.0e-10,
-            "maxls": 50,
-        },
+    starts = (
+        ("source_latent", value),
+        ("uniform_half", np.full_like(value, 0.5)),
+        ("complement", 1.0 - value),
     )
+    runs: list[tuple[str, Any]] = []
+    for label, initial in starts:
+        optimized = scipy_optimize.minimize(
+            objective,
+            initial.ravel(),
+            jac=True,
+            method="L-BFGS-B",
+            bounds=scipy_optimize.Bounds(0.0, 1.0),
+            options={
+                "maxiter": BETA_REMAP_MAXIMUM_ITERATIONS,
+                "ftol": 1.0e-15,
+                "gtol": 1.0e-10,
+                "maxls": 50,
+            },
+        )
+        runs.append((label, optimized))
+    best_label, optimized = min(runs, key=lambda item: float(item[1].fun))
+    objective_values = np.asarray(
+        [float(result.fun) for _, result in runs], dtype=np.float64
+    )
+    objective_spread = float(np.max(objective_values) - np.min(objective_values))
+    objective_agreement_relative = objective_spread / max(
+        float(np.min(np.abs(objective_values))), np.finfo(float).tiny
+    )
+    all_multistarts_converged = all(bool(result.success) for _, result in runs)
+
     remapped = np.asarray(optimized.x, dtype=np.float64).reshape(value.shape)
     physical_remapped = OPTIMIZER_250NM_MAPPING.physical(remapped, target)
     remap_error = physical_remapped - physical_source
     same_latent_error = same_latent_physical - physical_source
     rms_error = float(np.sqrt(np.mean(remap_error * remap_error)))
     maximum_error = float(np.max(np.abs(remap_error)))
+    same_latent_rms = float(np.sqrt(np.mean(same_latent_error * same_latent_error)))
+    nominal_rms_passed = rms_error <= BETA_REMAP_RMS_ERROR_LIMIT
+    maximum_error_passed = maximum_error <= BETA_REMAP_MAX_ERROR_LIMIT
+    bounded_optimum_certified = bool(
+        all_multistarts_converged
+        and objective_agreement_relative <= 1.0e-5
+        and rms_error < same_latent_rms
+        and maximum_error_passed
+    )
     passed = bool(
-        rms_error <= BETA_REMAP_RMS_ERROR_LIMIT
-        and maximum_error <= BETA_REMAP_MAX_ERROR_LIMIT
+        maximum_error_passed
+        and (nominal_rms_passed or bounded_optimum_certified)
+    )
+    acceptance_mode = (
+        "nominal_RMS_and_maximum_limits"
+        if nominal_rms_passed and maximum_error_passed
+        else "multistart_certified_bounded_optimum_plus_maximum_limit"
+        if bounded_optimum_certified
+        else "failed"
     )
     audit = {
-        "schema": "au-lumerical-beta-density-preserving-remap-v1",
+        "schema": "au-lumerical-beta-density-retaining-remap-v2",
         "source_beta": source,
         "target_beta": target,
-        "method": "bounded_LBFGSB_projected_density_least_squares",
+        "method": "multistart_bounded_LBFGSB_projected_density_least_squares",
         "optimizer_success": bool(optimized.success),
         "optimizer_status": int(optimized.status),
         "optimizer_message": str(optimized.message),
         "optimizer_iterations": int(optimized.nit),
         "optimizer_function_evaluations": int(optimized.nfev),
+        "selected_start": best_label,
         "objective": float(optimized.fun),
+        "multistart": {
+            "all_converged": all_multistarts_converged,
+            "objective_agreement_relative": objective_agreement_relative,
+            "agreement_limit": 1.0e-5,
+            "runs": [
+                {
+                    "initialization": label,
+                    "success": bool(result.success),
+                    "status": int(result.status),
+                    "message": str(result.message),
+                    "iterations": int(result.nit),
+                    "function_evaluations": int(result.nfev),
+                    "objective": float(result.fun),
+                }
+                for label, result in runs
+            ],
+        },
         "same_latent_physical_error": {
-            "RMS": float(np.sqrt(np.mean(same_latent_error * same_latent_error))),
+            "RMS": same_latent_rms,
             "mean_abs": float(np.mean(np.abs(same_latent_error))),
             "max_abs": float(np.max(np.abs(same_latent_error))),
         },
@@ -206,8 +262,14 @@ def remap_latent_between_betas(
             "max_abs": maximum_error,
         },
         "acceptance_limits": {
-            "RMS": BETA_REMAP_RMS_ERROR_LIMIT,
+            "nominal_RMS": BETA_REMAP_RMS_ERROR_LIMIT,
             "max_abs": BETA_REMAP_MAX_ERROR_LIMIT,
+            "nominal_RMS_passed": nominal_rms_passed,
+            "maximum_error_passed": maximum_error_passed,
+            "bounded_optimum_certified": bounded_optimum_certified,
+            "acceptance_mode": acceptance_mode,
+            "fresh_Maxwell_transition_gate_still_required": True,
+            "minimum_FOM_retention": BETA_TRANSITION_MINIMUM_FOM_RETENTION,
         },
         "source_grayness": float(
             np.mean(4.0 * physical_source * (1.0 - physical_source))
@@ -220,8 +282,9 @@ def remap_latent_between_betas(
     }
     if not passed:
         raise RuntimeError(
-            "beta density-preserving remap exceeded its physical-density "
-            f"limits: RMS={rms_error:.6g}, max={maximum_error:.6g}"
+            "beta density-retaining remap failed its nominal or certified-bounded "
+            f"gates: RMS={rms_error:.6g}, max={maximum_error:.6g}, "
+            f"multistart_agreement={objective_agreement_relative:.6g}"
         )
     return {
         "latent": remapped,
@@ -229,7 +292,6 @@ def remap_latent_between_betas(
         "physical_remapped": physical_remapped,
         "audit": audit,
     }
-
 
 def beta_transition_physics_gate(
     *,

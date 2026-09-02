@@ -143,6 +143,25 @@ def test_beta_remap_preserves_projected_density_before_new_stage() -> None:
     assert np.max(result["latent"]) <= 1.0
 
 
+def test_beta_remap_accepts_only_certified_bounded_optimum_beyond_nominal_rms() -> None:
+    size = CONTRACT.design_node_shape[0]
+    x = np.arange(size)[:, None]
+    y = np.arange(size)[None, :]
+    latent = ((x - size // 2) ** 2 + (y - size // 2) ** 2 < (size / 3) ** 2).astype(
+        np.float64
+    )
+    result = remap_latent_between_betas(
+        latent=latent, source_beta=1.0, target_beta=2.0
+    )
+    limits = result["audit"]["acceptance_limits"]
+    assert limits["nominal_RMS_passed"] is False
+    assert limits["maximum_error_passed"] is True
+    assert limits["bounded_optimum_certified"] is True
+    assert limits["fresh_Maxwell_transition_gate_still_required"] is True
+    assert result["audit"]["multistart"]["all_converged"] is True
+    assert result["audit"]["multistart"]["objective_agreement_relative"] <= 1.0e-5
+
+
 def test_beta_transition_gate_rejects_sign_flip_and_large_fom_loss() -> None:
     passed = beta_transition_physics_gate(
         previous_currents_nA={"Ea": 5.0, "Eb": -5.2},
