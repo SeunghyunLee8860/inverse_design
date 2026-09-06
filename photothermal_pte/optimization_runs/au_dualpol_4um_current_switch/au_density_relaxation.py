@@ -6,11 +6,14 @@ make the topology problem differentiable.  Binarization belongs to the
 filter/projection continuation, while this module supplies the constitutive
 map used by the single-frequency Lumerical Maxwell gate.
 
-For the optical relaxation we interpolate refractive index ``n`` and
-extinction coefficient ``k`` and then form ``epsilon=(n+1j*k)**2``.  This is
-the nonlinear metal/dielectric interpolation proposed by Christiansen et al.
-(CMAME 343, 23-39, 2019; DOI 10.1016/j.cma.2018.08.034) and used in the
-plasmonic FDTD topology framework of Zeng et al. (ACS Photonics 8, 2021;
+For the optical relaxation we interpolate extinction coefficient ``k``
+linearly.  The real index contrast uses a C1 cubic-Hermite tail only below
+``rho=0.02``, and is the ordinary linear ``n`` interpolation everywhere
+above it; we then form ``epsilon=(n+1j*k)**2``.  This preserves both material
+endpoints and, outside the extreme void tail, the nonlinear metal/dielectric
+interpolation proposed by Christiansen et al. (CMAME 343, 23-39, 2019;
+DOI 10.1016/j.cma.2018.08.034) and used in the plasmonic FDTD topology
+framework of Zeng et al. (ACS Photonics 8, 2021;
 DOI 10.1021/acsphotonics.1c00260).  It is not a SIMP rho**3 law.
 
 The relaxation is only a candidate until its Lumerical B200 forward,
@@ -38,7 +41,7 @@ ORDAL_AU_DATA = (
 
 @dataclass(frozen=True)
 class AuDensityRelaxationContract:
-    law: str = "christiansen_nk_then_square_v1"
+    law: str = "christiansen_nk_low_density_c1_then_square_v2"
     role: str = "filtered_projected_topology_occupancy_not_carrier_density"
     wavelength_m: float = 4.0e-6
     background_n: float = 1.0
@@ -46,6 +49,7 @@ class AuDensityRelaxationContract:
     endpoint_source: str = "Ordal et al. 1987, DOI 10.1364/AO.26.000744"
     binarization_mechanism: str = "density_filter_plus_tanh_projection_beta_continuation"
     optical_rho_power: float | None = None
+    optical_n_low_density_transition_rho: float = 2.0e-2
     exact_binary_required_during_relaxed_iterations: bool = False
     exact_binary_required_for_final_promotion: bool = True
     final_material: str = "ordinary_sampled_data_dispersive_Au"
@@ -84,6 +88,35 @@ def ordal_au_index(wavelength_m: float = CONTRACT.wavelength_m) -> complex:
     return complex(n, k)
 
 
+def _real_index_density_weight(projected_density: np.ndarray) -> np.ndarray:
+    """Return the C1 low-density weight used for the real index contrast.
+
+    Linear n-k interpolation crosses Lumerical's internal Re(epsilon)=1
+    material-classification boundary near rho=0.002878 at 4 um. At the beta-32
+    production state this changed a component-z index_detail column between
+    otherwise converged FD steps. The cubic Hermite tail leaves both endpoints
+    and the Christiansen interpolation above rho=0.02 unchanged, while
+    approaching the air endpoint tangentially so Re(epsilon)<1 throughout the
+    positive relaxed-density interval.
+    """
+
+    rho = np.asarray(projected_density, dtype=np.float64)
+    transition = float(CONTRACT.optical_n_low_density_transition_rho)
+    t = np.clip(rho / transition, 0.0, 1.0)
+    low = transition * (2.0 * t**2 - t**3)
+    return np.where(rho < transition, low, rho)
+
+
+def _d_real_index_density_weight(projected_density: np.ndarray) -> np.ndarray:
+    """Exact derivative of :func:`_real_index_density_weight`."""
+
+    rho = np.asarray(projected_density, dtype=np.float64)
+    transition = float(CONTRACT.optical_n_low_density_transition_rho)
+    t = np.clip(rho / transition, 0.0, 1.0)
+    low_derivative = 4.0 * t - 3.0 * t**2
+    return np.where(rho < transition, low_derivative, 1.0)
+
+
 def nk_relaxation(
     projected_density: np.ndarray,
     *,
@@ -99,7 +132,10 @@ def nk_relaxation(
         raise ValueError("Au index must use a passive n+ik convention")
     if background.real <= 0.0 or background.imag < 0.0:
         raise ValueError("background index must use a passive n+ik convention")
-    return background + rho * (au - background)
+    real_weight = _real_index_density_weight(rho)
+    real_index = background.real + real_weight * (au.real - background.real)
+    extinction = background.imag + rho * (au.imag - background.imag)
+    return real_index + 1j * extinction
 
 
 def epsilon_relaxation(
@@ -132,7 +168,15 @@ def d_epsilon_d_projected_density(
         background_index=background_index,
     )
     au = ordal_au_index() if au_index is None else complex(au_index)
-    return 2.0 * index * (au - complex(background_index))
+    background = complex(background_index)
+    real_weight_derivative = _d_real_index_density_weight(
+        _validate_projected_density(projected_density)
+    )
+    d_index = (
+        real_weight_derivative * (au.real - background.real)
+        + 1j * (au.imag - background.imag)
+    )
+    return 2.0 * index * d_index
 
 
 def lumerical_import_index(
@@ -177,6 +221,9 @@ def audit(sample_count: int = 1001) -> dict[str, object]:
         "passive_on_uniform_density_sweep": bool(np.all(epsilon.imag >= 0.0)),
         "exact_background_endpoint": bool(epsilon[0] == 1.0 + 0.0j),
         "exact_au_endpoint": bool(epsilon[-1] == au**2),
+        "positive_relaxed_path_stays_below_Re_epsilon_one": bool(
+            np.all(epsilon[1:].real < 1.0)
+        ),
         "rho_cubed_used": False,
         "ordal_data": str(ORDAL_AU_DATA),
         "ordal_data_sha256": source_hash,

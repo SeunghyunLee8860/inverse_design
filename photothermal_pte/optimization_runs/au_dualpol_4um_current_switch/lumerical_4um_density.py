@@ -137,6 +137,9 @@ def density_state_sha256(projected_density: np.ndarray) -> str:
         "axis_mapping": {"x": CONTRACT.axis_x, "y": CONTRACT.axis_y},
         "optical_law": RELAXATION_CONTRACT.law,
         "optical_rho_power": RELAXATION_CONTRACT.optical_rho_power,
+        "optical_n_low_density_transition_rho": (
+            RELAXATION_CONTRACT.optical_n_low_density_transition_rho
+        ),
         "cell_map": "arithmetic_mean_of_four_corner_nodes",
     }
     digest = hashlib.sha256()
@@ -170,6 +173,9 @@ def density_state_audit(projected_density: np.ndarray) -> dict[str, Any]:
         "axis_mapping": {"x": CONTRACT.axis_x, "y": CONTRACT.axis_y},
         "optical_law": RELAXATION_CONTRACT.law,
         "optical_rho_power": RELAXATION_CONTRACT.optical_rho_power,
+        "optical_n_low_density_transition_rho": (
+            RELAXATION_CONTRACT.optical_n_low_density_transition_rho
+        ),
         "minimum_epsilon_imaginary": float(np.min(epsilon.imag)),
         "all_constitutive_maps_derive_from_this_nodal_state": True,
         "gray_state_claimed_as_fabricated_material": False,

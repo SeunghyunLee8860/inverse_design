@@ -25,6 +25,31 @@ def test_4um_ordal_endpoint_and_no_rho_cubed_contract() -> None:
     assert payload["exact_background_endpoint"] is True
     assert payload["exact_au_endpoint"] is True
     assert payload["passive_on_uniform_density_sweep"] is True
+    assert payload["positive_relaxed_path_stays_below_Re_epsilon_one"] is True
+
+
+def test_low_density_tail_avoids_internal_lumerical_metal_threshold() -> None:
+    transition = CONTRACT.optical_n_low_density_transition_rho
+    rho = np.geomspace(3.0e-5, 1.0, 100_001)
+    epsilon = epsilon_relaxation(rho)
+    assert np.all(epsilon.real < 1.0)
+
+    unchanged = np.asarray([transition, 0.1, 0.5, 1.0])
+    expected = 1.0 + unchanged * (ordal_au_index() - 1.0)
+    assert np.array_equal(nk_relaxation(unchanged), expected)
+
+
+def test_low_density_analytic_derivative_and_c1_transition() -> None:
+    transition = CONTRACT.optical_n_low_density_transition_rho
+    rho = np.asarray([3.0e-5, 0.0028783, 0.019, transition, 0.021])
+    direction = np.asarray([0.2, -0.3, 0.1, -0.25, 0.15])
+    step = 1.0e-8
+    finite_difference = (
+        epsilon_relaxation(rho + step * direction)
+        - epsilon_relaxation(rho - step * direction)
+    ) / (2.0 * step)
+    analytic = d_epsilon_d_projected_density(rho) * direction
+    assert np.allclose(finite_difference, analytic, rtol=2.0e-8, atol=2.0e-6)
 
 
 def test_nk_then_square_is_nonlinear_in_epsilon() -> None:
