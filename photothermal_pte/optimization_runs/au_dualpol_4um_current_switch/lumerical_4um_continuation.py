@@ -725,10 +725,27 @@ def next_constraint_homotopy_caps(
         normalized.append(float(baseline[1] / caps[1] - 1.0))
     if active_count >= 3:
         normalized.append(float(baseline_grayness / gray_cap - 1.0))
-    reached = bool(
-        np.allclose(caps[: min(active_count, 2)], target[: min(active_count, 2)], rtol=1.0e-12, atol=1.0e-15)
-        and (active_count < 3 or np.isclose(gray_cap, target_grayness_cap, rtol=1.0e-12, atol=1.0e-15))
+    # A cap is an upper bound, so a value below the scheduled target is
+    # already stricter than requested and must count as target-reached.  The
+    # old equality test could loop forever when a feasible stage-entry cap
+    # happened to be tighter than the scheduled target (for example, the
+    # beta-16 grayness cap 0.2285 versus target 0.6).
+    cap_tolerance = 1.0e-15 + 1.0e-12 * np.abs(target)
+    dfm_reached = bool(
+        np.all(
+            caps[: min(active_count, 2)]
+            <= target[: min(active_count, 2)]
+            + cap_tolerance[: min(active_count, 2)]
+        )
     )
+    gray_reached = bool(
+        active_count < 3
+        or gray_cap
+        <= float(target_grayness_cap)
+        + 1.0e-15
+        + 1.0e-12 * abs(float(target_grayness_cap))
+    )
+    reached = bool(dfm_reached and gray_reached)
     return {
         "DFM_caps": caps,
         "grayness_cap": gray_cap,

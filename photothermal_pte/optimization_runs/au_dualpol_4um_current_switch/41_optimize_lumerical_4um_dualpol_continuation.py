@@ -786,22 +786,20 @@ def _constraint_targets_reached(state: dict[str, Any], beta: float) -> bool:
     active_count = len(active_design_constraint_names(beta))
     current = np.asarray(state["dfm_caps"], dtype=np.float64)
     target = np.asarray(state["target_dfm_caps"], dtype=np.float64)
+    cap_tolerance = 1.0e-15 + 1.0e-12 * np.abs(target)
     dfm_reached = bool(
-        np.allclose(
-            current[: min(active_count, 2)],
-            target[: min(active_count, 2)],
-            rtol=1.0e-12,
-            atol=1.0e-15,
+        np.all(
+            current[: min(active_count, 2)]
+            <= target[: min(active_count, 2)]
+            + cap_tolerance[: min(active_count, 2)]
         )
     )
     gray_reached = bool(
         active_count < 3
-        or np.isclose(
-            float(state["grayness_cap"]),
-            float(state["target_grayness_cap"]),
-            rtol=1.0e-12,
-            atol=1.0e-15,
-        )
+        or float(state["grayness_cap"])
+        <= float(state["target_grayness_cap"])
+        + 1.0e-15
+        + 1.0e-12 * abs(float(state["target_grayness_cap"]))
     )
     return bool(dfm_reached and gray_reached)
 

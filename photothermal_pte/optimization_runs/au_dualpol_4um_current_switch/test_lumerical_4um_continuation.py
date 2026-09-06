@@ -26,6 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     continuation_contract,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    next_constraint_homotopy_caps,
     remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
@@ -322,6 +323,20 @@ def test_grayness_cap_is_staged_then_fixed_at_final_beta_entry() -> None:
     assert stage_128["grayness_cap"] == FINAL_GRAYNESS_CAP
 
 
+def test_homotopy_accepts_an_entry_cap_stricter_than_its_target() -> None:
+    record = next_constraint_homotopy_caps(
+        beta=16.0,
+        baseline_dfm_values=np.asarray([0.72, 0.24]),
+        baseline_grayness=0.186,
+        current_dfm_caps=np.asarray([0.727, 0.248]),
+        current_grayness_cap=0.2285,
+        target_dfm_caps=np.asarray([0.727, 0.248]),
+        target_grayness_cap=0.6,
+    )
+    assert record["grayness_cap"] == pytest.approx(0.2285)
+    assert record["target_reached"] is True
+
+
 def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
     improving = [
         {
@@ -478,6 +493,21 @@ def _load_continuation_driver():
     sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def test_driver_accepts_checkpoint_caps_stricter_than_targets() -> None:
+    driver = _load_continuation_driver()
+    state = {
+        "dfm_caps": np.asarray([0.7272972016192454, 0.24789953146734628]),
+        "target_dfm_caps": np.asarray(
+            [0.7272972016192454, 0.24789953146734628]
+        ),
+        "grayness_cap": 0.2285018297900159,
+        "target_grayness_cap": 0.6,
+    }
+    assert driver._constraint_targets_reached(state, beta=16.0) is True
+
+
 
 
 def test_beta_fd_certificate_is_recorded_once_and_reverified(tmp_path: Path) -> None:
