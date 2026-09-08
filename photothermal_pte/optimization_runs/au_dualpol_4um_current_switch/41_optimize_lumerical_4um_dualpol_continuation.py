@@ -43,6 +43,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
+    target_cap_retention_progress,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     OPTIMIZER_250NM_MAPPING,
@@ -1250,6 +1251,10 @@ def main() -> int:
                 beta=beta,
                 dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
                 grayness_cap=float(state["grayness_cap"]),
+                target_dfm_caps=np.asarray(
+                    state["target_dfm_caps"], dtype=np.float64
+                ),
+                target_grayness_cap=float(state["target_grayness_cap"]),
                 history_prefix=history_prefix,
                 progress_callback=persist_successful_callback,
             )
@@ -1345,10 +1350,38 @@ def main() -> int:
                     np.asarray(stopped_candidate["latent"]).ravel(),
                     float(stopped_candidate["point"]["epigraph_nA"]),
                 ]
-            objective_progress = stage_objective_progress(
-                problem.complete_callback_history
+            objective_progress = (
+                dict(problem.plateau_result)
+                if problem.plateau_stop_requested
+                and problem.plateau_result is not None
+                else stage_objective_progress(problem.complete_callback_history)
             )
-            selected = problem.selected_candidate()
+            regular_selected = problem.selected_candidate()
+            cap_targets_reached = _constraint_targets_reached(state, beta)
+            best_observed_fom_nA = float(
+                regular_selected["audit"]["balanced_utility_nA"]
+            )
+            target_candidate_minimum_fom_nA = (
+                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * best_observed_fom_nA
+                if best_observed_fom_nA > 0.0
+                else np.inf
+            )
+            target_selected = problem.selected_candidate_satisfying_caps(
+                dfm_caps=np.asarray(state["target_dfm_caps"], dtype=np.float64),
+                grayness_cap=float(state["target_grayness_cap"]),
+                minimum_balanced_utility_nA=target_candidate_minimum_fom_nA,
+            )
+            direct_target_candidate_selected = bool(
+                not cap_targets_reached
+                and objective_progress["converged"]
+                and target_selected is not None
+            )
+            selected = (
+                target_selected
+                if direct_target_candidate_selected
+                else regular_selected
+            )
+            assert selected is not None
             final_point = selected["point"]
             latent_final = np.asarray(selected["latent"], dtype=np.float64)
             latent_optimizer_terminal = vector_optimizer_terminal[:-1].reshape(
@@ -1371,7 +1404,14 @@ def main() -> int:
                 final_balanced_utility_nA
                 >= retention_floor_nA - EPIGRAPH_CONSTRAINT_TOLERANCE
             )
-            cap_targets_reached = _constraint_targets_reached(state, beta)
+            target_progress = target_cap_retention_progress(
+                problem.complete_callback_history,
+                beta=beta,
+                target_dfm_caps=np.asarray(
+                    state["target_dfm_caps"], dtype=np.float64
+                ),
+                target_grayness_cap=float(state["target_grayness_cap"]),
+            )
             stage_result = {
                 "status": "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -1400,6 +1440,13 @@ def main() -> int:
                     ),
                     "target_reached": cap_targets_reached,
                     "maximum_allowed_entry_violation": 0.05,
+                    "target_candidate_progress": target_progress,
+                    "direct_target_candidate_selected": (
+                        direct_target_candidate_selected
+                    ),
+                    "target_candidate_minimum_FOM_nA": (
+                        target_candidate_minimum_fom_nA
+                    ),
                 },
                 "FOM_retention": {
                     "entry_balanced_utility_nA": epigraph_initial_nA,
@@ -1588,12 +1635,27 @@ def main() -> int:
                 and retention_passed
             )
             if completed_cap_subproblem and not cap_targets_reached:
+                if direct_target_candidate_selected:
+                    advance_reason = (
+                        "evaluated target-cap-feasible candidate retained at least "
+                        "90% of the best observed FOM after audited stagnation; "
+                        "jump directly to one final-target-cap confirmation subproblem"
+                    )
+                    state["dfm_caps"] = np.asarray(
+                        state["target_dfm_caps"], dtype=np.float64
+                    )
+                    state["grayness_cap"] = float(state["target_grayness_cap"])
+                else:
+                    advance_reason = (
+                        "fixed-cap physics plateau passed; tighten active caps "
+                        "by at most five-percent entry violation"
+                    )
                 stage_result["constraint_homotopy_advance"] = {
                     "from_cap_substage": cap_substage,
                     "to_cap_substage": cap_substage + 1,
-                    "reason": (
-                        "fixed-cap physics plateau passed; tighten active caps "
-                        "by at most five-percent entry violation"
+                    "reason": advance_reason,
+                    "jumped_directly_to_target_caps": (
+                        direct_target_candidate_selected
                     ),
                 }
                 _write_json(attempt_dir / "stage_result.json", stage_result)

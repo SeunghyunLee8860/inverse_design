@@ -30,6 +30,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
+    target_cap_retention_progress,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     calibrated_lumerical_250nm_dfm_caps,
@@ -355,6 +356,105 @@ def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
     assert stage_objective_progress(improving)["converged"] is False
     assert stage_objective_progress(plateau)["converged"] is True
 
+
+
+def _target_stagnation_row(
+    index: int,
+    *,
+    fom_nA: float,
+    raw_dfm: tuple[float, float],
+    grayness: float = 0.18,
+) -> dict[str, object]:
+    return {
+        "callback_index": index,
+        "current_Ea_nA": fom_nA + 0.1,
+        "current_Eb_nA": -fom_nA,
+        "balanced_utility_nA": fom_nA,
+        "maximum_design_constraint": -0.01,
+        "design_feasible": True,
+        "raw_DFM_values": list(raw_dfm),
+        "grayness": grayness,
+        "density_state_sha256": f"state-{index}",
+    }
+
+
+def test_fom_drop_alone_never_triggers_target_cap_shortcut() -> None:
+    rows = [
+        _target_stagnation_row(
+            index,
+            fom_nA=22.5 if index == 0 else 20.0,
+            raw_dfm=(0.70, 0.30),
+        )
+        for index in range(16)
+    ]
+    progress = target_cap_retention_progress(
+        rows,
+        beta=32.0,
+        target_dfm_caps=np.asarray([0.55, 0.21]),
+        target_grayness_cap=0.20,
+    )
+    assert progress["converged"] is False
+    assert progress["target_feasible_retention_preserving_points"] == 0
+
+
+def test_target_feasible_90_percent_candidate_stops_after_stagnation() -> None:
+    rows = [
+        _target_stagnation_row(
+            0,
+            fom_nA=22.5,
+            raw_dfm=(0.68, 0.23),
+        )
+    ]
+    rows.extend(
+        _target_stagnation_row(
+            index,
+            fom_nA=20.30,
+            raw_dfm=(0.39, 0.16),
+        )
+        for index in range(1, 11)
+    )
+    progress = target_cap_retention_progress(
+        rows,
+        beta=32.0,
+        target_dfm_caps=np.asarray([0.55, 0.21]),
+        target_grayness_cap=0.20,
+    )
+    assert progress["converged"] is True
+    assert progress["convergence_reason"] == (
+        "target_cap_feasible_retention_preserving_FOM_stagnation"
+    )
+    assert progress["minimum_target_candidate_FOM_nA"] == pytest.approx(20.25)
+    assert progress["best_target_candidate_FOM_nA"] == pytest.approx(20.30)
+    assert progress["unique_points_since_significant_feasible_improvement"] == 10
+
+
+def test_problem_selects_restartable_target_cap_candidate() -> None:
+    problem = ContinuationEpigraphProblem(
+        _fake_evaluation,
+        beta=32.0,
+        dfm_caps=np.asarray([0.70, 0.24]),
+        grayness_cap=0.20,
+    )
+    better_current_cap = _target_stagnation_row(
+        0, fom_nA=22.5, raw_dfm=(0.68, 0.23)
+    )
+    target_candidate = _target_stagnation_row(
+        1, fom_nA=20.3, raw_dfm=(0.39, 0.16)
+    )
+    problem.callback_history = [better_current_cap, target_candidate]
+    problem._candidate_latents = [
+        np.full(CONTRACT.design_node_shape, 0.5),
+        np.full(CONTRACT.design_node_shape, 0.6),
+    ]
+    problem._candidate_points = [{"name": "best"}, {"name": "target"}]
+    selected = problem.selected_candidate_satisfying_caps(
+        dfm_caps=np.asarray([0.55, 0.21]),
+        grayness_cap=0.20,
+        minimum_balanced_utility_nA=20.25,
+    )
+    assert selected is not None
+    assert selected["callback_index"] == 1
+    assert selected["point"] == {"name": "target"}
 
 def test_problem_requests_one_force_stop_after_physics_plateau() -> None:
     stopped: list[bool] = []

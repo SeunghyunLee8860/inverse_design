@@ -112,6 +112,12 @@ STAGE_PLATEAU_WINDOW = 4
 STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-2
 STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
 STAGE_PLATEAU_PROJECTED_RMS_LIMIT = 1.0e-3
+# A fixed-cap MMA may make large excursions after finding its best feasible
+# point.  Only stop that search early when it has also produced a candidate
+# satisfying the beta stage's final caps with the unchanged retention floor.
+TARGET_CAP_STAGNATION_PATIENCE = 10
+TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT = 1.0e-3
+TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA = 1.0e-3
 CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION = 0.05
 CAP_SUBSTAGE_MINIMUM_FOM_RETENTION = 0.90
 # The beta-2 -> beta-4 production remap can require about 3,500 iterations
@@ -837,6 +843,139 @@ def stage_objective_progress(
     }
 
 
+def target_cap_retention_progress(
+    callback_history: list[dict[str, Any]],
+    *,
+    beta: float,
+    target_dfm_caps: np.ndarray,
+    target_grayness_cap: float,
+) -> dict[str, Any]:
+    """Audit a target-feasible, retention-preserving stagnation shortcut.
+
+    A lower FOM alone never ends a stage.  The shortcut becomes eligible only
+    after an evaluated point satisfies the final caps for this beta, preserves
+    at least CAP_SUBSTAGE_MINIMUM_FOM_RETENTION of the best feasible switching
+    FOM observed in this fixed-cap problem, and no significant best-FOM
+    improvement has occurred for TARGET_CAP_STAGNATION_PATIENCE unique states.
+    """
+
+    unique: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, row in enumerate(callback_history):
+        state_hash = str(row.get("density_state_sha256", f"legacy-{index}"))
+        if state_hash in seen:
+            continue
+        seen.add(state_hash)
+        unique.append(row)
+    feasible_switching = [
+        (position, row)
+        for position, row in enumerate(unique)
+        if float(row.get("maximum_design_constraint", -np.inf))
+        <= DESIGN_CONSTRAINT_TOLERANCE
+        and float(row.get("current_Ea_nA", -np.inf)) > 0.0
+        and float(row.get("current_Eb_nA", np.inf)) < 0.0
+    ]
+    best_fom = max(
+        (float(row["balanced_utility_nA"]) for _, row in feasible_switching),
+        default=-np.inf,
+    )
+    retention_floor = (
+        CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * best_fom
+        if np.isfinite(best_fom) and best_fom > 0.0
+        else np.inf
+    )
+    active_count = len(active_design_constraint_names(float(beta)))
+    target_caps = np.asarray(target_dfm_caps, dtype=np.float64)
+    if target_caps.shape != (2,):
+        raise ValueError("target DFM caps must have shape (2,)")
+
+    target_rows: list[tuple[int, dict[str, Any]]] = []
+    for position, row in feasible_switching:
+        raw_dfm = np.asarray(row.get("raw_DFM_values"), dtype=np.float64)
+        dfm_count = min(active_count, 2)
+        dfm_pass = bool(
+            raw_dfm.shape == (2,)
+            and np.all(
+                raw_dfm[:dfm_count]
+                <= target_caps[:dfm_count]
+                * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+            )
+        )
+        grayness_pass = bool(
+            active_count < 3
+            or float(row.get("grayness", np.inf))
+            <= float(target_grayness_cap)
+            * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+        )
+        retention_pass = bool(
+            float(row["balanced_utility_nA"])
+            >= retention_floor - EPIGRAPH_CONSTRAINT_TOLERANCE
+        )
+        if dfm_pass and grayness_pass and retention_pass:
+            target_rows.append((position, row))
+
+    significant_best = -np.inf
+    last_significant_improvement_position = -1
+    for position, row in feasible_switching:
+        candidate = float(row["balanced_utility_nA"])
+        if not np.isfinite(significant_best):
+            significant_best = candidate
+            last_significant_improvement_position = position
+            continue
+        tolerance = max(
+            TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA,
+            TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT
+            * max(
+                abs(significant_best),
+                TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA,
+            ),
+        )
+        if candidate > significant_best + tolerance:
+            significant_best = candidate
+            last_significant_improvement_position = position
+    points_since_improvement = (
+        len(unique) - 1 - last_significant_improvement_position
+        if last_significant_improvement_position >= 0
+        else 0
+    )
+    target_best = max(
+        (float(row["balanced_utility_nA"]) for _, row in target_rows),
+        default=np.nan,
+    )
+    converged = bool(
+        len(feasible_switching) >= STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS
+        and target_rows
+        and points_since_improvement >= TARGET_CAP_STAGNATION_PATIENCE
+    )
+    return {
+        "converged": converged,
+        "convergence_reason": (
+            "target_cap_feasible_retention_preserving_FOM_stagnation"
+            if converged
+            else None
+        ),
+        "unique_physical_states": len(unique),
+        "feasible_switching_points": len(feasible_switching),
+        "best_feasible_switching_FOM_nA": float(best_fom),
+        "minimum_target_candidate_FOM_nA": float(retention_floor),
+        "target_feasible_retention_preserving_points": len(target_rows),
+        "best_target_candidate_FOM_nA": float(target_best),
+        "unique_points_since_significant_feasible_improvement": int(
+            points_since_improvement
+        ),
+        "stagnation_patience": TARGET_CAP_STAGNATION_PATIENCE,
+        "significant_improvement_relative_tolerance": (
+            TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT
+        ),
+        "significant_improvement_absolute_tolerance_nA": (
+            TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA
+        ),
+        "target_DFM_caps": target_caps.tolist(),
+        "target_grayness_cap": float(target_grayness_cap),
+        "minimum_FOM_retention_fraction": CAP_SUBSTAGE_MINIMUM_FOM_RETENTION,
+    }
+
+
 def design_constraint_point(
     latent: np.ndarray,
     *,
@@ -886,12 +1025,22 @@ class ContinuationEpigraphProblem:
     beta: float
     dfm_caps: np.ndarray
     grayness_cap: float
+    target_dfm_caps: np.ndarray | None = None
+    target_grayness_cap: float = np.inf
     history_prefix: list[dict[str, Any]] | None = None
     progress_callback: Callable[["ContinuationEpigraphProblem"], None] | None = None
 
     def __post_init__(self) -> None:
         self.beta = float(self.beta)
         self.dfm_caps = np.asarray(self.dfm_caps, dtype=np.float64)
+        self.target_dfm_caps = (
+            None
+            if self.target_dfm_caps is None
+            else np.asarray(self.target_dfm_caps, dtype=np.float64)
+        )
+        if self.target_dfm_caps is not None and self.target_dfm_caps.shape != (2,):
+            raise ValueError("target DFM caps must have shape (2,)")
+        self.target_grayness_cap = float(self.target_grayness_cap)
         self.callback_history: list[dict[str, Any]] = []
         self.history_prefix = [dict(row) for row in (self.history_prefix or [])]
         self._candidate_latents: list[np.ndarray] = []
@@ -1007,16 +1156,42 @@ class ContinuationEpigraphProblem:
         if self.progress_callback is not None:
             self.progress_callback(self)
         progress = stage_objective_progress(self.complete_callback_history)
+        target_progress: dict[str, Any] | None = None
+        target_candidate_available = False
+        if self.target_dfm_caps is not None:
+            target_progress = target_cap_retention_progress(
+                self.complete_callback_history,
+                beta=self.beta,
+                target_dfm_caps=self.target_dfm_caps,
+                target_grayness_cap=self.target_grayness_cap,
+            )
+            target_candidate_available = (
+                self.selected_candidate_satisfying_caps(
+                    dfm_caps=self.target_dfm_caps,
+                    grayness_cap=self.target_grayness_cap,
+                    minimum_balanced_utility_nA=float(
+                        target_progress["minimum_target_candidate_FOM_nA"]
+                    ),
+                )
+                is not None
+            )
         signs_pass = bool(
             float(point["current_a_A"]) > 0.0 and float(point["current_b_A"]) < 0.0
         )
+        stop_progress = progress
         if (
-            progress["converged"]
+            target_progress is not None
+            and target_progress["converged"]
+            and target_candidate_available
+        ):
+            stop_progress = target_progress
+        if (
+            stop_progress["converged"]
             and maximum_design <= DESIGN_CONSTRAINT_TOLERANCE
             and signs_pass
             and not self.plateau_stop_requested
         ):
-            self.plateau_result = progress
+            self.plateau_result = stop_progress
             self.plateau_stop_requested = True
             if self._force_stop is None:
                 raise RuntimeError(
@@ -1062,6 +1237,65 @@ class ContinuationEpigraphProblem:
         return {
             "callback_index": int(self.callback_history[index]["callback_index"]),
             "reason": reason,
+            "latent": self._candidate_latents[index].copy(),
+            "point": self._candidate_points[index],
+            "audit": dict(self.callback_history[index]),
+        }
+
+
+    def selected_candidate_satisfying_caps(
+        self,
+        *,
+        dfm_caps: np.ndarray,
+        grayness_cap: float,
+        minimum_balanced_utility_nA: float,
+    ) -> dict[str, Any] | None:
+        """Return the best locally evaluated point satisfying target caps."""
+
+        caps = np.asarray(dfm_caps, dtype=np.float64)
+        if caps.shape != (2,):
+            raise ValueError("target DFM caps must have shape (2,)")
+        active_count = len(active_design_constraint_names(self.beta))
+        candidates: list[int] = []
+        for index, row in enumerate(self.callback_history):
+            raw_dfm = np.asarray(row["raw_DFM_values"], dtype=np.float64)
+            dfm_count = min(active_count, 2)
+            dfm_pass = bool(
+                np.all(
+                    raw_dfm[:dfm_count]
+                    <= caps[:dfm_count] * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+                )
+            )
+            grayness_pass = bool(
+                active_count < 3
+                or float(row["grayness"])
+                <= float(grayness_cap) * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+            )
+            utility_pass = bool(
+                float(row["balanced_utility_nA"])
+                >= float(minimum_balanced_utility_nA)
+                - EPIGRAPH_CONSTRAINT_TOLERANCE
+            )
+            signs_pass = bool(
+                float(row["current_Ea_nA"]) > 0.0
+                and float(row["current_Eb_nA"]) < 0.0
+            )
+            if dfm_pass and grayness_pass and utility_pass and signs_pass:
+                candidates.append(index)
+        if not candidates:
+            return None
+        index = max(
+            candidates,
+            key=lambda candidate: float(
+                self.callback_history[candidate]["balanced_utility_nA"]
+            ),
+        )
+        return {
+            "callback_index": int(self.callback_history[index]["callback_index"]),
+            "reason": (
+                "maximum_balanced_utility_among_target_cap_feasible_"
+                "retention_preserving_points"
+            ),
             "latent": self._candidate_latents[index].copy(),
             "point": self._candidate_points[index],
             "audit": dict(self.callback_history[index]),
@@ -1123,6 +1357,11 @@ def continuation_contract() -> dict[str, Any]:
                 CAP_SUBSTAGE_MINIMUM_FOM_RETENTION
             ),
             "target_caps_are_fixed_at_beta_entry": True,
+            "target_candidate_shortcut": (
+                "only after an evaluated candidate satisfies all beta target caps, "
+                "retains at least 90% of the best observed FOM, and the best "
+                "feasible FOM has stagnated; then run one target-cap confirmation"
+            ),
         },
         "continuation_evaluation_budget": {
             "all_stage_emergency_ceiling": MINIMUM_CONTINUATION_EVALUATIONS,
@@ -1172,6 +1411,14 @@ def continuation_contract() -> dict[str, Any]:
             "absolute_tolerance_nA": STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA,
             "unique_projected_density_states_only": True,
             "projected_density_RMS_limit": STAGE_PLATEAU_PROJECTED_RMS_LIMIT,
+            "target_cap_stagnation_patience": TARGET_CAP_STAGNATION_PATIENCE,
+            "target_cap_significant_improvement_relative_tolerance": (
+                TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT
+            ),
+            "target_cap_significant_improvement_absolute_tolerance_nA": (
+                TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA
+            ),
+            "FOM_drop_alone_can_stop": False,
         },
         "initial_density": "exact uniform latent rho=0.5",
         "floating_Au_terminal_conductance_constraint": False,
