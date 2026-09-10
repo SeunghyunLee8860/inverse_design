@@ -36,6 +36,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     active_design_constraint_names,
     beta_transition_physics_gate,
     continuation_contract,
+    design_constraint_point,
     feasible_stage_entry_caps,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
@@ -63,11 +64,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
-CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v5"
+CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v6"
 LEGACY_CHECKPOINT_SCHEMAS = {
     "au-lumerical-continuation-checkpoint-v2",
     "au-lumerical-continuation-checkpoint-v3",
     "au-lumerical-continuation-checkpoint-v4",
+    "au-lumerical-continuation-checkpoint-v5",
 }
 PREFLIGHT_STATUS = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
 FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
@@ -211,6 +213,7 @@ def _save_checkpoint(
     planned_cap_substage: int = -1,
     target_dfm_caps: np.ndarray | None = None,
     target_grayness_cap: float = np.nan,
+    beta_reference_fom_nA: float = np.nan,
 ) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp.npz")
     np.savez_compressed(
@@ -230,6 +233,9 @@ def _save_checkpoint(
             dtype=np.float64,
         ),
         target_grayness_cap=np.asarray(target_grayness_cap, dtype=np.float64),
+        beta_reference_fom_nA=np.asarray(
+            beta_reference_fom_nA, dtype=np.float64
+        ),
     )
     temporary.replace(path)
 
@@ -288,6 +294,23 @@ def _load_checkpoint(path: Path) -> dict[str, Any]:
                 target_grayness_cap=float(
                     np.asarray(data["target_grayness_cap"]).item()
                 ),
+                beta_reference_fom_nA=float(
+                    np.asarray(data["beta_reference_fom_nA"]).item()
+                ),
+            )
+        elif schema == "au-lumerical-continuation-checkpoint-v5":
+            state.update(
+                cap_substage=int(np.asarray(data["cap_substage"]).item()),
+                planned_cap_substage=int(
+                    np.asarray(data["planned_cap_substage"]).item()
+                ),
+                target_dfm_caps=np.asarray(
+                    data["target_dfm_caps"], dtype=np.float64
+                ),
+                target_grayness_cap=float(
+                    np.asarray(data["target_grayness_cap"]).item()
+                ),
+                beta_reference_fom_nA=np.nan,
             )
         elif schema == "au-lumerical-continuation-checkpoint-v4":
             state.update(
@@ -299,6 +322,7 @@ def _load_checkpoint(path: Path) -> dict[str, Any]:
                 target_grayness_cap=float(
                     np.asarray(data["target_grayness_cap"]).item()
                 ),
+                beta_reference_fom_nA=np.nan,
             )
         else:
             state.update(
@@ -306,7 +330,7 @@ def _load_checkpoint(path: Path) -> dict[str, Any]:
                 planned_cap_substage=-1,
                 target_dfm_caps=np.full(2, np.nan, dtype=np.float64),
                 target_grayness_cap=np.nan,
-
+                beta_reference_fom_nA=np.nan,
             )
         return state
 
@@ -540,6 +564,21 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
         terminal_latent = np.asarray(arrays["latent_final"], dtype=np.float64)
     checkpoint_latent = np.asarray(state["latent"], dtype=np.float64)
     target_beta = BETA_SCHEDULE[beta_index]
+    beta_fom_candidates = [
+        float(stage.get("balanced_utility_nA", np.nan))
+        for stage in stages
+        if float(stage.get("beta", np.nan)) == target_beta
+        and bool(stage.get("opposite_current_switching_achieved", False))
+        and np.isfinite(float(stage.get("balanced_utility_nA", np.nan)))
+    ]
+    stored_beta_reference = float(
+        state.get("beta_reference_fom_nA", np.nan)
+    )
+    if np.isfinite(stored_beta_reference):
+        beta_fom_candidates.append(stored_beta_reference)
+    state["beta_reference_fom_nA"] = (
+        max(beta_fom_candidates) if beta_fom_candidates else np.nan
+    )
     terminal_beta = float(terminal_stage.get("beta", target_beta))
     prepared_beta = terminal_beta
     resume_state_kind = "terminal_stage"
@@ -658,6 +697,7 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
             planned_cap_substage=-1,
             target_dfm_caps=np.full(2, np.nan, dtype=np.float64),
             target_grayness_cap=np.nan,
+            beta_reference_fom_nA=np.nan,
         )
         restart_remap_audit = remap["audit"]
         prepared_beta = target_beta
@@ -945,6 +985,7 @@ def main() -> int:
                     "grayness_cap": np.inf,
                     "target_dfm_caps": np.full(2, np.nan, dtype=np.float64),
                     "target_grayness_cap": np.nan,
+                    "beta_reference_fom_nA": np.nan,
                 }
             else:
                 state, restart_provenance = restart_seed
@@ -1246,6 +1287,27 @@ def main() -> int:
                 manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
                 _write_json(manifest_path, manifest)
 
+            epigraph_initial_nA = 1.0e9 * min(
+                float(initial_physics["currents_A"]["Ea"]),
+                -float(initial_physics["currents_A"]["Eb"]),
+            )
+            beta_reference_fom_nA = float(
+                state.get("beta_reference_fom_nA", np.nan)
+            )
+            if not np.isfinite(beta_reference_fom_nA):
+                if epigraph_initial_nA <= 0.0:
+                    raise RuntimeError(
+                        "cannot initialize beta FOM reference without strict "
+                        "opposite-current switching"
+                    )
+                beta_reference_fom_nA = epigraph_initial_nA
+                state["beta_reference_fom_nA"] = beta_reference_fom_nA
+                _save_checkpoint(checkpoint_path, **state)
+            retention_floor_nA = (
+                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * beta_reference_fom_nA
+                if beta_reference_fom_nA > 0.0
+                else -100.0
+            )
             problem = ContinuationEpigraphProblem(
                 driver.evaluate,
                 beta=beta,
@@ -1255,17 +1317,9 @@ def main() -> int:
                     state["target_dfm_caps"], dtype=np.float64
                 ),
                 target_grayness_cap=float(state["target_grayness_cap"]),
+                minimum_balanced_utility_nA=retention_floor_nA,
                 history_prefix=history_prefix,
                 progress_callback=persist_successful_callback,
-            )
-            epigraph_initial_nA = 1.0e9 * min(
-                float(initial_physics["currents_A"]["Ea"]),
-                -float(initial_physics["currents_A"]["Eb"]),
-            )
-            retention_floor_nA = (
-                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * epigraph_initial_nA
-                if epigraph_initial_nA > 0.0
-                else -100.0
             )
             optimizer_latent = latent_initial
             optimizer_maxeval = STAGE_MAXEVAL[beta]
@@ -1308,6 +1362,59 @@ def main() -> int:
                 }
                 warm_start_audit["actual_balanced_utility_nA"] = epigraph_initial_nA
             variable_count = problem.variable_count
+            initial_design_point = design_constraint_point(
+                optimizer_latent,
+                beta=beta,
+                dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
+                grayness_cap=float(state["grayness_cap"]),
+            )
+            initial_design_values = np.asarray(
+                initial_design_point["normalized_values"], dtype=np.float64
+            )
+            initial_maximum_design_constraint = (
+                float(np.max(initial_design_values))
+                if initial_design_values.size
+                else -np.inf
+            )
+            # A tightened cap substage deliberately starts slightly infeasible.
+            # Give its first fabrication-restoration steps the already-authorized
+            # 90 percent current-retention slack.  This changes neither the
+            # max-min objective nor any accepted constraint.
+            infeasible_entry_epigraph_slack = bool(
+                initial_maximum_design_constraint > DESIGN_CONSTRAINT_TOLERANCE
+            )
+            epigraph_optimizer_initial_nA = (
+                retention_floor_nA
+                if infeasible_entry_epigraph_slack
+                else epigraph_initial_nA
+            )
+            initial_design_gradients = np.asarray(
+                initial_design_point["normalized_gradients"], dtype=np.float64
+            ).reshape(problem.design_constraint_count, -1)
+            initial_design_gradient_l2 = np.linalg.norm(
+                initial_design_gradients, axis=1
+            )
+            positive_design_gradient_l2 = initial_design_gradient_l2[
+                initial_design_gradient_l2 > np.finfo(np.float64).tiny
+            ]
+            design_gradient_reference_l2 = (
+                float(np.median(positive_design_gradient_l2))
+                if positive_design_gradient_l2.size
+                else 1.0
+            )
+            design_constraint_scales = np.ones(
+                problem.design_constraint_count, dtype=np.float64
+            )
+            nonzero_design_gradients = (
+                initial_design_gradient_l2 > np.finfo(np.float64).tiny
+            )
+            design_constraint_scales[nonzero_design_gradients] = np.clip(
+                design_gradient_reference_l2
+                / initial_design_gradient_l2[nonzero_design_gradients],
+                0.25,
+                4.0,
+            )
+            problem.bind_design_constraint_scales(design_constraint_scales)
             optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
             optimizer.set_lower_bounds(
                 np.r_[
@@ -1321,10 +1428,7 @@ def main() -> int:
             optimizer.set_max_objective(problem.objective)
             tolerances = np.r_[
                 np.full(2, EPIGRAPH_CONSTRAINT_TOLERANCE),
-                np.full(
-                    problem.design_constraint_count,
-                    DESIGN_CONSTRAINT_TOLERANCE,
-                ),
+                DESIGN_CONSTRAINT_TOLERANCE * design_constraint_scales,
             ]
             optimizer.add_inequality_mconstraint(problem.constraints, tolerances)
             optimizer.set_initial_step(
@@ -1336,7 +1440,9 @@ def main() -> int:
             optimizer.set_ftol_rel(STAGE_FTOL_REL)
             optimizer.set_xtol_rel(STAGE_XTOL_REL)
             optimizer.set_maxeval(optimizer_maxeval)
-            vector_initial = np.r_[optimizer_latent.ravel(), epigraph_initial_nA]
+            vector_initial = np.r_[
+                optimizer_latent.ravel(), epigraph_optimizer_initial_nA
+            ]
             problem.bind_force_stop(optimizer.force_stop)
             plateau_forced_stop = False
             try:
@@ -1362,7 +1468,11 @@ def main() -> int:
                 regular_selected["audit"]["balanced_utility_nA"]
             )
             target_candidate_minimum_fom_nA = (
-                CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * best_observed_fom_nA
+                max(
+                    retention_floor_nA,
+                    CAP_SUBSTAGE_MINIMUM_FOM_RETENTION
+                    * best_observed_fom_nA,
+                )
                 if best_observed_fom_nA > 0.0
                 else np.inf
             )
@@ -1411,6 +1521,7 @@ def main() -> int:
                     state["target_dfm_caps"], dtype=np.float64
                 ),
                 target_grayness_cap=float(state["target_grayness_cap"]),
+                minimum_balanced_utility_nA=retention_floor_nA,
             )
             stage_result = {
                 "status": "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
@@ -1428,6 +1539,21 @@ def main() -> int:
                 "optimizer_requested_maxeval": optimizer_maxeval,
                 "latent_bounds": [0.0, 1.0],
                 "MMA_initial_step": MMA_INITIAL_STEP[beta],
+                "infeasible_entry_epigraph_slack": (
+                    infeasible_entry_epigraph_slack
+                ),
+                "initial_maximum_design_constraint": (
+                    initial_maximum_design_constraint
+                ),
+                "optimizer_initial_epigraph_nA": epigraph_optimizer_initial_nA,
+                "physical_entry_epigraph_nA": epigraph_initial_nA,
+                "design_constraint_gradient_L2_at_entry": (
+                    initial_design_gradient_l2.tolist()
+                ),
+                "design_constraint_numerical_scales": (
+                    design_constraint_scales.tolist()
+                ),
+                "design_constraint_scaling_changes_feasible_set": False,
                 "initial_grayness": initial_grayness,
                 "constraint_homotopy": {
                     "current_DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
@@ -1450,6 +1576,12 @@ def main() -> int:
                 },
                 "FOM_retention": {
                     "entry_balanced_utility_nA": epigraph_initial_nA,
+                    "beta_reference_balanced_utility_nA": (
+                        beta_reference_fom_nA
+                    ),
+                    "reference_scope": (
+                        "fixed_non_decreasing_reference_within_beta"
+                    ),
                     "minimum_fraction": CAP_SUBSTAGE_MINIMUM_FOM_RETENTION,
                     "lower_bound_nA": retention_floor_nA,
                     "final_balanced_utility_nA": final_balanced_utility_nA,
@@ -1634,6 +1766,11 @@ def main() -> int:
                 and switching
                 and retention_passed
             )
+            if completed_cap_subproblem:
+                state["beta_reference_fom_nA"] = max(
+                    beta_reference_fom_nA,
+                    final_balanced_utility_nA,
+                )
             if completed_cap_subproblem and not cap_targets_reached:
                 if direct_target_candidate_selected:
                     advance_reason = (
@@ -1715,6 +1852,7 @@ def main() -> int:
                 state["planned_cap_substage"] = -1
                 state["target_dfm_caps"] = np.full(2, np.nan, dtype=np.float64)
                 state["target_grayness_cap"] = np.nan
+                state["beta_reference_fom_nA"] = np.nan
                 # The next stage computes a tighter cap from a latent that
                 # preserves the completed stage's physical density.
                 _save_checkpoint(checkpoint_path, **state)

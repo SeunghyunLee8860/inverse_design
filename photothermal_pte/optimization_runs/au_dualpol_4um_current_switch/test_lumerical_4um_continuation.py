@@ -456,6 +456,57 @@ def test_problem_selects_restartable_target_cap_candidate() -> None:
     assert selected["callback_index"] == 1
     assert selected["point"] == {"name": "target"}
 
+def test_beta_anchor_prevents_compounded_cap_retention_loss() -> None:
+    rows = [
+        _target_stagnation_row(
+            index,
+            fom_nA=20.0,
+            raw_dfm=(0.39, 0.16),
+        )
+        for index in range(12)
+    ]
+    progress = target_cap_retention_progress(
+        rows,
+        beta=32.0,
+        target_dfm_caps=np.asarray([0.55, 0.21]),
+        target_grayness_cap=0.20,
+        minimum_balanced_utility_nA=20.25,
+    )
+    assert progress["minimum_target_candidate_FOM_nA"] == pytest.approx(20.25)
+    assert progress["target_feasible_retention_preserving_points"] == 0
+    assert progress["converged"] is False
+
+
+def test_selected_checkpoint_never_promotes_below_beta_anchor() -> None:
+    problem = ContinuationEpigraphProblem(
+        _fake_evaluation,
+        beta=32.0,
+        dfm_caps=np.asarray([0.70, 0.24]),
+        grayness_cap=0.20,
+        minimum_balanced_utility_nA=20.0,
+    )
+    retained_but_infeasible = _target_stagnation_row(
+        0, fom_nA=20.5, raw_dfm=(0.68, 0.23)
+    )
+    retained_but_infeasible["design_feasible"] = False
+    retained_but_infeasible["maximum_design_constraint"] = 0.02
+    feasible_but_below_floor = _target_stagnation_row(
+        1, fom_nA=18.0, raw_dfm=(0.39, 0.16)
+    )
+    problem.callback_history = [
+        retained_but_infeasible,
+        feasible_but_below_floor,
+    ]
+    retained_latent = np.full(CONTRACT.design_node_shape, 0.5)
+    below_floor_latent = np.full(CONTRACT.design_node_shape, 0.6)
+    problem._candidate_latents = [retained_latent, below_floor_latent]
+    problem._candidate_points = [{"name": "retained"}, {"name": "below-floor"}]
+    selected = problem.selected_candidate()
+    assert np.array_equal(selected["latent"], retained_latent)
+    assert selected["point"] == {"name": "retained"}
+    assert "retention_preserving" in selected["reason"]
+
+
 def test_problem_requests_one_force_stop_after_physics_plateau() -> None:
     stopped: list[bool] = []
 

@@ -109,7 +109,10 @@ STAGE_XTOL_REL = 0.0
 INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE = 0.050
 STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS = 6
 STAGE_PLATEAU_WINDOW = 4
-STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-2
+# A fixed-cap stage has done enough objective work when the best feasible FOM
+# improves by less than 0.1% across the recent window.  The former 1% threshold
+# was too coarse for the ~20 nA production objective.
+STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-3
 STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
 STAGE_PLATEAU_PROJECTED_RMS_LIMIT = 1.0e-3
 # A fixed-cap MMA may make large excursions after finding its best feasible
@@ -808,7 +811,7 @@ def stage_objective_progress(
         [float(row.get("projected_density_change_RMS", np.inf)) for row in recent_rows],
         dtype=np.float64,
     )
-    movement_converged = bool(
+    raw_trial_movement_converged = bool(
         not movement_available
         or (
             recent_movement.size == STAGE_PLATEAU_WINDOW
@@ -822,7 +825,6 @@ def stage_objective_progress(
             enough
             and has_prior_window
             and improvement <= tolerance
-            and movement_converged
         ),
         "raw_callback_points": len(callback_history),
         "unique_physical_states": len(unique),
@@ -840,6 +842,12 @@ def stage_objective_progress(
         ),
         "projected_density_movement_gate_applied": movement_available,
         "projected_density_change_RMS_limit": STAGE_PLATEAU_PROJECTED_RMS_LIMIT,
+        # MMA is allowed to probe a large feasible point and reject it.  Such a
+        # raw trial must not keep an already stagnant incumbent at a loose
+        # grayness cap forever.  Retain the metric for diagnosis, but advance
+        # caps from the best-feasible FOM plateau rather than raw-trial motion.
+        "raw_trial_movement_converged": raw_trial_movement_converged,
+        "raw_trial_movement_is_diagnostic_only": True,
     }
 
 
@@ -849,6 +857,7 @@ def target_cap_retention_progress(
     beta: float,
     target_dfm_caps: np.ndarray,
     target_grayness_cap: float,
+    minimum_balanced_utility_nA: float = -np.inf,
 ) -> dict[str, Any]:
     """Audit a target-feasible, retention-preserving stagnation shortcut.
 
@@ -879,10 +888,14 @@ def target_cap_retention_progress(
         (float(row["balanced_utility_nA"]) for _, row in feasible_switching),
         default=-np.inf,
     )
-    retention_floor = (
+    local_retention_floor = (
         CAP_SUBSTAGE_MINIMUM_FOM_RETENTION * best_fom
         if np.isfinite(best_fom) and best_fom > 0.0
         else np.inf
+    )
+    retention_floor = max(
+        float(minimum_balanced_utility_nA),
+        float(local_retention_floor),
     )
     active_count = len(active_design_constraint_names(float(beta)))
     target_caps = np.asarray(target_dfm_caps, dtype=np.float64)
@@ -1027,6 +1040,7 @@ class ContinuationEpigraphProblem:
     grayness_cap: float
     target_dfm_caps: np.ndarray | None = None
     target_grayness_cap: float = np.inf
+    minimum_balanced_utility_nA: float = -np.inf
     history_prefix: list[dict[str, Any]] | None = None
     progress_callback: Callable[["ContinuationEpigraphProblem"], None] | None = None
 
@@ -1041,6 +1055,11 @@ class ContinuationEpigraphProblem:
         if self.target_dfm_caps is not None and self.target_dfm_caps.shape != (2,):
             raise ValueError("target DFM caps must have shape (2,)")
         self.target_grayness_cap = float(self.target_grayness_cap)
+        self.minimum_balanced_utility_nA = float(
+            self.minimum_balanced_utility_nA
+        )
+        if np.isnan(self.minimum_balanced_utility_nA):
+            raise ValueError("minimum balanced utility may not be NaN")
         self.callback_history: list[dict[str, Any]] = []
         self.history_prefix = [dict(row) for row in (self.history_prefix or [])]
         self._candidate_latents: list[np.ndarray] = []
@@ -1051,6 +1070,9 @@ class ContinuationEpigraphProblem:
         self._force_stop: Callable[[], None] | None = None
         self.plateau_stop_requested = False
         self.plateau_result: dict[str, Any] | None = None
+        self._design_constraint_scales = np.ones(
+            self.design_constraint_count, dtype=np.float64
+        )
 
     @property
     def complete_callback_history(self) -> list[dict[str, Any]]:
@@ -1060,6 +1082,16 @@ class ContinuationEpigraphProblem:
         """Bind the sole NLopt lifetime stop used by the physics plateau gate."""
 
         self._force_stop = callback
+
+    def bind_design_constraint_scales(self, scales: np.ndarray) -> None:
+        """Apply positive numerical preconditioning without changing g(x)<=0."""
+
+        value = np.asarray(scales, dtype=np.float64)
+        if value.shape != (self.design_constraint_count,):
+            raise ValueError("design constraint scales have the wrong shape")
+        if not np.all(np.isfinite(value)) or np.any(value <= 0.0):
+            raise ValueError("design constraint scales must be finite and positive")
+        self._design_constraint_scales = value.copy()
 
     @property
     def variable_count(self) -> int:
@@ -1164,6 +1196,7 @@ class ContinuationEpigraphProblem:
                 beta=self.beta,
                 target_dfm_caps=self.target_dfm_caps,
                 target_grayness_cap=self.target_grayness_cap,
+                minimum_balanced_utility_nA=self.minimum_balanced_utility_nA,
             )
             target_candidate_available = (
                 self.selected_candidate_satisfying_caps(
@@ -1205,10 +1238,24 @@ class ContinuationEpigraphProblem:
 
         if not self.callback_history:
             raise RuntimeError("cannot select a continuation candidate without points")
-        feasible = [
+        retention_preserving = [
             index
             for index, row in enumerate(self.callback_history)
-            if bool(row["design_feasible"])
+            if float(row["current_Ea_nA"]) > 0.0
+            and float(row["current_Eb_nA"]) < 0.0
+            and float(row["balanced_utility_nA"])
+            >= self.minimum_balanced_utility_nA
+            - EPIGRAPH_CONSTRAINT_TOLERANCE
+        ]
+        if not retention_preserving:
+            raise RuntimeError(
+                "MMA produced no sign-correct candidate satisfying the fixed "
+                "beta-anchored FOM floor"
+            )
+        feasible = [
+            index
+            for index in retention_preserving
+            if bool(self.callback_history[index]["design_feasible"])
         ]
         if feasible:
             index = max(
@@ -1220,7 +1267,7 @@ class ContinuationEpigraphProblem:
             reason = "maximum_balanced_utility_among_design_feasible_points"
         else:
             index = min(
-                range(len(self.callback_history)),
+                retention_preserving,
                 key=lambda candidate: (
                     max(
                         0.0,
@@ -1233,7 +1280,9 @@ class ContinuationEpigraphProblem:
                     -float(self.callback_history[candidate]["balanced_utility_nA"]),
                 ),
             )
-            reason = "minimum_design_violation_then_maximum_balanced_utility"
+            reason = (
+                "minimum_design_violation_among_beta_retention_preserving_points"
+            )
         return {
             "callback_index": int(self.callback_history[index]["callback_index"]),
             "reason": reason,
@@ -1316,7 +1365,11 @@ class ContinuationEpigraphProblem:
             / CURRENT_SCALE_A
         )
         design = point["design_constraints"]
-        result[:] = np.concatenate((epigraph, design["normalized_values"]))
+        scaled_design_values = (
+            np.asarray(design["normalized_values"], dtype=np.float64)
+            * self._design_constraint_scales
+        )
+        result[:] = np.concatenate((epigraph, scaled_design_values))
         if gradient.size:
             gradient[:] = 0.0
             gradient[:2, :-1] = (
@@ -1325,9 +1378,12 @@ class ContinuationEpigraphProblem:
             ).reshape(2, -1)
             gradient[:2, -1] = 1.0
             if self.design_constraint_count:
-                gradient[2:, :-1] = np.asarray(
-                    design["normalized_gradients"], dtype=np.float64
-                ).reshape(self.design_constraint_count, -1)
+                gradient[2:, :-1] = (
+                    np.asarray(
+                        design["normalized_gradients"], dtype=np.float64
+                    ).reshape(self.design_constraint_count, -1)
+                    * self._design_constraint_scales[:, None]
+                )
 
 
 def continuation_contract() -> dict[str, Any]:
@@ -1411,6 +1467,15 @@ def continuation_contract() -> dict[str, Any]:
             "absolute_tolerance_nA": STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA,
             "unique_projected_density_states_only": True,
             "projected_density_RMS_limit": STAGE_PLATEAU_PROJECTED_RMS_LIMIT,
+            "projected_density_RMS_policy": (
+                "diagnostic only; rejected or non-improving MMA trials do not "
+                "block fixed-cap convergence"
+            ),
+            "loose_cap_forced_stop": False,
+            "minimum_FOM_reference": (
+                "fixed non-decreasing reference within each beta; reset only "
+                "after an accepted beta transition"
+            ),
             "target_cap_stagnation_patience": TARGET_CAP_STAGNATION_PATIENCE,
             "target_cap_significant_improvement_relative_tolerance": (
                 TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT
