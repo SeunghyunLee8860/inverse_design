@@ -646,6 +646,17 @@ def _load_continuation_driver():
     return module
 
 
+def test_cross_commit_restart_reconstructs_missing_cap_plan() -> None:
+    source = (
+        Path(__file__)
+        .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
+        .read_text(encoding="utf-8")
+    )
+    assert '"reconstructed_from_verified_restart_checkpoint": True' in source
+    assert 'plans = manifest.setdefault(' in source
+    assert '"beta_constraint_homotopy_plans", {}' in source
+
+
 def test_driver_accepts_checkpoint_caps_stricter_than_targets() -> None:
     driver = _load_continuation_driver()
     state = {

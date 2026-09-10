@@ -1117,9 +1117,29 @@ def main() -> int:
                         cap_record["DFM_caps"], dtype=np.float64
                     )
                     state["grayness_cap"] = float(cap_record["grayness_cap"])
-                    manifest["beta_constraint_homotopy_plans"][
-                        _fd_beta_key(beta)
-                    ]["substages"].append(
+                    plan_key = _fd_beta_key(beta)
+                    plans = manifest.setdefault(
+                        "beta_constraint_homotopy_plans", {}
+                    )
+                    if plan_key not in plans:
+                        plans[plan_key] = {
+                            "beta": beta,
+                            "target_DFM_caps": np.asarray(
+                                state["target_dfm_caps"]
+                            ).tolist(),
+                            "target_grayness_cap": float(
+                                state["target_grayness_cap"]
+                            ),
+                            "entry_DFM_caps": np.asarray(
+                                state["dfm_caps"]
+                            ).tolist(),
+                            "entry_grayness_cap": float(
+                                state["grayness_cap"]
+                            ),
+                            "substages": [],
+                            "reconstructed_from_verified_restart_checkpoint": True,
+                        }
+                    plans[plan_key]["substages"].append(
                         {
                             "cap_substage": cap_substage,
                             "DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
