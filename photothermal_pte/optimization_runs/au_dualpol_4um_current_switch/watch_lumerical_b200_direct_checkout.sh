@@ -68,12 +68,15 @@ final_certified() {
 
 transient_license_failure() {
   local evidence
-  evidence="$(tail -n 200 "$console_log" 2>/dev/null)"
+  evidence="$({ tail -n 200 "$console_log"; jq -r ".error // empty" "$manifest"; } 2>/dev/null)"
   case "$evidence" in
     *"could not match resource name provided or the resource may not be active"* | \
     *"FlexNet Licensing error:-4,132"* | \
     *"Licensed number of users already reached"* | \
-    *"Insufficient FlexNet Publisher"*)
+    *"Insufficient FlexNet Publisher"* | \
+    *"Failed to set up Ansys license sharing"* | \
+    *"ANSYSLI exited or could not read server port"* | \
+    *"Failed to start messaging, check licenses"*)
       return 0
       ;;
     *)
