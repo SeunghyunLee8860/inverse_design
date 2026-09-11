@@ -121,8 +121,14 @@ STAGE_PLATEAU_PROJECTED_RMS_LIMIT = 1.0e-3
 TARGET_CAP_STAGNATION_PATIENCE = 10
 TARGET_CAP_SIGNIFICANT_RELATIVE_IMPROVEMENT = 1.0e-3
 TARGET_CAP_SIGNIFICANT_ABSOLUTE_IMPROVEMENT_NA = 1.0e-3
-CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION = 0.05
+CAP_HOMOTOPY_MAXIMUM_ENTRY_VIOLATION = 0.15
 CAP_SUBSTAGE_MINIMUM_FOM_RETENTION = 0.90
+# Intermediate cap substages exist to make binarization/DFM progress, not to
+# re-converge the optical objective at every small cap change.  Two distinct,
+# sign-correct, cap-feasible physics points that retain the fixed-beta FOM
+# floor are enough to advance.  The beta target cap and the final beta-128
+# stage still use the full plateau/final-certification gates below.
+INTERMEDIATE_CAP_MINIMUM_RETENTION_FEASIBLE_POINTS = 2
 # The beta-2 -> beta-4 production remap can require about 3,500 iterations
 # before all three deterministic starts meet the same bounded optimum.  A
 # 1,000-iteration ceiling returned three status=1 (iteration-limit) points
@@ -851,6 +857,59 @@ def stage_objective_progress(
     }
 
 
+def intermediate_cap_retention_progress(
+    callback_history: list[dict[str, Any]],
+    *,
+    minimum_balanced_utility_nA: float,
+) -> dict[str, Any]:
+    """Audit fast advancement of a non-target constraint-homotopy substage."""
+
+    unique: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, row in enumerate(callback_history):
+        state_hash = str(row.get("density_state_sha256", f"legacy-{index}"))
+        if state_hash in seen:
+            continue
+        seen.add(state_hash)
+        unique.append(row)
+    qualifying = [
+        row
+        for row in unique
+        if float(row.get("maximum_design_constraint", np.inf))
+        <= DESIGN_CONSTRAINT_TOLERANCE
+        and float(row.get("current_Ea_nA", -np.inf)) > 0.0
+        and float(row.get("current_Eb_nA", np.inf)) < 0.0
+        and float(row.get("balanced_utility_nA", -np.inf))
+        >= float(minimum_balanced_utility_nA)
+        - EPIGRAPH_CONSTRAINT_TOLERANCE
+    ]
+    best = max(
+        (float(row["balanced_utility_nA"]) for row in qualifying),
+        default=np.nan,
+    )
+    return {
+        "converged": bool(
+            len(qualifying)
+            >= INTERMEDIATE_CAP_MINIMUM_RETENTION_FEASIBLE_POINTS
+        ),
+        "convergence_reason": (
+            "intermediate_cap_has_two_distinct_sign_correct_cap_feasible_"
+            "retention_preserving_physics_points"
+            if len(qualifying)
+            >= INTERMEDIATE_CAP_MINIMUM_RETENTION_FEASIBLE_POINTS
+            else None
+        ),
+        "mode": "binarization_priority_intermediate_cap",
+        "unique_physical_states": len(unique),
+        "retention_feasible_points": len(qualifying),
+        "minimum_retention_feasible_points": (
+            INTERMEDIATE_CAP_MINIMUM_RETENTION_FEASIBLE_POINTS
+        ),
+        "minimum_balanced_utility_nA": float(minimum_balanced_utility_nA),
+        "best_retention_feasible_balanced_utility_nA": best,
+    }
+
+
 def target_cap_retention_progress(
     callback_history: list[dict[str, Any]],
     *,
@@ -1041,6 +1100,7 @@ class ContinuationEpigraphProblem:
     target_dfm_caps: np.ndarray | None = None
     target_grayness_cap: float = np.inf
     minimum_balanced_utility_nA: float = -np.inf
+    binarization_priority: bool = False
     history_prefix: list[dict[str, Any]] | None = None
     progress_callback: Callable[["ContinuationEpigraphProblem"], None] | None = None
 
@@ -1058,6 +1118,7 @@ class ContinuationEpigraphProblem:
         self.minimum_balanced_utility_nA = float(
             self.minimum_balanced_utility_nA
         )
+        self.binarization_priority = bool(self.binarization_priority)
         if np.isnan(self.minimum_balanced_utility_nA):
             raise ValueError("minimum balanced utility may not be NaN")
         self.callback_history: list[dict[str, Any]] = []
@@ -1212,6 +1273,13 @@ class ContinuationEpigraphProblem:
             float(point["current_a_A"]) > 0.0 and float(point["current_b_A"]) < 0.0
         )
         stop_progress = progress
+        if self.binarization_priority:
+            intermediate_progress = intermediate_cap_retention_progress(
+                self.complete_callback_history,
+                minimum_balanced_utility_nA=self.minimum_balanced_utility_nA,
+            )
+            if intermediate_progress["converged"]:
+                stop_progress = intermediate_progress
         if (
             target_progress is not None
             and target_progress["converged"]

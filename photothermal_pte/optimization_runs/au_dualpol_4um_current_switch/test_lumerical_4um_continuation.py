@@ -25,6 +25,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     beta_transition_physics_gate,
     continuation_contract,
     grayness_value_gradient,
+    intermediate_cap_retention_progress,
     linearized_maximin_box_warm_start,
     next_constraint_homotopy_caps,
     remap_latent_between_betas,
@@ -80,7 +81,7 @@ def test_continuation_safety_ceiling_and_lifecycle_are_explicit() -> None:
     assert "fixed-cap homotopy subproblem" in lifecycle["normal"]
     assert "new cap subproblem" in lifecycle["same_beta_new_MMA"]
     homotopy = continuation_contract()["constraint_cap_homotopy"]
-    assert homotopy["maximum_entry_violation_per_substage"] == 0.05
+    assert homotopy["maximum_entry_violation_per_substage"] == 0.15
     assert homotopy["minimum_FOM_retention_per_substage"] == 0.90
 
 
@@ -355,6 +356,58 @@ def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
     ]
     assert stage_objective_progress(improving)["converged"] is False
     assert stage_objective_progress(plateau)["converged"] is True
+
+
+def test_intermediate_cap_advances_after_two_retained_feasible_points() -> None:
+    rows = [
+        {
+            "current_Ea_nA": 22.1,
+            "current_Eb_nA": -22.0,
+            "balanced_utility_nA": 22.0,
+            "maximum_design_constraint": -1.0e-4,
+            "density_state_sha256": f"state-{index}",
+        }
+        for index in range(2)
+    ]
+    progress = intermediate_cap_retention_progress(
+        rows,
+        minimum_balanced_utility_nA=20.0,
+    )
+    assert progress["converged"] is True
+    assert progress["retention_feasible_points"] == 2
+    assert progress["mode"] == "binarization_priority_intermediate_cap"
+
+
+def test_intermediate_cap_does_not_count_duplicates_or_low_fom() -> None:
+    rows = [
+        {
+            "current_Ea_nA": 22.1,
+            "current_Eb_nA": -22.0,
+            "balanced_utility_nA": 22.0,
+            "maximum_design_constraint": -1.0e-4,
+            "density_state_sha256": "same-state",
+        },
+        {
+            "current_Ea_nA": 22.1,
+            "current_Eb_nA": -22.0,
+            "balanced_utility_nA": 22.0,
+            "maximum_design_constraint": -1.0e-4,
+            "density_state_sha256": "same-state",
+        },
+        {
+            "current_Ea_nA": 19.1,
+            "current_Eb_nA": -19.0,
+            "balanced_utility_nA": 19.0,
+            "maximum_design_constraint": -1.0e-4,
+            "density_state_sha256": "low-fom-state",
+        },
+    ]
+    progress = intermediate_cap_retention_progress(
+        rows,
+        minimum_balanced_utility_nA=20.0,
+    )
+    assert progress["converged"] is False
+    assert progress["retention_feasible_points"] == 1
 
 
 

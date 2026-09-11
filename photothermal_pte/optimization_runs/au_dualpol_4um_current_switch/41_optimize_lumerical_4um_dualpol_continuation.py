@@ -1338,6 +1338,7 @@ def main() -> int:
                 ),
                 target_grayness_cap=float(state["target_grayness_cap"]),
                 minimum_balanced_utility_nA=retention_floor_nA,
+                binarization_priority=not _constraint_targets_reached(state, beta),
                 history_prefix=history_prefix,
                 progress_callback=persist_successful_callback,
             )
@@ -1805,7 +1806,7 @@ def main() -> int:
                 else:
                     advance_reason = (
                         "fixed-cap physics plateau passed; tighten active caps "
-                        "by at most five-percent entry violation"
+                        "by at most fifteen-percent entry violation"
                     )
                 stage_result["constraint_homotopy_advance"] = {
                     "from_cap_substage": cap_substage,
